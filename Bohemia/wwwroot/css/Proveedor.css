@@ -1,0 +1,137 @@
+
+.Fondo_Producto {
+    background: linear-gradient(135deg, #c0c1d1, #f4f1f6);
+  }
+
+
+
+
+@media (max-width: 768px) {
+    contenedor {
+
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 90%; /* Reduce el ancho */
+        margin: 10px auto; /* Centra y da margen */
+    }
+}
+
+
+.contenedor_texto {
+ padding-top: 0.9em;
+}
+
+
+
+@media (max-width: 768px) {
+    .contenedor_texto {
+
+        margin-top: 0;
+    }
+    
+}
+
+.margen_texto {
+    margin-left: -20em;
+}
+
+@media (max-width: 768px) {
+    .margen_texto {
+
+        margin-left: 0;
+    }
+    
+}
+
+
+
+
+.Posicion {
+    flex: 1 1 calc(50% - 10px); /* Dos columnas en pantallas grandes */
+}
+
+@media (max-width: 768px) {
+    .Posicion {
+        flex: 1 1 100%; /* Una columna en pantallas pequeñas */
+    }
+}
+
+/* background-image: url('/lib/img/Fondoproducto.jpg'); */
+
+.inputbusqueda
+{
+    width: 50em;
+    display: block;
+    margin: 0 auto;
+
+}
+
+#tbody-producto {
+    display: block;
+    max-height: 400px; /* Ajusta este valor según el tamaño que desees */
+    overflow-y: auto;  /* Habilita el scroll vertical */
+    width: 100%;       /* Asegura que el tbody ocupe el 100% del ancho de la tabla */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead, tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+
+/* Personalizar la barra de desplazamiento */
+#tbody-producto::-webkit-scrollbar {
+    width: 20px; /* Ancho de la barra de scroll */
+}
+
+/* Color de la barra de desplazamiento */
+#tbody-producto::-webkit-scrollbar-track {
+    background: #292828; /* Color de fondo del track (la pista de la barra de scroll) */
+}
+
+/* Color del pulgar (parte que se mueve) */
+#tbody-producto::-webkit-scrollbar-thumb {
+    background: #555454; /* Color negro para el pulgar */
+    border-radius: 10px; /* Bordes redondeados para el pulgar */
+}
+
+/* Color cuando el pulgar está siendo hover (cuando el usuario pasa el mouse sobre él) */
+#tbody-producto::-webkit-scrollbar-thumb:hover {
+    background: #aca9a9; /* Un gris más claro cuando el usuario pasa el mouse */
+}
+
+
+/* @media (max-width: 768px) {
+    .inputbusqueda
+    {
+        width:
+        1%;
+    }
+} */
+.table th, .table td {
+    padding: 10px;
+    text-align: center;
+    max-width: 150px;
+    word-wrap: break-word; /* Permite dividir el texto en varias líneas */
+    white-space: normal; /* Hace que el texto se ajuste automáticamente */
+}
+
+
+
+
+@media (max-width: 550px) {
+    .ocultar-en-550px {
+        display: none;
+    }
+}
+@media (max-width: 768px) {
+    .ocultar-en-768px {
+        display: none;
+    }
+}

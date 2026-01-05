@@ -1,0 +1,151 @@
+<body class="Fondo_Cliente">
+
+
+    <h6 class="Textobohemia" style="text-align: center;">En esta sección usted podrá ingresar Los nuevos Clientes</h6>
+    <div>
+
+        <input type="hidden" id="ClienteID" value="0">
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" placeholder="⚠️ Ingrese Nombre">
+            </div>
+
+            <div class="col-md-4">
+                <label for="localidad" class="form-label Textobohemia">Localidad</label>
+                <input type="text" class="form-control" id="localidad" placeholder="Ingrese Localidad">
+            </div>
+
+            <div class="col-md-4">
+                <label for="dni" class="form-label Textobohemia">Dni</label>
+                <input type="text" class="form-control" id="dni" placeholder="⚠️ Ingrese Dni / cuil">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="telefono" class="form-label Textobohemia">Telefono</label>
+                <input type="number" class="form-control" id="telefono" placeholder="⚠️ Ingrese telefono">
+            </div>
+
+            <div class="col-md-4">
+                <label for="email" class="form-label Textobohemia">Email</label>
+                <input type="text" class="form-control" id="email" placeholder="Ingrese email">
+            </div>
+
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-dark w-100" onclick="GuardarCliente()">
+                    Guardar Cliente
+                </button>
+            </div>
+        </div>
+
+
+        @* 
+        <button type="button" class="btn btn-outline-dark" onclick="GuardarCliente()">
+            Guardar Cliente
+        </button>
+
+    </div> *@
+
+
+
+
+        <!-- Modal de edición -->
+        <div class="modal fade" id="modalEditarCliente" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label>Nombre</label>
+                            <input type="text" id="nombreEditar" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Localidad</label>
+                            <input type="text" id="localidadEditar" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Teléfono</label>
+                            <input type="text" id="telefonoEditar" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="text" id="emailEditar" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>DNI / CUIL</label>
+                            <input type="text" id="dniEditar" class="form-control">
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button class="btn btn-primary" onclick="GuardarCliente()">Guardar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        @* <table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Localidad</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>DNI / CUIL</th>
+
+        </tr>
+    </thead>
+
+    <tbody id="detalleCliente"></tbody>
+</table> *@
+
+
+
+        <div class="container mt-3">
+
+            <div class="table-responsive">
+                <table class="table table-hover table-sm table-dark">
+                    <thead>
+                        <tr>
+                            <th class="Textobohemia">Nombre</th>
+                            <th class="Textobohemia ocultar-en-768px">Localidad</th>
+                            <th class="Textobohemia ocultar-en-768px">Teléfono</th>
+                            <th class="Textobohemia">Email</th>
+                            <th class="Textobohemia">DNI / CUI</th>
+
+                            <th class="Textobohemia">editar</th>
+                            <th class=" ocultar-en-768px Textobohemia">Estado</th>
+                            <th class=" ocultar-en-768px Textobohemia">Eliminar</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="detalleCliente"></tbody>
+                </table>
+            </div>
+        </div>
+
+        @section Scripts {
+
+            <script src="~/js/Clientes.1.0.0.js"></script>
+
+        }
+
+</body>

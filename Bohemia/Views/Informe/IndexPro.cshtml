@@ -1,0 +1,52 @@
+<h1 class="Textobohemia" style="text-align: center;">Top Productos Mas Vendidos</h1>
+<div id="resumenVentas" style="display: none; font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #007bff;">
+</div>
+
+
+
+<div>
+    <h4 class="Textobohemia" style="text-align: center;"> Tabla con los productos con menos cantidad Vendida</h4>
+    <table border="1">
+        <thead>
+            <tr>
+                <th class="Textobohemia ocultar-en-768px">Producto Nombre</th>
+                <th class="Textobohemia ocultar-en-768px">Observacion</th>
+                <th class="Textobohemia">Codigo</th>
+                <th class="Textobohemia">Total Vendido</th>
+                <th class="Textobohemia">Fecha ingreso / modificado</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-productos-minimos">
+            <!-- Aquí se mostrarán los productos menos vendidos -->
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h4 class="Textobohemia" style="text-align: center;"> Tabla con los productos con mas cantidad Vendida</h4>
+    <table border="1">
+        <thead>
+            <tr>
+                <th class="Textobohemia">Producto Nombre</th>
+                <th class="Textobohemia">Observacion</th>
+                <th class="Textobohemia">Codigo</th>
+                <th class="Textobohemia">Total Vendido</th>
+                <th class="Textobohemia">Fecha ingreso / modificado</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-productos-mas-vendidos">
+         
+         
+        </tbody>
+    </table>
+</div>
+
+@* declara el grafico  *@
+<canvas id="myChart"></canvas>
+
+
+
+
+@section Scripts {
+    <script src="~/js/InformePro.js"></script>
+}

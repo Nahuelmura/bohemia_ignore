@@ -1,0 +1,292 @@
+@{
+  ViewData["Title"] = "Ventas";
+}
+
+<link rel="stylesheet" href="~/fontawesome/css/all.min.css">
+
+
+<body class="Fondo_Venta">
+
+
+
+        <div class="modal-body">
+          <input type="hidden" id="ProductoID" value="0">
+          <input type="hidden" id="VentaID" value="0">
+                  <input type="hidden" id="ClienteID" value="2">
+          <input type="text" id="UserId" value="@ViewBag.UsuarioId" hidden>
+
+          <!-- Primera fila: 3 inputs juntos -->
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-label Textobohemia"> ⚠️ Ingresar Código</label>
+              <input type="text" class="form-control" id="CodigoProducto" placeholder="Código">
+            </div>
+
+             <div class="col-md-4">
+                 <div class="form-group position-relative">
+                 <label for="Observacion" class="form-label Textobohemia" >Buscar por Observación</label>
+                 <input type="text" id="Observacion" class="form-control" placeholder="Buscar por observación..." autocomplete="off" />
+                 <ul id="sugerencias" class="list-group position-absolute w-100 color_lista" style="z-index:1000; display:none;"></ul>
+                 </div>
+               </div>
+
+
+            <div class="col-md-4">
+              <label class="form-label Textobohemia">Descripción</label>
+              <input type="text" class="form-control" id="descripcion" placeholder="Descripción" disabled>
+            </div>
+
+          </div>
+
+          <!-- Segunda fila: 2 inputs abajo -->
+          <div class="row mt-3">
+
+            <div class="col-md-4">
+              <label class="form-label Textobohemia">⚠️ Agrega la Cantidad</label>
+              <input type="number" class="form-control" id="cantidad" placeholder="Cantidad" min="1" required
+                oninput="validarCantidad(this)">
+
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label Textobohemia">Stock disponible</label>
+              <input type="text" class="form-control" id="stockdisponible" placeholder="Stock Disponible" disabled>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label Textobohemia">Precio Venta</label>
+              <input type="text" class="form-control" id="precioUnitario" placeholder="Precio Venta" disabled>
+            </div>
+<div class="col-md-4 mt-3">
+  <label for="Forma_pago" class="form-label Textobohemia">⚠️ Atento a la forma de pago</label>
+  @Html.DropDownList(
+    "Forma_pago",
+    null,
+    htmlAttributes: new {
+      @class = "form-control select2",
+      id = "Forma_pago"
+    }
+  )
+</div>
+
+
+
+        <div class="col-md-4 mt-3">
+  <label class="form-label Textobohemia">Total con Descuento</label>
+  <input type="text"
+         class="form-control"
+         id="totalConDescuento"
+         placeholder="Total Final"
+         disabled>
+</div>
+
+
+
+@* seccion Cliente en la interfaz de ventas  *@
+
+<!-- CLIENTE (AUTOCOMPLETE) -->
+<div class="col-md-4 mt-3 position-relative">
+
+    <label class="form-label Textobohemia">Cliente</label>
+
+    <input type="text"
+           id="Nombre"
+           class="form-control"
+           placeholder="Buscar cliente por nombre"
+           autocomplete="off">
+
+    <input type="hidden" id="ClienteID">
+
+    <ul id="sugerenciasClientes"
+        class="list-group position-absolute w-100 color_Fondo_Sugerencias"
+        style="top:100%; left:0; z-index:1050; display:none; ">
+    </ul>
+
+</div>
+
+<!-- DATOS DEL CLIENTE -->
+<div class="row mt-3">
+    <div class="col-md-4">
+        <label class="form-label">Localidad</label>
+        <input type="text" id="Localidad" class="form-control" readonly>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Teléfono</label>
+        <input type="text" id="Telefono" class="form-control" readonly>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">DNI / CUIL</label>
+        <input type="text" id="Dni" class="form-control" readonly>
+    </div>
+</div>
+
+
+  <div class="col-md-4 d-flex " style="margin-top: 4.2rem;  margin-bottom: 1.1rem ;">
+    <button type="button" class="btn btn-outline-primary btn-hover-custom w-100"
+            onclick="AgregarProductoTemporal(); limpiarCamposVistaTemporal();">
+      Agregar Producto
+    </button>
+  </div>
+</div>
+
+
+
+        <table class="table  table-hover mt-3 table-striped  table-dark">
+          <thead>
+            <tr>
+              <th class="Textobohemia">Código</th>
+              <th class="Textobohemia">Descripción</th>
+              <th class="Textobohemia ocultar-en-768px">Observacion</th>
+              <th class="Textobohemia ocultar-en-768px">Cantidad</th>
+              <th class="Textobohemia ocultar-en-768px">Forma pago </th>
+                <th class="Textobohemia ocultar-en-768px">Precio  descuento </th>
+              <th class="Textobohemia ocultar-en-768px">Precio Unitario venta</th>
+
+              <th class="Textobohemia">Eliminar</th>
+
+            </tr>
+          </thead>
+          <tbody id="detalleVentaTabla"></tbody>
+        </table>
+
+        <!-- Total de la compra -->
+        <div class="row mt-3">
+          <div class="col-md-6 offset-md-6">
+            <label class="form-label Textobohemia"><strong>Total de la compra:</strong></label>
+            <input type="text" class="form-control" id="totalCompra" value="0.00" disabled>
+          </div>
+
+          <div  class="posicion_boton_confirmar">
+                       <button onclick="toggleVenta()" class="btn btn-outline-primary btn-hover-custom ocultar-en-movil"data-bs-dismiss="modal">Mostrar ventas</button>
+                       <button type="button" class="btn btn-outline-danger btn-hover-custom" data-bs-dismiss="modal"  onclick="limpiarCampos(); limpiarTabla();location.reload();">Cancelar</button>
+                       <button type="button" class="btn btn-outline-success btn-hover-custom" onclick="GuardarVenta(); limpiarCampos(); ">Confirmar Venta</button>
+        </div>
+
+        </div>
+
+        @* <button type="button" class="btn btn-primary"
+          onclick="AgregarProductoTemporal(); limpiarCamposVistaTemporal(); ">Agregar Producto</button> *@
+
+
+
+
+
+<div id="seccionVenta" style="display: none;">
+  <div class="row mb-3 contenedor-filtro">
+    <div class="col-md-3">
+      <label class="Textobohemia" for="buscarventa">Buscar ventas por Código</label>
+      <input type="text" id="buscarventa" placeholder="Buscar venta">
+    </div>
+
+    <div class="col-md-3">
+      <label class="Textobohemia" for="fechabuscarventa">Buscar ventas por Fecha</label>
+      <input type="date" id="fechabuscarventa" placeholder="Buscar venta por Fecha">
+    </div>
+
+    <div class="col-md-3">
+      <label class="Textobohemia" for="descripcionbuscarventa">Buscar por Descripción</label>
+      @Html.DropDownList("descripcionbuscarventa", ViewBag.descripcionbuscarventa as List<SelectListItem>, new { @class = "select2" })
+    </div>
+  </div>
+
+  <table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th>Codigo</th>
+        <th>Descripcion Producto</th>
+        <th class="Textobohemia ocultar-en-768px">Observacion</th>
+        <th class="ocultar-en-768px">Fecha</th>
+        <th>Precio Unitario venta</th>
+        <th class="ocultar-en-768px">Cantidad</th>
+        <th class="ocultar-en-768px">Total</th>
+        <th class="ocultar-en-768px">Forma de pago</th>
+      </tr>
+    </thead>
+    <tbody id="tbody-Carga_Venta">
+    </tbody>
+  </table>
+</div>
+
+
+      </div>
+
+    </div>
+    <div class="modal-footer">
+
+@* <!-- Button trigger modal -->
+<button type="button" class="btn-flotante" data-bs-toggle="modal" data-bs-target="#DetalleModal">
+  <i class="fa-solid fa-plus"></i>
+</button> *@
+
+<!-- Modal -->
+<div class="modal fade" id="DetalleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 Textobohemia text-center " id="exampleModalLabel">Agregar Producto a Venta</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="limpiarCampos(); limpiarTabla();"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+
+
+
+
+        <div class="toast align-items-center text-bg-dark border-0" id="myToastOutside" role="alert"
+          aria-live="assertive" aria-atomic="true" data-bs-delay="5000"
+          style="position: fixed; top: 450px; right: 300px; z-index: 1050;">
+          <div class="d-flex">
+            <div class="toast-body">
+
+              Ingrese el código válido para obtener la información del producto.
+              Luego, defina la cantidad y presione "Agregar Producto" tantas veces como sea necesario.
+              Finalmente, haga clic en "Finalizar Compra".
+
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+        </div>
+
+
+
+
+
+
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+<script>
+  function toggleVenta() {
+    const seccion = document.getElementById("seccionVenta");
+    seccion.style.display = seccion.style.display === "none" ? "block" : "none";
+  }
+</script>
+
+<div class="toast align-items-center text-bg-dark border-0" id="myToastOutside" role="alert" aria-live="assertive"
+  aria-atomic="true" data-bs-delay="5000" style="position: fixed; top: 500px; right: 20px; z-index: 1050;">
+  <div class="d-flex">
+    <div class="toast-body">
+      Aprieta En boton con el + Para Registrar una Venta
+    </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+      aria-label="Close"></button>
+  </div>
+</div>
+
+</body>
+<link rel="stylesheet" href="~/css/ventas.css">
+
+
+@section Scripts {
+  <script src="~/js/Venta1.0.0.js"></script>
+}
