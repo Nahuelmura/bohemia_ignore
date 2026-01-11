@@ -161,10 +161,10 @@ function ListadoProveedores() {
         contenidoTabla += `
           <tr>
             <td>${proveedor.nombreProveedor}</td>
-            <td>${proveedor.localidad}</td>
+            <td class="ocultar-en-768px">${proveedor.localidad}</td>
             <td>${proveedor.telefono}</td>
-            <td>${proveedor.email}</td>
-            <td>${proveedor.cuit}</td>
+            <td class="ocultar-en-768px">${proveedor.email}</td>
+            <td class="ocultar-en-768px"  >${proveedor.cuit}</td>
             <td>
               <button class="btn btn-outline-success btn-sm"
                 onclick="AbrirModalEditarProveedor(${proveedor.proveedorID})">

@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<DetalleVenta> DetalleVentas { get; set; }
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<Proveedor> Proveedores { get; set; }
+    // public DbSet<DigitalizarFactura> GetDigitalizarFacturas { get; set; }
 
 
 }

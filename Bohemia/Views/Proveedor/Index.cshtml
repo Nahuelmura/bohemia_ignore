@@ -2,44 +2,50 @@
     ViewData["Title"] = "Proveedores";
 }
 
+<body class="fondo_provedores">
+    
+
 <link rel="stylesheet" href="~/css/Proveedor.css" asp-append-version="true" />
 
 
-<h1 class="Textobohemia"  style="text-align: center;">Lista de proveedores </h1>
+<h1 class="Textobohemia" style="text-align: center ;">Lista de proveedores </h1>
 
 
 <h6 class="Textobohemia" style="text-align: center;">
-  En esta sección usted podrá registrar los proveedores, gestionar sus datos y realizar ediciones cuando sea necesario.
+    En esta sección usted podrá registrar los proveedores, gestionar sus datos y realizar ediciones cuando sea
+    necesario.
 </h6>
 
 
 
 
 
-<div class="card mb-3 mx-auto " style="max-width: 800px;">
-  <div class="card-body">
-    <div class="row mb-3">
-        <input type="hidden" id="ProveedorID" value="0">
-        
+<div class=" " style="">
+    <div class="card-body">
+        <div class="row mb-3">
+            <input type="hidden" id="ProveedorID" value="0">
 
 
 
-        <div class="row mb-3 ">
 
-        <div class="col-md-4">
-                <label for="nombre" class="form-label Textobohemia">Nombre</label>
-                <input type="text" class="form-control" id="nombre" placeholder="⚠️ Ingresa el nombre del proveedor">
-                <div id="alertaNombre" class="alert alert-warning mt-2 d-none">
-                    ⚠️ Cuidado con los espacios 
+            <div class="row mb-3 ">
+
+                <div class="col-md-4">
+                    <label for="nombre" class="form-label Textobohemia">Nombre</label>
+                    <input type="text" class="form-control" id="nombre"
+                        placeholder="⚠️ Ingresa el nombre del proveedor">
+                    <div id="alertaNombre" class="alert alert-warning mt-2 d-none">
+                        ⚠️ Cuidado con los espacios
+                    </div>
                 </div>
-            </div>
                 <div class="col-md-4">
                     <label for="localidad" class="form-label Textobohemia">Localidad</label>
-                    <input type="text" class="form-control" id="localidad"  placeholder="⚠️ Ingresa la localidad">
+                    <input type="text" class="form-control" id="localidad" placeholder="⚠️ Ingresa la localidad">
                 </div>
                 <div class="col-md-4">
                     <label for="telefono" class="form-label Textobohemia">Telefono</label>
-                    <input type="text" class="form-control" id="telefono" placeholder="⚠️ Ingresa el número de teléfono">
+                    <input type="text" class="form-control" id="telefono"
+                        placeholder="⚠️ Ingresa el número de teléfono">
                 </div>
             </div>
 
@@ -50,13 +56,14 @@
                 </div>
                 <div class="col-md-4">
                     <label for="cuit" class="form-label Textobohemia">CUIT</label>
-                    <input type="number" class="form-control" id="cuit" placeholder="⚠️ Ingresa el CUIT">    
+                    <input type="number" class="form-control" id="cuit" placeholder="⚠️ Ingresa el CUIT">
                 </div>
-            </div>
-            <div class="justify-content-end d-flex">
-                <button type="button" class="btn btn-outline-dark col-md-3 " onclick="GuardarProveedor()">
-                    Guardar Proveedor
-                </button>
+
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-outline-dark w-100" onclick="GuardarProveedor()">
+                        Guardar Proveedor
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -64,73 +71,74 @@
 </div>
 
 <div class="container mt-3">
-        
-        <div class="table-responsive">
-            <table class="table table-hover table-sm table-dark">
-    <thead>
-        <tr>
-            <th class="Textobohemia">Nombre</th>
-            <th class="Textobohemia">Localidad</th>
-            <th class="Textobohemia">Teléfono</th>
-            <th class="Textobohemia">Email</th>
-            <th class="Textobohemia">DNI / CUIL</th>
-            <th class="Textobohemia">Editar</th>
-            <th class="Textobohemia">Estado</th>
-        </tr>
-    </thead>
-    <tbody id="listadoProveedores">
-    </tbody>
 
-     </div>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm table-dark">
+            <thead>
+                <tr>
+                    <th class="">Nombre</th>
+                        <th class="Textobohemia ocultar-en-768px ocultar-en-768px">Localidad</th>
+                    <th class="Textobohemia">Teléfono</th>
+                        <th class="Textobohemia ocultar-en-768px">Email</th>
+                        <th class="Textobohemia ocultar-en-768px">DNI / CUIL</th>
+                    <th class="Textobohemia">Editar</th>
+                        <th class="Textobohemia ocultar-en-768px">Estado</th>
+                </tr>
+            </thead>
+            <tbody id="listadoProveedores">
+            </tbody>
+
     </div>
+</div>
 
 
 
-    <!-- Modal de edición -->
-    <div class="modal fade" id="modalEditarProveedor" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title Textobohemia">Editar Proveedor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- Modal de edición -->
+<div class="modal fade" id="modalEditarProveedor" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title Textobohemia">Editar Proveedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="ProveedorIDModal" value="0">
+
+                <div class="Posicion mb-3">
+                    <span class="Textobohemia">Nombre Proveedor</span>
+                    <input type="text" class="form-control" id="nombreModal" placeholder="Ingresar Nombre Proveedor">
                 </div>
-                <div class="modal-body">
-                    <input type="hidden" id="ProveedorIDModal" value="0">
 
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Nombre Proveedor</span>
-                        <input type="text" class="form-control" id="nombreModal" placeholder="Ingresar Nombre Proveedor">
-                    </div>
-                 
 
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Localidad</span>
-                        <input type="text" class="form-control" id="localidadModal" placeholder="Ingresar Localidad">
-                    </div>
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Teléfono</span>
-                        <input type="text" class="form-control" id="telefonoModal" placeholder="Ingresar Teléfono">
-                    </div>
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Email</span>
-                        <input type="text" class="form-control" id="emailModal" placeholder="Ingresar Email">
-                    </div>
-                    
-
-                      <div class="Posicion mb-3">
-                        <span class="Textobohemia">DNT/CUIT</span>
-                        <input type="number" class="form-control" id="dnicuitModal" placeholder="Ingresar DNT/CUIT">
-                    </div>
-                    </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="GuardarProveedor()">Guardar</button>
+                <div class="Posicion mb-3">
+                    <span class="Textobohemia">Localidad</span>
+                    <input type="text" class="form-control" id="localidadModal" placeholder="Ingresar Localidad">
                 </div>
+                <div class="Posicion mb-3">
+                    <span class="Textobohemia">Teléfono</span>
+                    <input type="text" class="form-control" id="telefonoModal" placeholder="Ingresar Teléfono">
+                </div>
+                <div class="Posicion mb-3">
+                    <span class="Textobohemia">Email</span>
+                    <input type="text" class="form-control" id="emailModal" placeholder="Ingresar Email">
+                </div>
+
+
+                <div class="Posicion mb-3">
+                    <span class="Textobohemia">DNT/CUIT</span>
+                    <input type="number" class="form-control" id="dnicuitModal" placeholder="Ingresar DNT/CUIT">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="GuardarProveedor()">Guardar</button>
             </div>
         </div>
     </div>
+</div>
 
 
 @section Scripts {
     <script src="~/js/Proveedor.1.0.0.js"></script>
-}
+    }
+</body>

@@ -83,7 +83,7 @@
 
 @* seccion Cliente en la interfaz de ventas  *@
 
-<!-- CLIENTE (AUTOCOMPLETE) -->
+<!-- CLIENTE-Autocompletado-->
 <div class="col-md-4 mt-3 position-relative">
 
     <label class="form-label Textobohemia">Cliente</label>
@@ -103,23 +103,40 @@
 
 </div>
 
-<!-- DATOS DEL CLIENTE -->
-<div class="row mt-3">
-    <div class="col-md-4">
-        <label class="form-label">Localidad</label>
-        <input type="text" id="Localidad" class="form-control" readonly>
-    </div>
+@* desplegable datos del cliente *@
+<div class="accordion mt-3" id="accordionCliente">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed Textobohemia" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#datosCliente ">
+                Datos del cliente
+            </button>
+        </h2>
 
-    <div class="col-md-4">
-        <label class="form-label">Teléfono</label>
-        <input type="text" id="Telefono" class="form-control" readonly>
-    </div>
+        <div id="datosCliente" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Localidad</label>
+                        <input type="text" id="Localidad" class="form-control" readonly>
+                    </div>
 
-    <div class="col-md-4">
-        <label class="form-label">DNI / CUIL</label>
-        <input type="text" id="Dni" class="form-control" readonly>
+                    <div class="col-md-4">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" id="Telefono" class="form-control" readonly>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">DNI / CUIL</label>
+                        <input type="text" id="Dni" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 
   <div class="col-md-4 d-flex " style="margin-top: 4.2rem;  margin-bottom: 1.1rem ;">
