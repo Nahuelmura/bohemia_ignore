@@ -1,0 +1,29 @@
+@{
+ViewData["Title"] = "Cobros";
+}
+<div class="container mt-3">
+
+    <div class="table-responsive">
+        <table class="table table-hover table-sm table-dark">
+            <thead>
+                <tr>
+                    <th class="Textobohemia">Monto Cobro</th>
+                    <th class="Textobohemia ocultar-en-768px">Fecha Cobro</th>
+                    <th class="Textobohemia ocultar-en-768px">Forma de cobro</th>
+                    <th class="Textobohemia">Nombre del cliente</th>
+                    <th class="Textobohemia">Telefono del cliente</th>
+                    <th class="Textobohemia">Email Cliente</th>
+                
+
+                </tr>
+            </thead>
+            <tbody id="tbody-cobro"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="~/js/Cobro.1.0.0.js"></script>
+
+}
