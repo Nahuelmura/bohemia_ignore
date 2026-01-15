@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Movimiento Cuenta Corriente";
+}
+
+<h1 class="Textobohemia" style="text-align: center ;">Lista Movimiento Cuenta Corriente </h1>
+
+
+<h6 class="Textobohemia" style="text-align: center;">
+    En esta sección usted podrá ver los movimientos de la cuenta corriente y las Cuentas Corrientes de los clientes.
+</h6>
+
+
+<div class="container mt-3">
+
+    <div class="table-responsive">
+        <table class="table table-hover table-sm table-dark">
+            <thead>
+                <tr>
+                    <th class="">Nombre Cliente</th>
+                    <th class="">Fecha Movimiento</th>
+                    <th class="">Tipo Movimiento</th>
+                    <th class="">Importe</th>
+                    <th class="">Saldo Restante</th>
+                </tr>
+            </thead>
+            <tbody id="listadoMovimientosCuentaCorriente">
+            </tbody>
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/MovimientoCuentaCorriente.1.0.0.js"></script>
+    }

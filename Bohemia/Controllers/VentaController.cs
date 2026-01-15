@@ -216,7 +216,7 @@ public class VentaController : Controller
         {
             return Json(new { success = false, message = "Error al obtener la información del producto: " + ex.Message });
         }
-    }
+    }   
 
 
 
@@ -239,9 +239,6 @@ public class VentaController : Controller
 
             DateTime fechaVenta = fecha_venta ?? DateTime.Now;
 
-
-
-
             var venta = new Venta
             {
                 ClienteID = clienteID,
@@ -253,6 +250,30 @@ public class VentaController : Controller
 
             _context.Ventas.Add(venta);
             _context.SaveChanges(); // Guardamos para obtener el ID de la nueva venta
+
+            // Obtener último saldo del cliente
+            decimal ultimoSaldo = _context.MovimientosCuentaCorrientes
+                .Where(m => m.ClienteID == clienteID)
+                .OrderByDescending(m => m.Fecha)
+                .Select(m => m.Saldo)
+                .FirstOrDefault();
+
+            // Crear movimiento por venta
+            var movimientoVenta = new MovimientoCuentaCorriente
+            {
+                ClienteID = clienteID,
+                Fecha = fechaVenta,
+
+                Importe = total, // POSITIVO
+                Saldo = ultimoSaldo + total,
+
+                TipoMovimiento = TipoMovimiento.Venta,
+                ReferenciaTipo = "Venta",
+                ReferenciaID = venta.VentaID
+            };
+
+            _context.MovimientosCuentaCorrientes.Add(movimientoVenta);
+            _context.SaveChanges();
 
             return Json(new { success = true, ventaId = venta.VentaID });
         }

@@ -20,6 +20,8 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Proveedor> Proveedores { get; set; }
 
     public DbSet<Cobro> Cobros { get; set; }
+    public DbSet<MovimientoCuentaCorriente> MovimientosCuentaCorrientes { get; set; }
+
     // public DbSet<DigitalizarFactura> GetDigitalizarFacturas { get; set; }
 
 

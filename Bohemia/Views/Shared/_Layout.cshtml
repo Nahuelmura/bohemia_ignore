@@ -81,11 +81,36 @@
                                         Proveedor
                                     </a>
                                 </li>
+                            </ul>
+                        </li>
 
+
+                                 <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light Textobohemia" href="#"
+                                id="clientesProveedoresDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Cuenta corriente
+                                
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="clientesProveedoresDropdown">
                                 <li>
                                     <a class="dropdown-item Textobohemia" asp-area="" asp-controller="Cobro"
                                         asp-action="index">
                                         Cobros
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item Textobohemia" asp-area="" asp-controller="MovimientoCuentaCorriente"
+                                        asp-action="Index">
+                                        Movimiento Cuenta Corriente
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item Textobohemia" asp-area="" asp-controller="VentaCuotas"
+                                        asp-action="Index">
+                                        Venta en Cuotas
                                     </a>
                                 </li>
                             </ul>
@@ -102,7 +127,7 @@
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Informes
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownInforme">
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownInforme">
                                     <li>
                                         <a class="dropdown-item" asp-controller="Informe" asp-action="Index">Informe</a>
                                     </li>
