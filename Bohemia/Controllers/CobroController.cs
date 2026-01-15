@@ -138,7 +138,57 @@ public class CobroController : Controller
     }
 
 
-}
+
+
+
+
+    public JsonResult GuardarCobro(int clienteID,  int CobroID,  decimal montoCobro,DateTime fechaCobro, FormaCobro formaCobro)
+    {
+        string resultado = "";
+
+        // Redondear a 1 decimal
+        montoCobro = Math.Round(montoCobro, 1);
+
+        if (montoCobro <= 0)
+        {
+            return Json("Debe ingresar un Monto válido");
+        }
+
+        if (CobroID == 0)
+        {
+            var nuevoCobro = new Cobro
+            {
+                ClienteID = clienteID,
+                MontoCobro = montoCobro,
+                FechaCobro = fechaCobro,
+                FormaCobro = formaCobro
+            };
+
+            _context.Add(nuevoCobro);
+            _context.SaveChanges();
+            resultado = "Cobro guardado";
+        }
+        else
+        {
+            var editarCobro = _context.Cobros
+                .SingleOrDefault(e => e.CobroID == CobroID);
+
+            if (editarCobro == null)
+                return Json("Cobro no encontrado");
+
+            editarCobro.MontoCobro = montoCobro;
+            editarCobro.FechaCobro = fechaCobro;
+            editarCobro.FormaCobro = formaCobro;
+
+            _context.SaveChanges();
+            resultado = "Cobro editado exitosamente";
+        }
+
+        return Json(resultado);
+    }
+    
+
+    }
 
 
 

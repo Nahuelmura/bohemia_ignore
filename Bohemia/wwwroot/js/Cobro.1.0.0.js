@@ -16,6 +16,8 @@ function ListadoCobro() {
                     <td>${cobro.nombreCliente}</td>
                     <td>${cobro.telefonoCliente}</td>
                     <td>${cobro.emailCliente}</td>
+                    <td><button class="btn btn-primary btn-sm" onclick="GuardarCobro(${cobro.cobroID})">Editar</button></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="eliminarCobro(${cobro.cobroID})">Eliminar</button></td>  
                 </tr>`;
       });
 
@@ -117,3 +119,28 @@ $(document).ready(function () {
     }, 200);
   });
 });
+
+
+function GuardarCobro() {
+  let cobro = {
+    CobroID: $("#CobroID").val(),
+    ClienteID: $("#ClienteID").val(),
+    montoCobro: $("#monto").val(), // 👈 mismo nombre que el controller
+    fechaCobro: $("#fecha").val(),
+    formaCobro: $("#FormaCobro").val(),
+  };
+
+  $.ajax({
+    url: "../../Cobro/GuardarCobro",
+    type: "POST",
+    data: cobro,
+    dataType: "json",
+    success: function (response) {
+      console.log(response);
+      ListadoCobro();
+    },
+    error: function () {
+      alert("Error al guardar el cobro");
+    },
+  });
+}
