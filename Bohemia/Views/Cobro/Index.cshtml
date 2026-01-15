@@ -1,6 +1,102 @@
 @{
-ViewData["Title"] = "Cobros";
+    ViewData["Title"] = "Cobros";
 }
+
+<body class="Fondo_cobro">
+    
+    
+
+
+<h6 class="Textobohemia" style="text-align: center;">En esta sección usted podrá ingresar los productos con su
+    descripción, observación, costo, precio de venta y editarlos.</h6>
+
+
+<div class="">
+    <div class="contenedor">
+        <input type="hidden" id="CobroID" value="0">
+
+        <!-- Primera fila -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="codigo" class="form-label Textobohemia">Monto del cobro</label>
+                <input type="text" class="form-control" id="monto" placeholder="⚠️ Ingrese el monto del cobro ej: 300000">
+                
+            </div>
+            <div class="col-md-4">
+                <label for="FormaCobro" class="form-label Textobohemia">Forma de Cobro</label>
+                @Html.DropDownList(
+                "FormaCobro",
+                                (IEnumerable<SelectListItem>)ViewBag.FormaCobro,
+                                new { @class = "form-control select2" }
+                                )
+            </div>
+
+
+            <div class="col-md-4">
+                <label for="observacion" class="form-label Textobohemia">Observación</label>
+                <input type="date" class="form-control" id="observacion" placeholder="⚠️ Fecha del cobro">
+            </div>
+        </div>
+
+        <!-- Segunda fila -->
+        <div class="row align-items-end">
+        <div class="position-relative col-md-6">
+            <label class="form-label">Cliente</label>
+            <input type="text" id="Nombre" class="form-control" autocomplete="off">
+            <input type="hidden" id="ClienteID">
+
+            <ul id="sugerenciasClientes"
+             class="list-group position-absolute w-100 color_Fondo_Sugerencias"
+                style="z-index: 1050; display: none;">
+            </ul>
+        </div>
+
+            <div class="col-md-6 text-center text-md-start">
+                <button type="submit" class="btn btn-outline-dark w-100 " onclick="GuardarProducto()">Guardar
+                    Producto</button>
+            </div>
+  </div>
+
+        <div class="accordion mt-3" id="accordionCliente">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed Textobohemia" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#datosCliente">
+                        Datos del cliente
+                    </button>
+                </h2>
+
+                <div id="datosCliente" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">Localidad</label>
+                                <input type="text" id="Localidad" class="form-control" readonly>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Teléfono</label>
+                                <input type="text" id="Telefono" class="form-control" readonly>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">DNI / CUIL</label>
+                                <input type="text" id="Dni" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+ 
+    
+       
+        </div>
+    </div>
+</div>
+
 <div class="container mt-3">
 
     <div class="table-responsive">
@@ -13,7 +109,7 @@ ViewData["Title"] = "Cobros";
                     <th class="Textobohemia">Nombre del cliente</th>
                     <th class="Textobohemia">Telefono del cliente</th>
                     <th class="Textobohemia">Email Cliente</th>
-                
+
 
                 </tr>
             </thead>
@@ -26,4 +122,4 @@ ViewData["Title"] = "Cobros";
 
     <script src="~/js/Cobro.1.0.0.js"></script>
 
-}
+}</body>

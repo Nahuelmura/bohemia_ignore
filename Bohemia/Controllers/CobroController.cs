@@ -22,6 +22,22 @@ public class CobroController : Controller
 
     public IActionResult Index()
     {
+        // Crear una lista de SelectListItem que incluya el elemento adicional
+        var selectListItems = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "0", Text = "[SELECCIONE LA FORMA DE COBRO]" }
+        };
+
+        // Obtener todas las opciones del enum
+        var enumValues = Enum.GetValues(typeof(FormaCobro)).Cast<FormaCobro>();
+
+        // Convertir las opciones del enum en SelectListItem
+        selectListItems.AddRange(enumValues.Select(e => new SelectListItem
+        {
+            Value = e.GetHashCode().ToString(),
+            Text = e.ToString().ToUpper()
+        }));
+        ViewBag.FormaCobro = selectListItems;
         return View();
     }
 
@@ -64,4 +80,66 @@ public class CobroController : Controller
     }
 
 
+
+
+
+
+    //Controllador de cliente en venta
+
+    [HttpGet]
+    public JsonResult BuscarClientes(string texto)
+    {
+        if (string.IsNullOrWhiteSpace(texto))
+        {
+            return Json(new { success = true, clientes = new List<object>() });
+        }
+
+        var clientes = _context.Clientes
+            .Where(c =>
+                !c.Eliminado &&
+                c.Nombre != null &&
+                c.Nombre.Contains(texto)
+            )
+            .Select(c => new
+            {
+                clienteID = c.ClienteID,
+                nombre = c.Nombre,
+                localidad = c.Localidad,
+                telefono = c.Telefono,
+                dni = c.Dni_cuil
+            })
+            .Take(10)
+            .ToList();
+
+        return Json(new { success = true, clientes });
+    }
+
+    [HttpGet]
+    public JsonResult ObtenerClienteID(int id)
+    {
+        var cliente = _context.Clientes
+            .Where(c => c.ClienteID == id && !c.Eliminado)
+            .Select(c => new
+            {
+                clienteID = c.ClienteID,
+                nombre = c.Nombre,
+                localidad = c.Localidad,
+                telefono = c.Telefono,
+                dni = c.Dni_cuil
+            })
+            .FirstOrDefault();
+
+        if (cliente == null)
+        {
+            return Json(new { success = false, message = "Cliente no encontrado" });
+        }
+
+        return Json(new { success = true, cliente });
+    }
+
+
 }
+
+
+
+
