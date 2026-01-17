@@ -166,6 +166,30 @@ public class CobroController : Controller
 
             _context.Add(nuevoCobro);
             _context.SaveChanges();
+
+            decimal ultimoSaldo = _context.MovimientosCuentaCorrientes
+            .Where(m => m.ClienteID == clienteID)
+            .OrderByDescending(m => m.Fecha)
+            .Select(m => m.Saldo)
+            .FirstOrDefault();
+
+            var movimientoCobro = new MovimientoCuentaCorriente
+            {
+                ClienteID = clienteID,
+                Fecha = fechaCobro,
+
+                Importe = -montoCobro, // NEGATIVO
+                Saldo = ultimoSaldo - montoCobro,
+
+                TipoMovimiento = TipoMovimiento.Cobro,
+                ReferenciaTipo = "Cobro",
+                ReferenciaID = CobroID
+            };
+
+            _context.MovimientosCuentaCorrientes.Add(movimientoCobro);
+            _context.SaveChanges();
+
+
             resultado = "Cobro guardado";
         }
         else
