@@ -44,6 +44,7 @@ public class CobroController : Controller
     public JsonResult ListadoCobro(int cobroID)
     {
         var cobros = _context.Cobros.AsQueryable();
+        var culturaAR = new CultureInfo("es-AR");
 
         // if (cobros > 0)
         // {
@@ -55,7 +56,12 @@ public class CobroController : Controller
             CobroID = c.CobroID,
 
             MontoCobro = c.MontoCobro,
+
+            MontoCobroTexto = c.MontoCobro.ToString("N2", culturaAR),
+
+            // MontoCobro = c.MontoCobro,
             FechaCobro = c.FechaCobro,
+            FechaCobroTexto = c.FechaCobro .ToString("dd/MM/yyyy"),
             FormaCobro = c.FormaCobro.ToString(),
 
             ClienteID = c.ClienteID,
@@ -142,56 +148,70 @@ public class CobroController : Controller
 
 
 
-    public JsonResult GuardarCobro(int clienteID,  int CobroID,  decimal montoCobro,DateTime fechaCobro, FormaCobro formaCobro)
+
+    public JsonResult GuardarCobro(int clienteID, int CobroID, string montoCobro, DateTime fechaCobro,
+     FormaCobro formaCobro)
     {
         string resultado = "";
 
-        // Redondear a 1 decimal
-        montoCobro = Math.Round(montoCobro, 1);
 
-        if (montoCobro <= 0)
+        var culturaAR = new CultureInfo("es-AR");
+        decimal monto;
+
+        if (!decimal.TryParse(
+            montoCobro,
+            NumberStyles.Number,
+            culturaAR,
+            out monto))
+        {
+            return Json("Formato inválido. Use 250.560,30");
+        }
+
+        // Redondear a 2 decimales
+        monto = Math.Round(monto, 2);
+
+        if (monto <= 0)
         {
             return Json("Debe ingresar un Monto válido");
         }
 
+        // NUEVO COBRO
         if (CobroID == 0)
         {
             var nuevoCobro = new Cobro
             {
                 ClienteID = clienteID,
-                MontoCobro = montoCobro,
+                MontoCobro = monto,
                 FechaCobro = fechaCobro,
                 FormaCobro = formaCobro
             };
 
-            _context.Add(nuevoCobro);
+            _context.Cobros.Add(nuevoCobro);
             _context.SaveChanges();
 
             decimal ultimoSaldo = _context.MovimientosCuentaCorrientes
-            .Where(m => m.ClienteID == clienteID)
-            .OrderByDescending(m => m.Fecha)
-            .Select(m => m.Saldo)
-            .FirstOrDefault();
+                .Where(m => m.ClienteID == clienteID)
+                .OrderByDescending(m => m.Fecha)
+                .Select(m => m.Saldo)
+                .FirstOrDefault();
 
             var movimientoCobro = new MovimientoCuentaCorriente
             {
                 ClienteID = clienteID,
                 Fecha = fechaCobro,
-
-                Importe = -montoCobro, // NEGATIVO
-                Saldo = ultimoSaldo - montoCobro,
-
+                Importe = -monto,                 // NEGATIVO
+                Saldo = ultimoSaldo - monto,
                 TipoMovimiento = TipoMovimiento.Cobro,
                 ReferenciaTipo = "Cobro",
-                ReferenciaID = CobroID
+                ReferenciaID = nuevoCobro.CobroID
             };
 
             _context.MovimientosCuentaCorrientes.Add(movimientoCobro);
             _context.SaveChanges();
 
-
             resultado = "Cobro guardado";
         }
+        // EDITAR COBRO
         else
         {
             var editarCobro = _context.Cobros
@@ -200,19 +220,21 @@ public class CobroController : Controller
             if (editarCobro == null)
                 return Json("Cobro no encontrado");
 
-            editarCobro.MontoCobro = montoCobro;
+            editarCobro.MontoCobro = monto;
             editarCobro.FechaCobro = fechaCobro;
             editarCobro.FormaCobro = formaCobro;
 
             _context.SaveChanges();
+
             resultado = "Cobro editado exitosamente";
         }
 
         return Json(resultado);
     }
-    
 
-    }
+
+
+}
 
 
 

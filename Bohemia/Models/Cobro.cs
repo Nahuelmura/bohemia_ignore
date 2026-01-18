@@ -45,4 +45,8 @@ public class CobroVista
     public string? EmailCliente { get; set; }
 
     public string? Dni_cuilCliente { get; set; }
+
+    public string? MontoCobroTexto { get; set; }
+
+    public string?FechaCobroTexto { get; set; }
 }

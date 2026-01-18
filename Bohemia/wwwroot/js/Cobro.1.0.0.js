@@ -10,14 +10,13 @@ function ListadoCobro() {
       $.each(ListadoCobro.cobros, function (index, cobro) {
         contenidoTabla += `
                 <tr>
-                    <td>${cobro.montoCobro}</td>
-                    <td>${cobro.fechaCobro}</td>
-                    <td>${cobro.formaCobro}</td>
+                    <td>${cobro.montoCobroTexto}</td>
+                    <td class="ocultar-en-768px">${cobro.fechaCobroTexto}</td>
+                    <td class="ocultar-en-768px" >${cobro.formaCobro}</td>
                     <td>${cobro.nombreCliente}</td>
                     <td>${cobro.telefonoCliente}</td>
-                    <td>${cobro.emailCliente}</td>
-                    <td><button class="btn btn-primary btn-sm" onclick="GuardarCobro(${cobro.cobroID})">Editar</button></td>
-                    <td><button class="btn btn-danger btn-sm" onclick="eliminarCobro(${cobro.cobroID})">Eliminar</button></td>  
+                    <td class="ocultar-en-768px" >${cobro.emailCliente}</td>
+
                 </tr>`;
       });
 
@@ -29,9 +28,8 @@ function ListadoCobro() {
   });
 }
 
-
-
-
+                    // <td><button class="btn btn-primary btn-sm" onclick="GuardarCobro(${cobro.cobroID})">Editar</button></td>
+                    // <td><button class="btn btn-danger btn-sm" onclick="eliminarCobro(${cobro.cobroID})">Eliminar</button></td>  
 
 $(document).ready(function () {
   let timer = null;
@@ -121,14 +119,100 @@ $(document).ready(function () {
 });
 
 
+//validacion de fecha no superiror al actual
+$(document).ready(function () {
+  let hoy = new Date().toISOString().split("T")[0];
+  $("#fecha").attr("max", hoy);
+});
+
 function GuardarCobro() {
+  let montoTexto = $("#monto").val().trim();
+  let fechaTexto = $("#fecha").val();
+
+  // 🔴 VALIDAR MONTO
+  if (montoTexto === "") {
+    Swal.fire({
+      icon: "warning",
+      title: "Monto requerido",
+      text: "Debe ingresar un monto",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  // 🔧 Normalizar monto (último separador = decimal)
+  let montoNormalizado = montoTexto;
+  let lastDot = montoNormalizado.lastIndexOf(".");
+  let lastComma = montoNormalizado.lastIndexOf(",");
+
+  if (lastDot > lastComma) {
+    montoNormalizado =
+      montoNormalizado.substring(0, lastDot).replace(/[.,]/g, "") +
+      "." +
+      montoNormalizado.substring(lastDot + 1);
+  } else if (lastComma > lastDot) {
+    montoNormalizado =
+      montoNormalizado.substring(0, lastComma).replace(/[.,]/g, "") +
+      "." +
+      montoNormalizado.substring(lastComma + 1);
+  } else {
+    montoNormalizado = montoNormalizado.replace(/[.,]/g, "");
+  }
+
+  let montoNumero = parseFloat(montoNormalizado);
+
+  if (isNaN(montoNumero) || montoNumero <= 0) {
+    Swal.fire({
+      icon: "error",
+      title: "Monto inválido",
+      text: "El monto debe ser mayor a cero",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  // 🔴 VALIDAR FECHA
+  if (!fechaTexto) {
+    Swal.fire({
+      icon: "warning",
+      title: "Fecha requerida",
+      text: "Debe ingresar una fecha",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  let fechaIngresada = new Date(fechaTexto);
+  let hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  if (fechaIngresada > hoy) {
+    Swal.fire({
+      icon: "error",
+      title: "Fecha inválida",
+      text: "La fecha no puede ser posterior al día de hoy",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  // 📤 OBJETO A ENVIAR
   let cobro = {
     CobroID: $("#CobroID").val(),
     ClienteID: $("#ClienteID").val(),
-    montoCobro: $("#monto").val(), // 👈 mismo nombre que el controller
-    fechaCobro: $("#fecha").val(),
+    montoCobro: montoTexto,
+    fechaCobro: fechaTexto,
     formaCobro: $("#FormaCobro").val(),
   };
+
+  // ⏳ LOADING
+  Swal.fire({
+    title: "Guardando cobro...",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 
   $.ajax({
     url: "../../Cobro/GuardarCobro",
@@ -136,11 +220,22 @@ function GuardarCobro() {
     data: cobro,
     dataType: "json",
     success: function (response) {
-      console.log(response);
+      Swal.fire({
+        icon: "success",
+        title: "Cobro guardado con éxito",
+        text: response,
+        confirmButtonText: "Aceptar",
+      });
+
       ListadoCobro();
     },
     error: function () {
-      alert("Error al guardar el cobro");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al guardar el cobro",
+        confirmButtonText: "Aceptar",
+      });
     },
   });
 }
