@@ -1,7 +1,25 @@
-window.onload = ListadoCobro;
-function ListadoCobro() {
+window.onload = function () {
+  ListadoCobro("");
+};
+$("#FechaDesde, #FechaHasta").on("change", function () {
+  let nombre = $("#txtBuscarCliente").val();
+  ListadoCobro(nombre);
+});
+
+
+
+$("#txtBuscarCliente").on("keyup", function () {
+  let nombre = $(this).val();
+  ListadoCobro(nombre);
+});
+
+function ListadoCobro(nombre) {
+  let fechaDesde = $("#FechaDesde").val();
+  let fechaHasta = $("#FechaHasta").val();
+    
   $.ajax({
     url: "/Cobro/ListadoCobro",
+    data: { nombre: nombre, fechaDesde: fechaDesde, fechaHasta: fechaHasta },
     type: "POST",
     dataType: "json",
     success: function (ListadoCobro) {
@@ -28,8 +46,8 @@ function ListadoCobro() {
   });
 }
 
-                    // <td><button class="btn btn-primary btn-sm" onclick="GuardarCobro(${cobro.cobroID})">Editar</button></td>
-                    // <td><button class="btn btn-danger btn-sm" onclick="eliminarCobro(${cobro.cobroID})">Eliminar</button></td>  
+// <td><button class="btn btn-primary btn-sm" onclick="GuardarCobro(${cobro.cobroID})">Editar</button></td>
+// <td><button class="btn btn-danger btn-sm" onclick="eliminarCobro(${cobro.cobroID})">Eliminar</button></td>
 
 $(document).ready(function () {
   let timer = null;
@@ -117,7 +135,6 @@ $(document).ready(function () {
     }, 200);
   });
 });
-
 
 //validacion de fecha no superiror al actual
 $(document).ready(function () {
@@ -239,3 +256,7 @@ function GuardarCobro() {
     },
   });
 }
+
+
+
+

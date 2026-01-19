@@ -3,6 +3,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ProyectoBohemia.Data;
 using ProyectoBohemia.Models;
 
@@ -41,17 +42,35 @@ public class CobroController : Controller
         return View();
     }
 
-    public JsonResult ListadoCobro(int cobroID)
+    public JsonResult ListadoCobro(int cobroID, string nombre, DateTime? fechaDesde, DateTime? fechaHasta)
     {
-        var cobros = _context.Cobros.AsQueryable();
+    var cobros = _context.Cobros.Include(c => c.Cliente ).AsQueryable();
+
         var culturaAR = new CultureInfo("es-AR");
 
-        // if (cobros > 0)
-        // {
-        //     cobros = cobros
-        //         .Where(c => c.ClienteID == clienteID);
-        // }
-        var CobrosMostrar = cobros.Select(c => new CobroVista
+        if (!string.IsNullOrEmpty(nombre))
+        {
+            cobros = cobros.Where(c => c.Cliente.Nombre.StartsWith(nombre));
+        }
+
+
+        if (fechaDesde.HasValue && fechaHasta.HasValue)
+        {
+            DateTime desde = fechaDesde.Value.Date; // Establece la hora en 00:00:00
+            DateTime hasta = fechaHasta.Value.Date.AddDays(1).AddTicks(-1); // Fin del día 23:59:59
+
+            cobros = cobros.Where(c => c.FechaCobro >= desde && c.FechaCobro <= hasta);
+
+            
+                
+            }
+
+            // if (cobros > 0)
+            // {
+            //     cobros = cobros
+            //         .Where(c => c.ClienteID == clienteID);
+            // }
+            var CobrosMostrar = cobros.Select(c => new CobroVista
         {
             CobroID = c.CobroID,
 
@@ -84,7 +103,6 @@ public class CobroController : Controller
             cobros = CobrosMostrar
         });
     }
-
 
 
 
