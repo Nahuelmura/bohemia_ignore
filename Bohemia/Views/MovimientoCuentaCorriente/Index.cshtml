@@ -1,34 +1,105 @@
-@{
+ @{
     ViewData["Title"] = "Movimiento Cuenta Corriente";
 }
 
-<h1 class="Textobohemia" style="text-align: center ;">Lista Movimiento Cuenta Corriente </h1>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/movimiento.css" />
+
+
+<h1 class="Textobohemia" style="text-align: center ;">Movimiento Cuenta Corriente </h1>
 
 
 <h6 class="Textobohemia" style="text-align: center;">
-    En esta sección usted podrá ver los movimientos de la cuenta corriente y las Cuentas Corrientes de los clientes.
+    En esta sección usted podrá ver las Cuentas Corrientes de los clientes y sus respectivos estados.
 </h6>
 
 
-<div class="container mt-3">
 
-    <div class="table-responsive">
-        <table class="table table-hover table-sm table-dark" >
-            <thead >
-                <tr>
-                    <th class="fs-5" style="text-align: center; color: rgba(159, 161, 228, 0.85);">Nombre Cliente</th>
-                    <th class="fs-5" style="text-align: center; color: rgba(159, 161, 228, 0.85);">Fecha Movimiento</th>
-                    <th class="fs-5" style="text-align: center; color: rgba(159, 161, 228, 0.85);">Importe</th>
-                    <th class="fs-5" style="text-align: center; color: rgba(159, 161, 228, 0.85);">Saldo Restante</th>
-                </tr>
-            </thead>
-            <tbody id="listadoMovimientosCuentaCorriente">
-            </tbody>
+    <main class="dashboard-container">
+        <div class="stats-bar">
+            <div class="stat-card">
+    <div class="stat-icon total">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+    </div>
+    <div class="stat-content">
+        <h3>Saldo Total</h3>
+        <div class="value">$ 0,00</div>
+    </div>
+</div>
 
+        <div class="stat-card">
+    <div class="stat-icon pending">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+    </div>
+    <div class="stat-content">
+        <h3>Total Pendiente</h3>
+        <div class="value" id="totalPendiente">$ 0,00</div>
     </div>
 </div>
 
 
-@section Scripts {
+           <div class="stat-card">
+    <div class="stat-icon overdue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+    </div>
+    <div class="stat-content">
+        <h3>Vencidos</h3>
+        <div class="value" id="totalVencido">$ 0,00</div>
+    </div>
+</div>
+        </div>
+
+        <div class="cards-grid" id="cardsContainer">
+           
+
+        </div>
+    </main>
+
+    <!-- Overlay oscuro -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+    <!-- Panel lateral derecho -->
+    <div class="drawer-panel" id="drawerPanel">
+        <div class="drawer-header">
+            <div class="drawer-client-info">
+                <div class="avatar-circle" id="drawerAvatar">JA</div>
+                <div>
+                    <h2 id="drawerClientName">Juan Audisio</h2>
+                    <span class="drawer-balance" id="drawerBalance">Saldo: $ 0,00</span>
+                </div>
+            </div>
+            <button class="drawer-close-btn" onclick="closeDrawer()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+
+        <div class="drawer-body">
+
+            <div class="history-timeline">
+                <div class="timeline-header">
+                    <span>Historial de Movimientos</span>
+                </div>
+
+                <div id="drawerTransactions">
+                    <!-- Las transacciones se cargan dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    @section Scripts {
     <script src="~/js/MovimientoCuentaCorriente.1.0.0.js"></script>
     }

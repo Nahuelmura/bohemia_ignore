@@ -217,7 +217,7 @@ public class CobroController : Controller
             {
                 ClienteID = clienteID,
                 Fecha = fechaCobro,
-                Importe = -monto,                 // NEGATIVO
+                Importe = monto,                 // NEGATIVO
                 Saldo = ultimoSaldo - monto,
                 TipoMovimiento = TipoMovimiento.Cobro,
                 ReferenciaTipo = "Cobro",

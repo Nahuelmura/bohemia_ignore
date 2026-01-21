@@ -48,4 +48,76 @@ public class MovimientoCuentaCorrienteController : Controller
 
         return Json(MovimientosMostrar);
     }
+
+    public JsonResult ListadoCuentaCorrienteClientes()
+    {
+        var data = _context.MovimientosCuentaCorrientes
+            .Include(m => m.Cliente)
+            .GroupBy(m => new { m.ClienteID, m.Cliente.Nombre })
+            .Select(g => new CuentaCorrienteClienteVista
+            {
+                ClienteID = g.Key.ClienteID,
+                ClienteNombre = g.Key.Nombre,
+                SaldoActual = g.OrderByDescending(x => x.Fecha)
+                            .Select(x => x.Saldo)
+                            .FirstOrDefault(),
+                Pendiente = g.Where(x => x.TipoMovimiento == TipoMovimiento.Venta)
+                            .Sum(x => x.Importe)
+                            - g.Where(x => x.TipoMovimiento == TipoMovimiento.Cobro)
+                            .Sum(x => x.Importe),
+                UltimoMovimiento = g.Max(x => x.Fecha)
+            })
+            .ToList();
+
+        return Json(data);
+    }
+
+
+
+    public JsonResult ListadoPorCliente(int clienteID)
+{
+    var movimientos = _context.MovimientosCuentaCorrientes
+        .Where(m => m.ClienteID == clienteID)
+        .OrderByDescending(m => m.Fecha)
+        .Select(m => new
+        {
+            m.Fecha,
+            m.Importe,
+            m.TipoMovimiento,
+            m.ReferenciaTipo,
+            m.ReferenciaID,
+
+        })
+        .ToList();
+
+    return Json(movimientos);
+}
+
+
+public JsonResult ObtenerSaldoTotal()
+{
+    var saldoTotal = _context.MovimientosCuentaCorrientes
+        .GroupBy(m => m.ClienteID)
+        .Select(g => g
+            .OrderByDescending(x => x.Fecha)
+            .Select(x => x.Saldo)
+            .FirstOrDefault()
+        )
+        .Sum();
+
+    return Json(saldoTotal);
+}
+
+
+public JsonResult ObtenerTotalPendiente()
+{
+    var totalPendiente = _context.MovimientosCuentaCorrientes
+        .Where(m => m.TipoMovimiento == TipoMovimiento.Venta
+                 || m.TipoMovimiento == TipoMovimiento.Cobro)
+        .Sum(m => m.TipoMovimiento == TipoMovimiento.Venta ? m.Importe : -m.Importe);
+
+    return Json(totalPendiente);
+}
+
+    
 }

@@ -1,0 +1,711 @@
+/* ========================================
+   VARIABLES Y BASE
+======================================== */
+:root {
+    --primary: #6366f1;
+    --primary-bg: rgba(99, 102, 241, 0.1);
+
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.1);
+
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+
+    --card-bg: #1e1e2d;
+    --border-soft: rgba(255, 255, 255, 0.08);
+
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+
+    --bg-dark: #13131a;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+/* ========================================
+   HEADER / TITULOS
+======================================== */
+.Textobohemia {
+    text-align: center;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.Textobohemia.subtitle,
+h6.Textobohemia {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+/* ========================================
+   DASHBOARD CONTAINER
+======================================== */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   STATS BAR
+======================================== */
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--card-border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.stat-icon.clients {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.stat-icon.total {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.stat-icon.pending {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.stat-icon.overdue {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.stat-content h3 {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-content .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ========================================
+   CARDS GRID
+======================================== */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.25rem;
+}
+
+/* ========================================
+   CLIENT CARD
+======================================== */
+.client-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.client-card:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+}
+
+.client-card.selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.client-card.critical {
+    border-left: 3px solid var(--danger);
+}
+
+.client-card.needs-attention {
+    border-left: 3px solid var(--warning);
+}
+
+/* Card Header */
+.card-header {
+    padding: 1.25rem;
+}
+
+.client-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.client-main-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.client-details h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--text-primary);
+}
+
+.client-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-badge.active {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.status-badge.pending {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+/* Balances */
+.balances-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.balance-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.balance-item {
+    text-align: right;
+}
+
+.balance-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.15rem;
+}
+
+.balance-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.balance-amount.positive {
+    color: var(--success);
+}
+
+.balance-amount.warning {
+    color: var(--danger);
+}
+
+.pending-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.pending-badge.danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.pending-badge svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Chevron */
+.chevron-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.client-card:hover .chevron-wrapper {
+    background: var(--primary-bg);
+}
+
+.chevron-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.client-card:hover .chevron-icon {
+    color: var(--primary);
+    transform: translateX(3px);
+}
+
+/* ========================================
+   DRAWER PANEL - Slide desde la derecha
+======================================== */
+
+/* Overlay oscuro */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    visibility: hidden;
+    z-index: 998;
+    transition: background 0.3s ease, visibility 0.3s ease;
+}
+
+.drawer-overlay.active {
+    background: rgba(0, 0, 0, 0.6);
+    visibility: visible;
+    backdrop-filter: blur(4px);
+}
+
+/* Panel lateral */
+.drawer-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 500px;
+    max-width: 95vw;
+    height: 100vh;
+    background: var(--card-bg);
+    box-shadow: -10px 0 50px rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.drawer-panel.active {
+    transform: translateX(0);
+}
+
+/* Header del drawer */
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.05));
+}
+
+.drawer-client-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.drawer-client-info h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.drawer-balance {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.drawer-close-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.drawer-close-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    transform: rotate(90deg);
+}
+
+.drawer-close-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* Body del drawer */
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+/* Source indicator */
+.source-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.source-indicator svg {
+    width: 18px;
+    height: 18px;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+/* History Timeline */
+.history-timeline {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.ver-todo {
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.ver-todo:hover {
+    opacity: 0.8;
+}
+
+/* Transaction Items */
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    transition: background 0.2s ease;
+}
+
+.transaction-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.trans-date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.trans-date-badge .day {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.trans-date-badge .month {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.trans-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.trans-type {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.trans-type.type-cobro {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.trans-type.type-venta {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.trans-meta {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.trans-id {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.trans-amount {
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.trans-amount.positive {
+    color: var(--success);
+}
+
+.trans-amount.negative {
+    color: var(--danger);
+}
+
+/* Footer del drawer */
+.drawer-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+.btn-action {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-action svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5558e8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+/* Animación de entrada para transacciones */
+.drawer-panel .transaction-item {
+    opacity: 0;
+    transform: translateX(30px);
+    animation: slideInTransaction 0.4s ease forwards;
+}
+
+.drawer-panel .transaction-item:nth-child(1) { animation-delay: 0.05s; }
+.drawer-panel .transaction-item:nth-child(2) { animation-delay: 0.1s; }
+.drawer-panel .transaction-item:nth-child(3) { animation-delay: 0.15s; }
+.drawer-panel .transaction-item:nth-child(4) { animation-delay: 0.2s; }
+.drawer-panel .transaction-item:nth-child(5) { animation-delay: 0.25s; }
+.drawer-panel .transaction-item:nth-child(6) { animation-delay: 0.3s; }
+.drawer-panel .transaction-item:nth-child(7) { animation-delay: 0.35s; }
+.drawer-panel .transaction-item:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes slideInTransaction {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .client-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .balances-container {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .drawer-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-bar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-content .value {
+        font-size: 1.2rem;
+    }
+}
+
+
+
+.drawer-panel {
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.drawer-panel.open {
+    transform: translateX(0);
+}
