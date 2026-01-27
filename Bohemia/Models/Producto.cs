@@ -47,6 +47,12 @@ public class ProductoVista
     public bool Eliminado { get; set; }
 
 
+
+    // CAMPOS FORMATEADOS
+    public string PrecioCostoFormato { get; set; }
+    public string PrecioVentaFormato { get; set; }
+
+
 }
 
 

@@ -1,180 +1,184 @@
-<body class="Fondo_Producto">
+@{
+    ViewData["Title"] = "Productos";
+}
 
-    <!--Alerta fuera del modal -->
+<body class="Fondo_cobro">
+
+    <!-- ================= TOAST ================= -->
     <div class="toast align-items-center text-bg-dark border-0" id="myToastOutside" role="alert" aria-live="assertive"
-        aria-atomic="true" data-bs-delay="5000" style="position: fixed; top: 400px; right: 20px; z-index: 1050;">
+        aria-atomic="true" data-bs-delay="5000" style="position: fixed; top: 120px; right: 20px; z-index: 1050;">
         <div class="d-flex">
             <div class="toast-body">
-                <mark>Total de productos registrados:</mark> Representa la cantidad de productos únicos registrados por
-                código.
-                Mientras que <mark>Cantidad total de productos:</mark> corresponde a la suma de todas las unidades
-                disponibles.
-                <mark>Total de Precios de Costo:</mark> Indica la suma total de los precios de costo de todos los
-                productos.
+                <mark>Total de productos registrados:</mark> cantidad de productos únicos.<br>
+                <mark>Cantidad total de productos:</mark> suma de todas las unidades.<br>
+                <mark>Total precios de costo:</mark> suma total del costo.
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
 
+    <h1 class="Textobohemia text-center">Productos</h1>
 
-    <h6 class="Textobohemia" style="text-align: center;">En esta sección usted podrá ingresar los productos con su
-        descripción, observación, costo, precio de venta y editarlos.</h6>
+    <h6 class="Textobohemia text-center mb-4">
+        En esta sección usted podrá ingresar los productos con su descripción, observación, costo y precio de venta.
+    </h6>
 
+    <div class="container cobros-dark">
 
-    <div class="fondo_Producto">
-        <div class="contenedor">
-            <input type="hidden" id="ProductoID" value="0">
+        <input type="hidden" id="ProductoID" value="0">
 
-            <!-- Primera fila -->
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="codigo" class="form-label Textobohemia">Código</label>
-                    <input type="text" class="form-control" id="codigo" placeholder="⚠️ Ingresa Código">
-                    <div id="alertaCodigo" class="alert alert-warning mt-2 d-none">
-                        ⚠️ Cuidado con los espacios
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <label for="Descripcion" class="form-label Textobohemia">Descripción</label>
-                    @Html.DropDownList("Descripcion", null, htmlAttributes: new { @class = "form-control select2" })
-                </div>
-                <div class="col-md-4">
-                    <label for="observacion" class="form-label Textobohemia">Observación</label>
-                    <input type="text" class="form-control" id="observacion" placeholder="⚠️ Ingresa Observación ">
+        <!-- ================= FORMULARIO ================= -->
+        <div class="row mb-4">
+
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Código</label>
+                <input type="text" class="form-control" id="codigo" placeholder="⚠️ Ingresa Código">
+                <div id="alertaCodigo" class="alert alert-warning mt-2 d-none">
+                    ⚠️ Cuidado con los espacios
                 </div>
             </div>
 
-            <!-- Segunda fila -->
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="cantidad" class="form-label Textobohemia">Cantidad</label>
-                    <input type="number" class="form-control" id="cantidad"
-                        placeholder="⚠️ Ingrese la Cantidad que tiene del producto">
-                </div>
-                <div class="col-md-4">
-                    <label for="precio" class="form-label Textobohemia">Precio de Costo</label>
-                    <input type="text" class="form-control" id="precio" placeholder="⚠️ Ingrese Precio de costo">
-                </div>
-                <div class="col-md-4">
-                    <label for="precioVenta" class="form-label Textobohemia">Precio de Venta</label>
-                    <input type="text" class="form-control" id="precioVenta" placeholder="⚠️ Ingrese  Precio de Venta">
-                </div>
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Descripción</label>
+                @Html.DropDownList("Descripcion", null,
+                htmlAttributes: new { @class = "form-control select2" })
             </div>
 
-            <!-- Tercera fila -->
-            <div class="row align-items-center mt-4">
-                <div class="col-md-4 mb-2 mb-md-0">
-
-                    <input class="inputbusqueda form-control" type="text" id="txtBuscarCodigo"
-                        placeholder="Buscar por Código" />
-                </div>
-                <div class="col-md-4 mb-2 mb-md-0">
-
-                    <input class="inputbusqueda form-control" type="text" id="txtBuscarDescripcion"
-                        placeholder="Buscar por Descripción" />
-                </div>
-                <div class="col-md-4 text-center text-md-start">
-                    <button type="submit" class="btn btn-outline-dark w-100 "
-                        onclick="GuardarProducto()">Guardar Producto</button>
-                </div>
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Observación</label>
+                <input type="text" class="form-control" id="observacion" placeholder="⚠️ Ingresa observación">
             </div>
+
         </div>
-    </div>
 
-    <!-- Modal de edición -->
-    <div class="modal fade" id="modalEditarProducto" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title Textobohemia">Editar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="ProductoID" value="0">
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Codigo</span>
-                        <input type="text" class="form-control" id="codigoModal" placeholder="Ingresar Código">
-                    </div>
+        <div class="row mb-4">
 
-
-
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Descripcion</span>
-                        <label for="descripcionModal" class="form-label"></label>
-                        @Html.DropDownList("descripcionModal", null, htmlAttributes: new { @class = "form-control               select2" })
-                    </div>
-
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Cantidad</span>
-                        <input type="number" class="form-control " id="cantidadModal" placeholder="Cantidad">
-                    </div>
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Precio</span>
-                        <input type="text" class="form-control" id="precioModal" placeholder="Precio de costo">
-                    </div>
-
-                    <div class="Posicion mb-3">
-                        <span class="Textobohemia">Precio venta</span>
-                        <input type="number" class="form-control" id="precioVentaModal" placeholder="Precio de venta">
-                    </div>
-
-                    <div class="Posicion mb-3">
-                        <label for="Observacion" class="form-label">Observacion</label>
-                        <input type="text" class="form-control" id="observacionModal" placeholder="Observacion">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="GuardarProducto()">Guardar</button>
-                </div>
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad" placeholder="⚠️ Cantidad disponible">
             </div>
+
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Precio de costo</label>
+                <input type="text" class="form-control" id="precio" placeholder="⚠️Ingrese el Precio de costo ej: $3000">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Precio de venta</label>
+                <input type="text" class="form-control" id="precioVenta" placeholder="⚠️Ingrese el Precio de venta: $6000">
+            </div>
+
         </div>
-    </div>
 
+        <!-- ================= BUSQUEDA + GUARDAR ================= -->
+        <div class="row mb-4 align-items-end">
 
-    <div class="row contenedor_texto">
-        <div class="col-md-4 Textobohemia" id="totalProductos"
-            style="font-weight: bold; margin-bottom: 10px; text-align: ;"></div>
-        <div class="col-md-4 Textobohemia" id="totalPrecioCosto" style="font-weight: bold; margin-bottom: 10px;"></div>
-        <div class="col-md-4 Textobohemia" id="totalCantidadProductos" style="font-weight: bold; margin-bottom: 10px; "
-            class="Textobohemia">Cantidad total de productos: 0</div>
-    </div>
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Buscar por código</label>
+                <input class="form-control" id="txtBuscarCodigo" placeholder="Busqueda por codigo">
+            </div>
 
-    <div class="container mt-3">
+            <div class="col-md-4">
+                <label class="form-label Textobohemia">Buscar por observacion</label>
+                <input class="form-control" id="txtBuscarDescripcion" placeholder="Busqueda por observacion">
+            </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-sm table-dark">
+            <div class="col-md-4 mt-3">
+                <button class="btn btn-outline-dark w-100" onclick="GuardarProducto()">
+                    Guardar Producto
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ================= METRICAS ================= -->
+        <div class="row mb-3 text-center">
+            <div class="col-md-4 Textobohemia" id="totalProductos"></div>
+            <div class="col-md-4 Textobohemia" id="totalPrecioCosto"></div>
+            <div class="col-md-4 Textobohemia" id="totalCantidadProductos"></div>
+        </div>
+
+        <!-- ================= TABLA ================= -->
+        <div class="table-responsive mt-3">
+            <table class="table table-hover table-dark table-sm">
                 <thead>
                     <tr>
-                        <th class="Textobohemia">Código Producto</th>
-                        <th class="Textobohemia ocultar-en-768px">Descripción</th>
-                        <th class="Textobohemia ocultar-en-768px">Observacion</th>
-                        <th class="Textobohemia">Cantidad</th>
-                        <th class="Textobohemia">Precio Costo</th>
-                        <th class="Textobohemia">Precio Venta</th>
-                        <th class="Textobohemia"></th>
-                        <th class="Textobohemia"></th>
-                        <th class=" ocultar-en-768px Textobohemia"></th>
-
+                        <th class="Textobohemia-tabla">Código</th>
+                        <th class="Textobohemia-tabla ocultar-en-768px">Descripción</th>
+                        <th class="Textobohemia-tabla ocultar-en-768px">Observación</th>
+                        <th class="Textobohemia-tabla">Cantidad</th>
+                        <th class="Textobohemia-tabla">Costo</th>
+                        <th class="Textobohemia-tabla">Venta</th>
+                        <th class="Textobohemia-tabla"></th>
+                        <th class="Textobohemia-tabla"></th>
+                        <th class="Textobohemia-tabla ocultar-en-768px"></th>
                     </tr>
                 </thead>
                 <tbody id="tbody-producto"></tbody>
             </table>
         </div>
+
     </div>
+
+    <!-- ================= MODAL EDITAR ================= -->
+    <div class="modal fade" id="modalEditarProducto" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content cobros-dark">
+
+                <div class="modal-header">
+                    <h5 class="modal-title Textobohemia">Editar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="ProductoIDModal">
+
+                    <div class="mb-3">
+                        <label class="form-label Textobohemia">Código</label>
+                        <input type="text" class="form-control" id="codigoModal">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label Textobohemia colorFondo">Descripción</label>
+                        @Html.DropDownList(
+                                                "descripcionModal",
+                                                null,
+                                                new { @class = "form-control select2" }
+                                                )
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label Textobohemia">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidadModal">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label Textobohemia">Precio costo</label>
+                        <input type="text" class="form-control" id="precioModal">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label Textobohemia">Precio venta</label>
+                        <input type="text" class="form-control" id="precioVentaModal">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label Textobohemia">Observación</label>
+                        <input type="text" class="form-control" id="observacionModal">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-outline-dark" onclick="GuardarProducto()">Guardar</button>
+                </div>
+
+            </div>
+        </div>
     </div>
+
+    @section Scripts {
+        <script src="~/js/Producto.js"></script>
+    }
+
 </body>
-<script>
-
-
-
-
-
-</script>
-
-@section Scripts {
-
-    <script src="~/js/Producto.js"></script>
-
-}

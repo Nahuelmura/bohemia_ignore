@@ -137,3 +137,90 @@ thead, tbody tr {
         display: none;
     }
 }
+
+
+
+
+/* =========================
+   MODAL EDITAR - FONDO AZUL
+========================= */
+
+.modal-content.cobros-dark {
+    background: linear-gradient(180deg, #0b1c3d, #0f2a5f);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Header del modal */
+.modal-content.cobros-dark .modal-header {
+    background: rgba(99, 102, 241, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Título */
+.modal-content.cobros-dark .modal-title {
+    color: #ffffff;
+    letter-spacing: 0.05em;
+}
+
+/* Body */
+.modal-content.cobros-dark .modal-body {
+    background: transparent;
+}
+
+/* Inputs dentro del modal */
+.modal-content.cobros-dark .form-control {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Focus */
+.modal-content.cobros-dark .form-control:focus {
+    border-color: #8b9cff;
+    box-shadow: 0 0 0 3px rgba(139, 156, 255, 0.25);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Footer */
+.modal-content.cobros-dark .modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+
+/* =========================
+   SELECT2 – MODAL AZUL
+========================= */
+
+/* Select cerrado */
+.select2-container--default .select2-selection--single {
+    background-color: #0b1f4a;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    height: 42px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+
+/* Texto seleccionado */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #ffffff;
+    padding-left: 12px;
+}
+
+/* Flecha */
+.select2-container--default .select2-selection__arrow b {
+    border-color: #ffffff transparent transparent transparent;
+}
+
+/* Focus */
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #8b9cff;
+    box-shadow: 0 0 0 3px rgba(139, 156, 255, .25);
+}
+
+
+
+
+

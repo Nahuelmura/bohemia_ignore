@@ -3,27 +3,29 @@
 }
 
 <body class="Fondo_cobro">
-    
-    
+
+    <h1 class="Textobohemia" style="text-align: center ;">Cobros </h1>
 
 
-<h6 class="Textobohemia" style="text-align: center;">En esta sección usted podrá ingresar Los cobros por cliente.</h6>
 
+    <h6 class="Textobohemia text-center mb-4">
+        En esta sección usted podrá ingresar los cobros por cliente.
+    </h6>
 
-<div class="">
-    <div class="contenedor">
+    <div class="container cobros-dark">
+
         <input type="hidden" id="CobroID" value="0">
-            <input type="hidden" id="ClienteID" value="0">
+        <input type="hidden" id="ClienteID" value="0">
 
-        <!-- Primera fila -->
-        <div class="row mb-3">
+        <!-- ================= FORMULARIO ================= -->
+        <div class="row mb-4">
             <div class="col-md-4">
-                <label for="codigo" class="form-label Textobohemia">Monto del cobro</label>
-                <input type="text" class="form-control" id="monto" placeholder="⚠️ Ingrese el monto del cobro ej: 300000">
-                
+                <label class="form-label Textobohemia" style="color:white ;">Monto del cobro</label>
+                <input type="number" class="form-control" id="monto" placeholder="Ej: 300000">
             </div>
+
             <div class="col-md-4">
-                <label for="FormaCobro" class="form-label Textobohemia">Forma de Cobro</label>
+                <label class="form-label Textobohemia" style="color:white ;">Forma de Cobro</label>
                 @Html.DropDownList(
                 "FormaCobro",
                                 (IEnumerable<SelectListItem>)ViewBag.FormaCobro,
@@ -31,177 +33,89 @@
                                 )
             </div>
 
+            <div class="col-md-4">
+                <label class="form-label Textobohemia" style="color:white ;">Fecha de Cobro</label>
+                <input type="date" class="form-control" id="fecha" style=";">
+            </div>
+        </div>
+
+        <!-- ================= CLIENTE + DATOS (MISMA ALTURA) ================= -->
+        <div class="row mb-4 align-items-end">
+
+            <div class="col-md-2 position-relative">
+                <label class="form-label Textobohemia" style="color:white ;">Cliente</label>
+                <input type="text" id="Nombre" class="form-control" placeholder="Nombre del cliente" autocomplete="off">
+
+                <ul id="sugerenciasClientes" class="list-group position-absolute w-100 color_Fondo_Sugerencias"
+                    style="z-index:1050; display:none;">
+                </ul>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label Textobohemia" style="color:white ;">Localidad</label>
+                <input type="text" id="Localidad" class="form-control" readonly>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label Textobohemia" style="color:white ;">Teléfono</label>
+                <input type="text" id="Telefono" class="form-control" readonly>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label Textobohemia" style="color:white ;">DNI / CUIL</label>
+                <input type="text" id="Dni" class="form-control" readonly>
+            </div>
+
+        
+                <div class="col-md-4  mt-3 ms-auto">
+                    <button class="btn btn-outline-dark w-100" onclick="GuardarCobro()">
+                        Guardar Cobro
+                    </button>
+                </div>
+        </div>
+
+        <!-- ================= GUARDAR ================= -->
+
+
+        <!-- ================= FILTROS ================= -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label class="Textobohemia" style="color:white ;">Buscar Cliente</label>
+                <input class="form-control" id="txtBuscarCliente">
+            </div>
 
             <div class="col-md-4">
-                <label for="fecha" class="form-label Textobohemia">Fecha de Cobro</label>
-                    <input type="date" class="form-control" id="fecha" placeholder="⚠️ Fecha del cobro">
+                <label class="Textobohemia" style="color:white ;">Fecha Desde</label>
+                <input type="date" class="form-control" id="FechaDesde">
+            </div>
+
+            <div class="col-md-4">
+                <label class="Textobohemia" style="color:white ;">Fecha hasta</label>
+                <input type="date" class="form-control" id="FechaHasta">
             </div>
         </div>
 
-        <!-- Segunda fila -->
-        <div class="row align-items-end">
-        <div class="position-relative col-md-4">
-                    <label class="form-label Textobohemia">Cliente</label>
-            <input type="text" id="Nombre" class="form-control" autocomplete="off" placeholder="Ingrese el Nombre del cliente que realizo el pago,ej : Nahuel Cruz">
-            <input type="hidden" id="ClienteID">
-
-            <ul id="sugerenciasClientes"
-             class="list-group position-absolute w-100 color_Fondo_Sugerencias"
-                style="z-index: 1050; display: none;">
-            </ul>
+        <!-- ================= TABLA ================= -->
+        <div class="table-responsive">
+            <table class="table table-hover table-dark table-sm">
+                <thead>
+                    <tr>
+                        <th class="Textobohemia-tabla">Monto</th>
+                        <th class="ocultar-en-768px Textobohemia-tabla">Fecha</th>
+                        <th class="ocultar-en-768px Textobohemia-tabla">Forma</th>
+                        <th class="Textobohemia-tabla">Cliente</th>
+                        <th class="Textobohemia-tabla">Teléfono</th>
+                        <th class="ocultar-en-768px Textobohemia-tabla">Email</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-cobro"></tbody>
+            </table>
         </div>
 
-         <div class="col-md-4">
-                <div class="accordion" id="accordionCliente">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed Textobohemia" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#datosCliente">
-                                Datos del cliente
-                            </button>
-                        </h2>
-
-                        <div id="datosCliente" class="accordion-collapse collapse">
-                            <div class="accordion-body">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Localidad</label>
-                                        <input type="text" id="Localidad" class="form-control" readonly>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">Teléfono</label>
-                                        <input type="text" id="Telefono" class="form-control" readonly>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">DNI / CUIL</label>
-                                        <input type="text" id="Dni" class="form-control" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 text-center text-md-start">
-                    <button type="submit" class="btn btn-outline-dark w-100 " onclick="GuardarCobro()">Guardar Cobro</button>
-            </div>
-
-         
-           
-<div>
-    <div class="row">
-       
-                 <div class="row mt-3">
-                            <div class="col-md-4 mb-2 mb-md-0">
-                                <legend class="Textobohemia"> Buscar cliente</legend>
-                                <input class="inputbusqueda form-control" type="text" id="txtBuscarCliente"
-                                    placeholder="Buscar por Cliente" />
-                            </div>
-
-                            <div class="col-md-4 mb-2 mb-md-0">
-                                <legend class="Textobohemia"> Buscar Fecha Desde</legend>
-                                <input class="inputbusqueda form-control" type="date" id="FechaDesde" />
-                            </div>
-
-                            <div class="col-md-4 mb-2 mb-md-0">
-                                <legend class="Textobohemia"> Buscar Fecha Hasta</legend>
-                                <input class="inputbusqueda form-control" type="date" id="FechaHasta" />
-                            </div>
-                        </div>
-
-
-       
-
-
- 
-    
-       
-        </div>
     </div>
-</div>
 
+    @section Scripts {
+        <script src="~/js/Cobro.1.0.0.js"></script>
+    }
 
-
-
-
-
-<!-- Modal de edición -->
-<div class="modal fade" id="modalEditarCobro" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title Textobohemia">Editar Cobro</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <!-- oculto para el ID -->
-                <input type="hidden" id="CobroID">
-
-                <div class="mb-3">
-                    <label class="form-label Textobohemia">Monto</label>
-                    <input type="text" class="form-control" id="montoCobro">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label Textobohemia">Fecha</label>
-                    <input type="date" class="form-control" id="fechaCobro">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label Textobohemia">Forma de Cobro</label>
-                    @Html.DropDownList(
-                        "FormaCobro",
-                        (IEnumerable<SelectListItem>)ViewBag.FormaCobro,
-                        new { @class = "form-control", @id = "FormaCobro" }
-                    )
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="GuardarCobro()">Guardar</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-
-<div class="container mt-3">
-
-    <div class="table-responsive">
-        <table class="table table-hover table-sm table-dark">
-            <thead>
-                <tr>
-                    <th class="Textobohemia">Monto Cobro</th>
-                    <th class="Textobohemia ocultar-en-768px">Fecha Cobro</th>
-                    <th class= "Textobohemia ocultar-en-768px"> Forma de cobro</th>
-                    <th class="Textobohemia">Nombre del cliente</th>
-                    <th class="Textobohemia">Telefono del cliente</th>
-                    <th class= "Textobohemia ocultar-en-768px" > Email Cliente</th>
-                                  @* <th class="Textobohemia">Editar</th>
-                        <th class="Textobohemia">Eliminar</th> *@
-
-
-                </tr>
-            </thead>
-            <tbody id="tbody-cobro"></tbody>
-        </table>
-    </div>
-</div>
-
-
-@section Scripts {
-
-    <script src="~/js/Cobro.1.0.0.js"></script>
-
-}</body>
+</body>

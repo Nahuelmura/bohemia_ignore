@@ -1,9 +1,188 @@
+/* ==============================
+   COBROS - DARK DASHBOARD STYLE
+============================== */
+
+
+/* ==============================
+   TARJETA DATOS DEL CLIENTE
+============================== */
+
+.cliente-card {
+    background: #1e1e2d;
+    border-radius: 16px;
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    height: 100%;
+}
+
+.cliente-card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.cliente-card .form-control[readonly] {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: default;
+}
+
+/* Estado vacío (opcional) */
+.cliente-card .form-control:placeholder-shown {
+    opacity: 0.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cliente-card {
+        margin-top: 1rem;
+    }
+}
 .Fondo_cobro
 {
-    background-color: #6b94bb;;
+    background-color: #040438;
 }
+.cobros-dark {
+    color: #fff;
+}
+
+/* Labels */
+.cobros-dark label,
+.cobros-dark legend {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+/* Inputs */
+.cobros-dark .form-control,
+.cobros-dark .form-select {
+    background: #505088;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-radius: 12px;
+}
+
+.cobros-dark .form-control:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    background: #1e1e2d;
+    color: #fff;
+}
+
+.cobros-dark .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Select2 */
+.cobros-dark .select2-container--default .select2-selection--single {
+    background: #1e1e2d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    height: 38px;
+}
+
+.cobros-dark .select2-selection__rendered {
+    color: #fff;
+    line-height: 38px;
+}
+
+/* Accordion */
+.cobros-dark .accordion-item {
+    background: #1e1e2d;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cobros-dark .accordion-button {
+    background: transparent;
+    color: #fff;
+    font-size: 0.85rem;
+}
+
+.cobros-dark .accordion-button:not(.collapsed) {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+/* Botón */
+.cobros-dark .btn-outline-dark {
+    border-radius: 14px;
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 3px solid #ffffff;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.cobros-dark .btn-outline-dark:hover {
+    background: #6366f1;
+    border-color: #6366f1;
+}
+
+/* ================= TABLE ================= */
+
+.cobros-dark .table {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.cobros-dark .table thead {
+    background: rgba(99, 102, 241, 0.12);
+}
+
+.cobros-dark .table thead th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    border-bottom: none;
+}
+
+.cobros-dark .table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.cobros-dark .table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.cobros-dark .table td {
+    font-size: 0.8rem;
+    vertical-align: middle;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .cobros-dark .table th,
+    .cobros-dark .table td {
+        font-size: 0.7rem;
+    }
+}
+
 
 .color_Fondo_Sugerencias {
     background-color: #72ace4;
+}
+
+table.table.table-dark th.Textobohemia-tabla {
+    font-family: Arial, sans-serif;
+    font-variant: small-caps;
+    font-weight: 600;
+    font-size: 0.90rem;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    background-color: #3d3fae;
         
+}
+
+.Textobohemia {
+  font-family: Arial, sans-serif; /* Puedes cambiar la fuente */
+  font-variant: small-caps; /* Convierte el texto en mayúsculas estilizadas */
+  font-weight: bold; /* Aumenta el grosor de la letra */
+  color: rgb(0, 0, 0);
+  color: #f9f9f9;
 }

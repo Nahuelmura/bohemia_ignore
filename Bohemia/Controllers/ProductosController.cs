@@ -72,7 +72,10 @@ public JsonResult ListadoProducto(int productoID, string codigo, string observac
 {
     var productos = _context.Productos.AsQueryable();
 
-    if (productoID > 0)
+
+        var culturaAR = new CultureInfo("es-AR");
+
+        if (productoID > 0)
     {
         productos = productos.Where(p => p.ProductoID == productoID);
     }
@@ -113,6 +116,10 @@ public JsonResult ListadoProducto(int productoID, string codigo, string observac
         PrecioVenta = p.PrecioVenta,
         CantidadProducto = totalProductosRegistrados,
         Eliminado = p.Eliminado,
+
+        // 👇 FORMATO CORRECTO
+        PrecioCostoFormato = p.PrecioCosto.ToString("N2", culturaAR),
+        PrecioVentaFormato = p.PrecioVenta.ToString("N2", culturaAR),
     }).ToList();
 
 return Json(new { 

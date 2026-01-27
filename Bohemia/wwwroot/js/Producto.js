@@ -15,6 +15,7 @@ $(document).ready(function () {
 });
 
 
+
     function ListadoProducto(codigo,observacion) {
         $.ajax({
             url: '../../Productos/ListadoProducto',
@@ -44,8 +45,8 @@ $(document).ready(function () {
                     let claseEliminado = producto.eliminado ? 'table-danger' : '';
                     let descripcion = producto.eliminado ? `<del>${producto.descripcionstring}</del>` : producto.descripcionstring;
                     let cantidad = producto.eliminado ? `<del>${producto.cantidad}</del>` : producto.cantidad;
-                    let precio = producto.eliminado ? `<del>${producto.precioCosto}</del>` : producto.precioCosto;
-                    let precioVenta = producto.eliminado ? `<del>${producto.precioVenta}</del>` : producto.precioVenta;
+                    let precio = producto.eliminado ? `<del>${producto.precioCostoFormato}</del>` : producto.precioCostoFormato;
+                    let precioVenta = producto.eliminado ? `<del>${producto.precioVentaFormato}</del>` : producto.precioVentaFormato;
                     let observacion = producto.observacion ? producto.observacion : "NO DEFINIDO";
                     observacion = producto.eliminado ? `<del>${observacion}</del>` : observacion;
             
@@ -225,7 +226,7 @@ function GuardarProducto() {
         codigo = $("#codigo").val().trim();
         cantidad = parseInt($("#cantidad").val());
         descripcion = $("#Descripcion").val().trim();
-        precio = parseFloat($("#precio").val());
+        precio = ($("#precio").val());
     }
 
     // Validaciones antes de enviar la solicitud
@@ -388,3 +389,21 @@ function limpiarCampos() {
         $("#observacionModal").val("");
     }
 }
+
+ 
+// buscador de productos, es otra estructura diferente a selec2 
+let descripcionChoices;
+
+$('#modalEditarProducto').on('shown.bs.modal', function () {
+
+    if (descripcionChoices) {
+        descripcionChoices.destroy();
+    }
+
+    descripcionChoices = new Choices('#descripcionModal', {
+        searchEnabled: true,
+        shouldSort: false,
+        itemSelectText: '',
+    });
+
+});
