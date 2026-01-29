@@ -42,9 +42,11 @@ body {
    HEADER / TITULOS
 ======================================== */
 .Textobohemia {
-    text-align: center;
     color: var(--text-primary);
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .Textobohemia.subtitle,
@@ -68,9 +70,10 @@ h6.Textobohemia {
 ======================================== */
 .stats-bar {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
+    min-width: 0;
 }
 
 .stat-card {
@@ -82,6 +85,8 @@ h6.Textobohemia {
     gap: 1rem;
     border: 1px solid var(--card-border);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    justify-content: center;
+    min-width: 0;
 }
 
 .stat-card:hover {
@@ -128,11 +133,16 @@ h6.Textobohemia {
     font-weight: 500;
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
+    text-align: center;
 }
 
 .stat-content .value {
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
     color: var(--text-primary);
 }
 
@@ -251,14 +261,17 @@ h6.Textobohemia {
 }
 
 .balance-row {
+
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: space-between;
     gap: 0.5rem;
 }
 
 .balance-item {
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .balance-label {
@@ -311,7 +324,7 @@ h6.Textobohemia {
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(114, 106, 144, 0.638);
     transition: all 0.3s ease;
 }
 
@@ -638,6 +651,13 @@ h6.Textobohemia {
     animation: slideInTransaction 0.4s ease forwards;
 }
 
+.user-email {
+    white-space: nowrap;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .drawer-panel .transaction-item:nth-child(1) { animation-delay: 0.05s; }
 .drawer-panel .transaction-item:nth-child(2) { animation-delay: 0.1s; }
 .drawer-panel .transaction-item:nth-child(3) { animation-delay: 0.15s; }
@@ -672,12 +692,14 @@ h6.Textobohemia {
     }
 
     .balances-container {
-        width: 100%;
-        justify-content: space-between;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}   
 
     .drawer-panel {
         width: 100%;
@@ -685,12 +707,14 @@ h6.Textobohemia {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
     .stats-bar {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+        
+
     }
 
-    .stat-card {
+    .stat-card  {
         padding: 1rem;
     }
 
