@@ -39,10 +39,13 @@ public class CobroController : Controller
             Text = e.ToString().ToUpper()
         }));
         ViewBag.FormaCobro = selectListItems;
+
+
+       
         return View();
     }
 
-    public JsonResult ListadoCobro(int cobroID, string nombre, DateTime? fechaDesde, DateTime? fechaHasta)
+    public JsonResult ListadoCobro( string nombre, DateTime? fechaDesde, DateTime? fechaHasta,  FormaCobro? cobroID )
     {
     var cobros = _context.Cobros.Include(c => c.Cliente ).AsQueryable();
 
@@ -59,18 +62,22 @@ public class CobroController : Controller
             DateTime desde = fechaDesde.Value.Date; // Establece la hora en 00:00:00
             DateTime hasta = fechaHasta.Value.Date.AddDays(1).AddTicks(-1); // Fin del día 23:59:59
 
-            cobros = cobros.Where(c => c.FechaCobro >= desde && c.FechaCobro <= hasta);
-
-            
-                
+            cobros = cobros.Where(c => c.FechaCobro >= desde && c.FechaCobro <= hasta);                
             }
 
-            // if (cobros > 0)
-            // {
-            //     cobros = cobros
-            //         .Where(c => c.ClienteID == clienteID);
-            // }
-            var CobrosMostrar = cobros.Select(c => new CobroVista
+
+        if (cobroID.HasValue && (int)cobroID.Value != 0)
+        {
+            cobros = cobros.Where(c => c.FormaCobro == cobroID.Value);
+        }
+
+
+        // if (cobros > 0)
+        // {
+        //     cobros = cobros
+        //         .Where(c => c.ClienteID == clienteID);
+        // }
+        var CobrosMostrar = cobros.Select(c => new CobroVista
         {
             CobroID = c.CobroID,
 

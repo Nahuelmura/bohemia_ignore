@@ -40,7 +40,7 @@
         </div>
 
         <!-- ================= CLIENTE + DATOS (MISMA ALTURA) ================= -->
-        <div class="row mb-4 align-items-end">
+        <div class="row mb-4 align-items-end ">
 
             <div class="col-md-2 position-relative">
                 <label class="form-label Textobohemia" style="color:white ;">Cliente</label>
@@ -66,46 +66,63 @@
                 <input type="text" id="Dni" class="form-control" readonly>
             </div>
 
-        
-                <div class="col-md-4  mt-3 ms-auto">
-                    <button class="btn btn-outline-dark w-100" onclick="GuardarCobro()">
-                        Guardar Cobro
-                    </button>
-                </div>
+
+            <div class="col-md-4  mt-3 ms-auto">
+                <button class="btn btn-outline-dark w-100" onclick="GuardarCobro()">
+                    Guardar Cobro
+                </button>
+            </div>
         </div>
 
         <!-- ================= GUARDAR ================= -->
 
 
         <!-- ================= FILTROS ================= -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <label class="Textobohemia" style="color:white ;">Buscar Cliente</label>
-                <input class="form-control" id="txtBuscarCliente">
-            </div>
+        <div class="filtro-clientes-cobro mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="Textobohemia text-white">Buscar Cliente</label>
+                    <input class="form-control" id="txtBuscarCliente"
+                        placeholder="Buscar por nombre ej: Nahuel Maidana">
+                </div>
 
-            <div class="col-md-4">
-                <label class="Textobohemia" style="color:white ;">Fecha Desde</label>
-                <input type="date" class="form-control" id="FechaDesde">
-            </div>
+                <div class="col-md-3">
+                    <label class="Textobohemia text-white">Fecha Desde</label>
+                    <input type="date" class="form-control" id="FechaDesde">
+                </div>
 
-            <div class="col-md-4">
-                <label class="Textobohemia" style="color:white ;">Fecha hasta</label>
-                <input type="date" class="form-control" id="FechaHasta">
+                <div class="col-md-3">
+                    <label class="Textobohemia text-white">Fecha Hasta</label>
+                    <input type="date" class="form-control" id="FechaHasta">
+                </div>
+
+                <div class=" col-md-3">
+                    <label class="  Textobohemia text-white">Forma de cobro</label>
+
+                    @Html.DropDownList(
+                                        "cobroID",
+                                        (IEnumerable<SelectListItem>)ViewBag.FormaCobro, // 👈 CORRECTO
+                                        new { @class = "form-control", id = "cobroID" }
+                                        )
+                </div>
             </div>
         </div>
+
 
         <!-- ================= TABLA ================= -->
         <div class="table-responsive">
             <table class="table table-hover table-dark table-sm">
                 <thead>
                     <tr>
-                        <th class="Textobohemia-tabla">Monto</th>
+
+                        <th class="Textobohemia-tabla">Nombre cliente</th>
                         <th class="ocultar-en-768px Textobohemia-tabla">Fecha</th>
-                        <th class="ocultar-en-768px Textobohemia-tabla">Forma</th>
-                        <th class="Textobohemia-tabla">Cliente</th>
                         <th class="Textobohemia-tabla">Teléfono</th>
-                        <th class="ocultar-en-768px Textobohemia-tabla">Email</th>
+                        <th class="ocultar-en-768px Textobohemia-tabla">Forma de cobro</th>
+                        <th class="Textobohemia-tabla">Monto</th>
+                   
+                      
+                     
                     </tr>
                 </thead>
                 <tbody id="tbody-cobro"></tbody>

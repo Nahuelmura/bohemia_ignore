@@ -3,3 +3,49 @@
   }
 
 /* el grueso de la interfaz y estilo esta en cobros.css */
+
+
+
+.detalle-box {
+  background: #40668b;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Ocultar columnas en mobile */
+@media (max-width: 768px) {
+  .ocultar-en-768px {
+    display: none !important;
+  }
+}
+
+/* Mostrar solo en mobile */
+.mostrar-en-768px {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mostrar-en-768px {
+    display: table-cell;
+  }
+}
+
+/* Estilo fila desplegable */
+.detalle-responsive td {
+  background-color: #f8f9fa;
+}
+
+.detalle-box {
+  padding: 10px;
+  border-radius: 8px;
+}
+
+
+
+.filtro-clientes {
+  max-width: 420px;
+  padding: 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1f2933, #111827);
+  border: 1px solid #374151;
+}

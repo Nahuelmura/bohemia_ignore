@@ -186,3 +186,12 @@ table.table.table-dark th.Textobohemia-tabla {
   color: rgb(0, 0, 0);
   color: #f9f9f9;
 }
+
+
+.filtro-clientes-cobro {
+width: 100%;
+    padding: 18px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1f2933, #111827);
+    border: 1px solid #374151;
+}

@@ -1,13 +1,22 @@
-window.onload = ListadoClientes;
 
-function ListadoClientes() {
+window.onload = function () {
+  ListadoClientes("");
+};
+
+$("#txtBuscarCliente").on("keyup", function () {
+  let nombre = $(this).val();
+  ListadoClientes(nombre);
+});
+
+function ListadoClientes(nombre) {
   $.ajax({
     url: "../../Cliente/ListadoClientes",
+    data: { nombre: nombre },
     type: "POST",
     dataType: "json",
     success: function (listadoClientes) {
       let clientes = listadoClientes.clientes;
-      let contenidoTabla = ``;
+      let contenidoTabla = "";
 
       $.each(clientes, function (index, cliente) {
         let claseEliminado = cliente.eliminado ? "table-danger" : "";
@@ -24,63 +33,75 @@ function ListadoClientes() {
           ? `<del>${mostrarValor(cliente.telefono)}</del>`
           : mostrarValor(cliente.telefono);
 
-        let email = cliente.eliminado
-          ? `<del>${mostrarValor(cliente.email)}</del>`
-          : mostrarValor(cliente.email);
-
-        let dni = cliente.eliminado
-          ? `<del>${mostrarValor(cliente.dni_cuil)}</del>`
-          : mostrarValor(cliente.dni_cuil);
+        let email = mostrarValor(cliente.email);
+        let dni = mostrarValor(cliente.dni_cuil);
 
         let botonEstado = `
-                    <button type="button"
-                        class="btn ${
-                          cliente.eliminado
-                            ? "btn-outline-success"
-                            : "btn-outline-danger"
-                        }"
-                        onclick="DesactivarCliente(${cliente.clienteID}, ${
-          cliente.eliminado ? 0 : 1
-        })">
-                        <i class="fa-solid fa-ban ${
-                          cliente.eliminado ? "fa-check-circle" : "fa-trash-can"
-                        }"></i>
-                    </button>`;
+          <button class="btn btn-sm ${
+            cliente.eliminado ? "btn-outline-danger" : "btn-outline-success"
+          }"
+          onclick="DesactivarCliente(${cliente.clienteID}, ${
+            cliente.eliminado ? 0 : 1
+          })">
+            <i class="fa-solid ${
+              cliente.eliminado ? "fa-trash-can" : "fa-check-circle"
+            }"></i>
+          </button>`;
 
-        let botonEliminar = `
-                        <button type="button" class="btn btn-danger" onclick="EliminarCliente(${cliente.clienteID})">
-                            <i class="fa-solid fa-trash"></i> 
-                        </button>`;
-
-        LimpiarFormularioAlta();
         contenidoTabla += `
-                    <tr class="${claseEliminado}">
-                        <td>${nombre}</td>
-                        <td class="ocultar-en-768px" >${localidad}</td>
-                        <td >${telefono}</td>
-                        <td class="ocultar-en-768px">${email}</td>
-                        <td class="ocultar-en-768px">${dni}</td>
-                        <td >
-                            <button type="button" class="btn btn-outline-success me-2"
-                                onclick="AbrirModalEditar(${cliente.clienteID})">
-                                <i class="fa-solid fa-file-pen"></i>
-                            </button>
-                        </td>
-                        <td class="ocultar-en-768px">
-                            ${botonEstado}
-                            
-                        </td>
-                        <td class="ocultar-en-768px">${botonEliminar}</td>
-                    </tr>`;
+          <tr class="${claseEliminado}">
+            <td>${nombre}</td>
+            <td class="ocultar-en-768px">${localidad}</td>
+            <td>${telefono}</td>
+
+            <td class="mostrar-en-768px">
+              <button class="btn btn-sm btn-outline-primary"
+                onclick="toggleDetalle(${cliente.clienteID})">
+                Ver más
+              </button>
+            </td>
+
+            <td class="ocultar-en-768px">${email}</td>
+            <td class="ocultar-en-768px">${dni}</td>
+
+            <td>
+              <button class="btn btn-outline-success btn-sm"
+                onclick="AbrirModalEditar(${cliente.clienteID})">
+                <i class="fa-solid fa-file-pen"></i>
+              </button>
+            </td>
+
+            <td class="ocultar-en-768px">${botonEstado}</td>
+          </tr>
+
+          <tr id="detalle-${cliente.clienteID}" class="detalle-responsive d-none">
+            <td colspan="8">
+              <div class="detalle-box">
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>DNI/CUIT:</strong> ${dni}</p>
+              </div>
+            </td>
+          </tr>
+        `;
       });
 
-      document.getElementById("detalleCliente").innerHTML = contenidoTabla;
+      $("#detalleCliente").html(contenidoTabla);
     },
     error: function () {
-      alert("Error al cargar los clientes.");
+      alert("Error al cargar los clientes");
     },
   });
 }
+
+function toggleDetalle(id) {
+  $("#detalle-" + id).toggleClass("d-none");
+}
+
+
+
+
+
+
 
 function mostrarValor(valor) {
   return valor === null || valor === undefined || valor === "" || valor == 0
@@ -88,16 +109,20 @@ function mostrarValor(valor) {
     : valor;
 }
 
+
+//  boton eliminar  </td>
+//                         <td class="ocultar-en-768px">${botonEliminar}</td>
+
 function GuardarCliente() {
-  let clienteID = $("#ClienteID").val();
+  let clienteID = $("#ClienteIDModal").val(); 
   let nombre, localidad, telefono, email, dni_cuil;
 
   if ($("#modalEditarCliente").hasClass("show")) {
-    nombre = $("#nombreEditar").val().trim();
-    localidad = $("#localidadEditar").val().trim();
-    telefono = $("#telefonoEditar").val();
-    email = $("#emailEditar").val().trim();
-    dni_cuil = $("#dniEditar").val().trim();
+    nombre = $("#nombreModal").val().trim();
+    localidad = $("#localidadModal").val().trim();
+    telefono = $("#telefonoModal").val();
+    email = $("#emailModal").val().trim();
+    dni_cuil = $("#dnicuitModal").val().trim();
   } else {
     clienteID = 0;
     nombre = $("#nombre").val().trim();
@@ -171,19 +196,21 @@ function AbrirModalEditar(clienteID) {
     url: "../../Cliente/ListadoClientes",
     type: "POST",
     dataType: "json",
-    data: { clienteID: clienteID },
+    data: { clienteID },
     success: function (response) {
       let cliente = response.clientes[0];
 
-      $("#ClienteID").val(cliente.clienteID);
+      $("#ClienteIDModal").val(cliente.clienteID);
+      $("#nombreModal").val(cliente.nombre);
+      $("#localidadModal").val(cliente.localidad);
+      $("#telefonoModal").val(cliente.telefono);
+      $("#emailModal").val(cliente.email);
+      $("#dnicuitModal").val(cliente.dni_cuil);
 
-      $("#nombreEditar").val(cliente.nombre);
-      $("#localidadEditar").val(cliente.localidad);
-      $("#telefonoEditar").val(cliente.telefono);
-      $("#emailEditar").val(cliente.email);
-      $("#dniEditar").val(cliente.dni_cuil);
-
-      $("#modalEditarCliente").modal("show");
+      const modal = new bootstrap.Modal(
+        document.getElementById("modalEditarCliente"),
+      );
+      modal.show();
     },
   });
 }

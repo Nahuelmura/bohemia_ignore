@@ -1,25 +1,41 @@
 window.onload = function () {
   ListadoCobro("");
 };
+
+//buscar por fecha
 $("#FechaDesde, #FechaHasta").on("change", function () {
   let nombre = $("#txtBuscarCliente").val();
   ListadoCobro(nombre);
 });
 
 
+//buscar por forma de cobro
 
+$("#cobroID").on("change", function () {
+  ListadoCobro($("#txtBuscarCliente").val());
+});
+
+//buscar por nombre
 $("#txtBuscarCliente").on("keyup", function () {
   let nombre = $(this).val();
   ListadoCobro(nombre);
 });
 
 function ListadoCobro(nombre) {
+
+
   let fechaDesde = $("#FechaDesde").val();
   let fechaHasta = $("#FechaHasta").val();
+      let cobroID = $("#cobroID").val();
     
   $.ajax({
     url: "/Cobro/ListadoCobro",
-    data: { nombre: nombre, fechaDesde: fechaDesde, fechaHasta: fechaHasta },
+    data: {
+      nombre: nombre,
+      fechaDesde: fechaDesde,
+      fechaHasta: fechaHasta,
+      cobroID: cobroID,
+    },
     type: "POST",
     dataType: "json",
     success: function (ListadoCobro) {
@@ -28,13 +44,11 @@ function ListadoCobro(nombre) {
       $.each(ListadoCobro.cobros, function (index, cobro) {
         contenidoTabla += `
                 <tr>
-                    <td>${cobro.montoCobroTexto}</td>
-                    <td class="ocultar-en-768px">${cobro.fechaCobroTexto}</td>
+                 <td>${cobro.nombreCliente}</td>
+                 <td class="ocultar-en-768px">${cobro.fechaCobroTexto}</td>
+                      <td>${cobro.telefonoCliente}</td>                  
                     <td class="ocultar-en-768px" >${cobro.formaCobro}</td>
-                    <td>${cobro.nombreCliente}</td>
-                    <td>${cobro.telefonoCliente}</td>
-                    <td class="ocultar-en-768px" >${cobro.emailCliente}</td>
-
+                     <td>${cobro.montoCobroTexto}</td>  
                 </tr>`;
       });
 

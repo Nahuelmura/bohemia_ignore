@@ -54,26 +54,78 @@
 
         </div>
 
-        <!-- ================= TABLA ================= -->
-        <div class="table-responsive mt-4">
-            <table class="table table-hover table-dark table-sm">
-                <thead>
-                    <tr>
-                        <th class="Textobohemia-tabla">Nombre</th>
-                        <th class="Textobohemia-tabla ocultar-en-768px">Localidad</th>
-                        <th class="Textobohemia-tabla">Teléfono</th>
-                        <th class="Textobohemia-tabla ocultar-en-768px">Email</th>
-                        <th class="Textobohemia-tabla ocultar-en-768px">DNI / CUIL</th>
-                        <th class="Textobohemia-tabla">Editar</th>
-                        <th class="Textobohemia-tabla ocultar-en-768px">Estado</th>
-                        <th class="Textobohemia-tabla ocultar-en-768px">Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody id="detalleCliente"></tbody>
-            </table>
+
+
+        <div class="modal fade" id="modalEditarCliente" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content cobros-dark">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title Textobohemia">Editar Proveedor</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" id="ClienteIDModal" value="0">
+
+                        <div class="mb-3">
+                            <label class="form-label Textobohemia">Nombre</label>
+                            <input type="text" class="form-control" id="nombreModal">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label Textobohemia">Localidad</label>
+                            <input type="text" class="form-control" id="localidadModal">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label Textobohemia">Teléfono</label>
+                            <input type="text" class="form-control" id="telefonoModal">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label Textobohemia">Email</label>
+                            <input type="text" class="form-control" id="emailModal">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label Textobohemia">CUIT</label>
+                            <input type="number" class="form-control" id="dnicuitModal">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button class="btn btn-outline-dark" onclick="GuardarCliente()">Guardar</button>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
-    </div>
+        @* buscador  *@
+
+        <div class="filtro-clientes mb-4">
+            <label class="Textobohemia text-white">🔎 Buscar Cliente</label>
+            <input class="form-control form-control-lg mt-2" id="txtBuscarCliente" placeholder="Buscar por nombre">
+        </div>
+        <div class="table-responsive">
+        <table class="table table-hover table-dark table-sm">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th class="ocultar-en-768px">Localidad</th>
+                    <th>Teléfono</th>
+                    <th class="mostrar-en-768px">Detalle</th>
+                    <th class="ocultar-en-768px">Email</th>
+                    <th class="ocultar-en-768px">DNI / CUIL</th>
+                    <th>Editar</th>
+                    <th class="ocultar-en-768px">Estado</th>
+                </tr>
+            </thead>
+            <tbody id="detalleCliente"></tbody>
+        </table>
+        </div>
 
     @section Scripts {
         <script src="~/js/Clientes.1.0.0.js"></script>

@@ -28,16 +28,21 @@ public class ClienteController : Controller
 
 
 
-    public JsonResult ListadoClientes(int clienteID)
+    public JsonResult ListadoClientes(int clienteID, string nombre)
     {
         var clientes = _context.Clientes.AsQueryable();
+
+        if (!string.IsNullOrEmpty(nombre))
+        {
+            clientes = clientes.Where(c => c.Nombre.StartsWith(nombre));
+        }
 
         if (clienteID > 0)
         {
             clientes = clientes
                 .Where(c => c.ClienteID == clienteID);
         }
-        var clienteMostrar = clientes.Select(c => new ClienteVista
+        var clienteMostrar = clientes.OrderBy(c => c.Eliminado).ThenBy(C => C.Nombre) .Select(c => new ClienteVista
         {
             ClienteID = c.ClienteID,
 
@@ -62,7 +67,7 @@ public class ClienteController : Controller
         }).ToList();
 
         return Json(new
-        {
+        { 
             clientes = clienteMostrar
         });
     }
