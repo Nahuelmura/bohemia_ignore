@@ -1,12 +1,7 @@
-
 .Fondo_Producto {
     background: linear-gradient(135deg, #c0c1d1, #f4f1f6);
   }
 
-
-.contenedor {
-   
-}
 
 @media (max-width: 768px) {
     contenedor {
@@ -187,40 +182,6 @@ thead, tbody tr {
     border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-
-/* =========================
-   SELECT2 – MODAL AZUL
-========================= */
-
-/* Select cerrado */
-.select2-container--default .select2-selection--single {
-    background-color: #0b1f4a;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    height: 42px;
-    color: #fff;
-    display: flex;
-    align-items: center;
+.form-control{
+    background-color: #505088 !important;
 }
-
-/* Texto seleccionado */
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: #ffffff;
-    padding-left: 12px;
-}
-
-/* Flecha */
-.select2-container--default .select2-selection__arrow b {
-    border-color: #ffffff transparent transparent transparent;
-}
-
-/* Focus */
-.select2-container--default.select2-container--focus .select2-selection--single {
-    border-color: #8b9cff;
-    box-shadow: 0 0 0 3px rgba(139, 156, 255, .25);
-}
-
-
-
-
-

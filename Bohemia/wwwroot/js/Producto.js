@@ -1,5 +1,14 @@
 window.onload = ListadoProducto();
 
+document.addEventListener("DOMContentLoaded", () => {
+
+    document.querySelectorAll(".cantidad-input")
+        .forEach(formatearCantidad);
+
+    document.querySelectorAll(".precio-input")
+        .forEach(i => formatearPrecio(i, true)); // true = muestra $
+});
+
 $(document).ready(function () {
     $("#txtBuscarCodigo").on("keyup", function () {
         var codigo = $(this).val();
@@ -51,15 +60,11 @@ $(document).ready(function () {
                     observacion = producto.eliminado ? `<del>${observacion}</del>` : observacion;
             
                     let botonEstado = `
-                        <button type="button" class="btn ${producto.eliminado ? 'btn-outline-success' : 'btn-outline-danger'}" 
+                        <button type="button" class="btn ${producto.eliminado ? 'btn-outline-danger'  : 'btn-outline-success'}" 
                             onclick="DesactivarProducto(${producto.productoID}, ${producto.eliminado ? 0 : 1})">
-                            <i class="fa-solid fa-ban ${producto.eliminado ? 'fa-check-circle' : 'fa-trash-can'}"></i> 
+                            <i class="fa-solid fa-ban ${producto.eliminado ? 'fa-trash-can' : 'fa-check-circle'}"></i> 
                         </button>`;
             
-                    let botonEliminar = `
-                        <button type="button" class="btn btn-danger" onclick="EliminarProducto(${producto.productoID})">
-                            <i class="fa-solid fa-trash"></i> 
-                        </button>`;
             
                     contenidoTabla += `
                         <tr class="${claseEliminado}">
@@ -75,7 +80,6 @@ $(document).ready(function () {
                                 </button>
                             </td>
                             <td class="ocultar-en-768px">${botonEstado}</td>
-                            <td>${botonEliminar}</td>
                         </tr>`;
                 });
             
@@ -88,55 +92,7 @@ $(document).ready(function () {
     }
 
 
-// Función para eliminar un producto permanentemente
 
-function EliminarProducto(productoID) {
-    Swal.fire({
-        title: "¿Estás seguro?",
-        text: "Esta acción eliminará el producto permanentemente.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '../../Productos/EliminarProducto',
-                type: 'POST',
-                data: { productoID: productoID },
-                dataType: 'json',
-                success: function (respuesta) {
-                    if (respuesta.success) {
-                        Swal.fire({
-                            title: "¡Eliminado!",
-                            text: "El producto ha sido eliminado correctamente.",
-                            icon: "success",
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-
-                        ListadoProducto(); // Recargar la lista después de eliminar
-                    } else {
-                        Swal.fire({
-                            title: "Error",
-                            text: "No se pudo eliminar el producto.",
-                            icon: "error"
-                        });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: "Error",
-                        text: "Ocurrió un problema al eliminar el producto.",
-                        icon: "error"
-                    });
-                }
-            });
-        }
-    });
-}
 
 
 function DesactivarProducto(productoID, accion) {
@@ -186,20 +142,18 @@ function DesactivarProducto(productoID, accion) {
 
 
 
-document.getElementById("cantidad").addEventListener("input", function (event) {
-    // Elimina cualquier carácter que no sea un número
-    this.value = this.value.replace(/\D/g, '');
-});
+document.addEventListener("DOMContentLoaded", () => {
 
+    // cantidades
+    formatearCantidad(document.getElementById("cantidad"), true);
+    formatearCantidad(document.getElementById("cantidadModal"), true);
 
-document.getElementById("precio").addEventListener("input", function (event) {
-    // Permite números, puntos y comas
-    this.value = this.value.replace(/[^0-9.,]/g, '');
-});
+    // precios
+    formatearMoneda(document.getElementById("precio"), true);
+    formatearMoneda(document.getElementById("precioVenta"), true);
+    formatearMoneda(document.getElementById("precioModal"), true);
+    formatearMoneda(document.getElementById("precioVentaModal"), true);
 
-document.getElementById("precioVenta").addEventListener("input", function (event) {
-    // Permite números, puntos y comas
-    this.value = this.value.replace(/[^0-9.,]/g, '');
 });
 
 
@@ -215,18 +169,20 @@ function GuardarProducto() {
 
     // Si el modal está abierto, usar los valores del modal
     if ($("#modalEditarProducto").hasClass("show")) {
-        codigo = $("#codigoModal").val().trim();
-        cantidad = parseInt($("#cantidadModal").val());
-        descripcion = $("#descripcionModal").val().trim();
-        precio = parseFloat($("#precioModal").val());
-        precioVenta = parseFloat($("#precioVentaModal").val());
-        observacion = $("#observacionModal").val().trim(); 
+    codigo = $("#codigoModal").val().trim();
+    cantidad = limpiarNumeroSQL($("#cantidadModal").val());
+    descripcion = $("#descripcionModal").val().trim();
+    precio = limpiarNumeroSQL($("#precioModal").val());
+    precioVenta = limpiarNumeroSQL($("#precioVentaModal").val());
+    observacion = $("#observacionModal").val().trim();
     } else {
         // Si no, usar los valores del formulario principal
         codigo = $("#codigo").val().trim();
-        cantidad = parseInt($("#cantidad").val());
+        cantidad = limpiarNumeroSQL($("#cantidad").val());
         descripcion = $("#Descripcion").val().trim();
-        precio = ($("#precio").val());
+        precio = limpiarNumeroSQL($("#precio").val());
+        precioVenta = limpiarNumeroSQL($("#precioVenta").val());
+        observacion = $("#observacion").val().trim();
     }
 
     // Validaciones antes de enviar la solicitud
@@ -314,7 +270,7 @@ function AbrirModalEditar(productoID) {
 
             document.getElementById("ProductoID").value = Producto.productoID;
             document.getElementById("codigoModal").value = Producto.codigo;
-            document.getElementById("descripcionModal").value = Producto.descripcion;
+            document.getElementById("descripcion").value = Producto.descripcion;
             document.getElementById("cantidadModal").value = Producto.cantidad;
             document.getElementById("precioModal").value = Producto.precioCosto;
             document.getElementById("precioVentaModal").value = Producto.precioVenta;
@@ -405,5 +361,156 @@ $('#modalEditarProducto').on('shown.bs.modal', function () {
         shouldSort: false,
         itemSelectText: '',
     });
-
 });
+
+function cerrarModal() {
+    $('#modalEditarProducto').modal('hide');
+}  
+
+
+/* ================================
+   CANTIDAD (solo enteros)
+================================ */
+function formatearCantidad(input) {
+    if (!input) return;
+
+    input.addEventListener("input", e => {
+
+        let valor = e.target.value.replace(/\D/g, "");
+
+        if (!valor) {
+            e.target.value = "";
+            return;
+        }
+
+        e.target.value = Number(valor).toLocaleString("es-AR");
+    });
+}
+
+
+function formatearMoneda(input) {
+    if (!input) return;
+
+    input.addEventListener("input", () => {
+
+        let raw = input.value.replace(/[^\d]/g, "");
+
+        if (!raw) {
+            input.value = "";
+            return;
+        }
+
+        const numero = raw / 100;
+
+        input.value = numero.toLocaleString("es-AR", {
+            style: "currency",
+            currency: "ARS",
+            minimumFractionDigits: 2
+        });
+    });
+}
+
+
+/* ================================
+   PRECIO (moneda)
+================================ */
+function formatearPrecio(input) {
+
+    if (!input) return;
+
+    /* ===== al entrar ===== */
+    input.addEventListener("focus", () => {
+        if (!input.value) {
+            input.value = "$ 0,00";
+        }
+    });
+
+
+    /* ===== mientras escribe ===== */
+    input.addEventListener("input", e => {
+
+        // solo números (centavos)
+        let numeros = e.target.value.replace(/\D/g, "");
+
+        if (!numeros) numeros = "0";
+
+        // siempre 2 decimales
+        numeros = numeros.padStart(3, "0");
+
+        let entero = numeros.slice(0, -2);
+        let decimal = numeros.slice(-2);
+
+        entero = Number(entero).toLocaleString("es-AR");
+
+        e.target.value = `$ ${entero},${decimal}`;
+    });
+}
+
+
+function limpiarNumeroSQL(valor) {
+    if (!valor) return 0;
+
+    const limpio = valor
+        .replace(/\$/g, "")
+        .replace(/\s/g, "")
+        .replace(/\./g, "")
+        .replace(",", ".");
+
+    return Number(limpio) || 0;
+}
+
+
+
+
+
+
+
+// Función para eliminar un producto permanentemente
+
+// function EliminarProducto(productoID) {
+//     Swal.fire({
+//         title: "¿Estás seguro?",
+//         text: "Esta acción eliminará el producto permanentemente.",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#d33",
+//         cancelButtonColor: "#3085d6",
+//         confirmButtonText: "Sí, eliminar",
+//         cancelButtonText: "Cancelar"
+//     }).then((result) => {
+//         if (result.isConfirmed) {
+//             $.ajax({
+//                 url: '../../Productos/EliminarProducto',
+//                 type: 'POST',
+//                 data: { productoID: productoID },
+//                 dataType: 'json',
+//                 success: function (respuesta) {
+//                     if (respuesta.success) {
+//                         Swal.fire({
+//                             title: "¡Eliminado!",
+//                             text: "El producto ha sido eliminado correctamente.",
+//                             icon: "success",
+//                             timer: 2000,
+//                             showConfirmButton: false
+//                         });
+
+//                         ListadoProducto(); // Recargar la lista después de eliminar
+//                     } else {
+//                         Swal.fire({
+//                             title: "Error",
+//                             text: "No se pudo eliminar el producto.",
+//                             icon: "error"
+//                         });
+//                     }
+//                 },
+//                 error: function () {
+//                     Swal.fire({
+//                         title: "Error",
+//                         text: "Ocurrió un problema al eliminar el producto.",
+//                         icon: "error"
+//                     });
+//                 }
+//             });
+//         }
+//     });
+// }

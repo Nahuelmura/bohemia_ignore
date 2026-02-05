@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Productos";
 }
+<link rel="stylesheet" href="~/css/Productos.css" asp-append-version="true" />
 
 <body class="Fondo_cobro">
 
@@ -55,17 +56,17 @@
 
             <div class="col-md-4">
                 <label class="form-label Textobohemia">Cantidad</label>
-                <input type="number" class="form-control" id="cantidad" placeholder="⚠️ Cantidad disponible">
+                <input  type="text" class="form-control cantidad-input" id="cantidad" placeholder="⚠️ Cantidad disponible">
             </div>
 
             <div class="col-md-4">
                 <label class="form-label Textobohemia">Precio de costo</label>
-                <input type="text" class="form-control" id="precio" placeholder="⚠️Ingrese el Precio de costo ej: $3000">
+                <input type="text" class="form-control precio-input" id="precio" placeholder="⚠️Ingrese el Precio de costo ej: $3000">
             </div>
 
             <div class="col-md-4">
                 <label class="form-label Textobohemia">Precio de venta</label>
-                <input type="text" class="form-control" id="precioVenta" placeholder="⚠️Ingrese el Precio de venta: $6000">
+                <input type="text" class="form-control precio-input" id="precioVenta" placeholder="⚠️Ingrese el Precio de venta: $6000">
             </div>
 
         </div>
@@ -109,9 +110,8 @@
                         <th class="Textobohemia-tabla">Cantidad</th>
                         <th class="Textobohemia-tabla">Costo</th>
                         <th class="Textobohemia-tabla">Venta</th>
-                        <th class="Textobohemia-tabla"></th>
-                        <th class="Textobohemia-tabla"></th>
-                        <th class="Textobohemia-tabla ocultar-en-768px"></th>
+                        <th class="Textobohemia-tabla">Editar</th>
+                        <th class="Textobohemia-tabla">EStado</th>
                     </tr>
                 </thead>
                 <tbody id="tbody-producto"></tbody>
@@ -123,53 +123,56 @@
     <!-- ================= MODAL EDITAR ================= -->
     <div class="modal fade" id="modalEditarProducto" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content cobros-dark">
+            <div class="modal-content  cobros-dark">
 
-                <div class="modal-header">
+                <div class="modal-header ">
                     <h5 class="modal-title Textobohemia">Editar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button onclick="cerrarModal()" class="btn-close " data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
-                    <input type="hidden" id="ProductoIDModal">
+                <div class="modal-body ">
 
-                    <div class="mb-3">
+                <div class="row ">
+
+                <input type="hidden" id="ProductoIDModal">
+
+                    <div class="mb-3 col-md-3">
                         <label class="form-label Textobohemia">Código</label>
                         <input type="text" class="form-control" id="codigoModal">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label Textobohemia colorFondo">Descripción</label>
-                        @Html.DropDownList(
-                                                "descripcionModal",
-                                                null,
-                                                new { @class = "form-control select2" }
-                                                )
+                    <div class="col-md-9 ">
+                        <label class="form-label Textobohemia">Descripción</label>
+                        @Html.DropDownList("descripcion", null,
+                        htmlAttributes: new { @class = "form-control" })
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 col-md-4">
                         <label class="form-label Textobohemia">Cantidad</label>
-                        <input type="number" class="form-control" id="cantidadModal">
+                        <input type="number" class="form-control cantidad-input" id="cantidadModal">
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 col-md-4">
                         <label class="form-label Textobohemia">Precio costo</label>
-                        <input type="text" class="form-control" id="precioModal">
+                        <input type="text" class="form-control precio-input" id="precioModal">
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 col-md-4">
                         <label class="form-label Textobohemia">Precio venta</label>
-                        <input type="text" class="form-control" id="precioVentaModal">
+                        <input type="text" class="form-control precio-input" id="precioVentaModal">
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 col-md-9">
                         <label class="form-label Textobohemia">Observación</label>
                         <input type="text" class="form-control" id="observacionModal">
                     </div>
                 </div>
 
+                </div>
+                    
+
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" onclick="cerrarModal()">Cerrar</button>
                     <button class="btn btn-outline-dark" onclick="GuardarProducto()">Guardar</button>
                 </div>
 
