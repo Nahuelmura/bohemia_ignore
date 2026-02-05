@@ -90,7 +90,7 @@
 
                         <div class="mb-3">
                             <label class="form-label Textobohemia">CUIT</label>
-                            <input type="number" class="form-control" id="dnicuitModal">
+                            <input type="text" class="form-control" id="dnicuitModal">
                         </div>
                     </div>
 
@@ -110,22 +110,23 @@
             <input class="form-control form-control-lg mt-2" id="txtBuscarCliente" placeholder="Buscar por nombre">
         </div>
         <div class="table-responsive">
-        <table class="table table-hover table-dark table-sm">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th class="ocultar-en-768px">Localidad</th>
-                    <th>Teléfono</th>
-                    <th class="mostrar-en-768px">Detalle</th>
-                    <th class="ocultar-en-768px">Email</th>
-                    <th class="ocultar-en-768px">DNI / CUIL</th>
-                    <th>Editar</th>
-                    <th class="ocultar-en-768px">Estado</th>
-                </tr>
-            </thead>
-            <tbody id="detalleCliente"></tbody>
-        </table>
+            <table class="table table-hover table-dark table-sm">
+                <thead>
+                    <tr>
+                        <th class="Textobohemia-tabla">Nombre</th>
+                        <th class="Textobohemia-tabla ocultar-en-768px">Localidad</th>
+                        <th class="Textobohemia-tabla">Teléfono</th>
+                        <th class="Textobohemia-tabla mostrar-en-768px">Detalle</th>
+                        <th class="Textobohemia-tabla ocultar-en-768px">Email</th>
+                        <th class="Textobohemia-tabla ocultar-en-768px">DNI / CUIL</th>
+                        <th class="Textobohemia-tabla">Editar</th>
+                        <th class="Textobohemia-tabla ocultar-en-768px">Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="detalleCliente"></tbody>
+            </table>
         </div>
+
 
     @section Scripts {
         <script src="~/js/Clientes.1.0.0.js"></script>

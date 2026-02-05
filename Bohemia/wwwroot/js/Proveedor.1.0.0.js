@@ -104,7 +104,7 @@ function GuardarProveedor() {
             showConfirmButton: false,
           }).then(() => {
             const modal = bootstrap.Modal.getInstance(
-              document.getElementById("modalEditarProveedor")
+              document.getElementById("modalEditarProveedor"),
             );
 
             if (modal) {
@@ -133,56 +133,110 @@ function GuardarProveedor() {
   });
 }
 
-function ListadoProveedores() {
+
+
+$("#txtBuscarCliente").on("keyup", function () {
+  let nombre = $(this).val();
+  ListadoProveedores(nombre);
+});
+
+
+function ListadoProveedores(nombre) {
   $.ajax({
     url: "../../Proveedor/ListadoProveedores",
+    data: { nombre: nombre },
     type: "GET",
     dataType: "json",
     success: function (listadoProveedores) {
-      let contenidoTabla = ``;
+      let proveedores = listadoProveedores.proveedores;
+      let contenidoTabla = "";
 
-      $.each(listadoProveedores.proveedores, function (index, proveedor) {
+      $.each(proveedores, function (index, proveedor) {
+        let claseEliminado = proveedor.activo ? "" : "table-danger";
+
+        let nombre = proveedor.activo
+          ? mostrarValor(proveedor.nombreProveedor)
+          : `<del>${mostrarValor(proveedor.nombreProveedor)}</del>`;
+
+        let localidad = proveedor.activo
+          ? mostrarValor(proveedor.localidad)
+          : `<del>${mostrarValor(proveedor.localidad)}</del>`;
+
+        let telefono = proveedor.activo
+          ? mostrarValor(proveedor.telefono)
+          : `<del>${mostrarValor(proveedor.telefono)}</del>`;
+
+        let email = mostrarValor(proveedor.email);
+        let cuit = mostrarValor(proveedor.cuit);
+
         let botonEstado = `
-                        <button type="button" class="btn ${
-                          proveedor.activo
-                            ? "btn-outline-success"
-                            : "btn-outline-danger"
-                        }" 
-                            onclick="DesactivarProveedor(${
-                              proveedor.proveedorID
-                            }, ${proveedor.activo ? 0 : 1})">
-                            <i class="fa-solid fa-ban ${
-                              proveedor.activo
-                                ? "fa-check-circle"
-                                : "fa-trash-can"
-                            }"></i> 
-                        </button>`;
+          <button class="btn btn-sm ${
+            proveedor.activo ? "btn-outline-success" : "btn-outline-danger"
+          }"
+          onclick="DesactivarProveedor(${proveedor.proveedorID}, ${
+            proveedor.activo ? 0 : 1
+          })">
+            <i class="fa-solid ${
+              proveedor.activo ? "fa-check-circle" : "fa-trash-can"
+            }"></i>
+          </button>`;
 
         contenidoTabla += `
-          <tr>
-            <td>${proveedor.nombreProveedor}</td>
-            <td class="ocultar-en-768px">${proveedor.localidad}</td>
-            <td>${proveedor.telefono}</td>
-            <td class="ocultar-en-768px">${proveedor.email}</td>
-            <td class="ocultar-en-768px"  >${proveedor.cuit}</td>
+          <tr class="${claseEliminado}">
+            <td>${nombre}</td>
+            <td class="ocultar-en-768px">${localidad}</td>
+            <td>${telefono}</td>
+
+            <td class="mostrar-en-768px">
+              <button class="btn btn-sm btn-outline-primary"
+                onclick="toggleDetalleProveedor(${proveedor.proveedorID})">
+                Ver más
+              </button>
+            </td>
+
+            <td class="ocultar-en-768px">${email}</td>
+            <td class="ocultar-en-768px">${cuit}</td>
+
             <td>
               <button class="btn btn-outline-success btn-sm"
                 onclick="AbrirModalEditarProveedor(${proveedor.proveedorID})">
                 <i class="fa-solid fa-file-pen"></i>
               </button>
             </td>
-             <td class="ocultar-en-768px">${botonEstado}</td>
+
+            <td class="ocultar-en-768px">${botonEstado}</td>
+          </tr>
+
+          <tr id="detalle-proveedor-${proveedor.proveedorID}" 
+              class="detalle-responsive d-none">
+            <td colspan="8">
+              <div class="detalle-box">
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>CUIT:</strong> ${cuit}</p>
+              </div>
+            </td>
           </tr>
         `;
       });
 
-      document.getElementById("listadoProveedores").innerHTML = contenidoTabla;
+      $("#listadoProveedores").html(contenidoTabla);
     },
     error: function () {
       alert("Error al cargar el listado de proveedores");
     },
   });
 }
+
+function toggleDetalleProveedor(id) {
+  $("#detalle-proveedor-" + id).toggleClass("d-none");
+}
+
+function mostrarValor(valor) {
+  return valor === null || valor === undefined || valor === "" || valor == 0
+    ? "Sin asignar"
+    : valor;
+}
+
 
 function DesactivarProveedor(proveedorID, nuevoEstado) {
   let accionTexto = nuevoEstado === 0 ? "desactivar" : "activar";
@@ -257,7 +311,7 @@ function AbrirModalEditarProveedor(proveedorID) {
       $("#dnicuitModal").val(proveedor.cuit);
 
       let modal = new bootstrap.Modal(
-        document.getElementById("modalEditarProveedor")
+        document.getElementById("modalEditarProveedor"),
       );
       modal.show();
     },
@@ -273,6 +327,32 @@ function limpiarFormularioProveedor() {
 
   $("#nombre, #localidad, #telefono, #email, #cuit").val("");
   $(
-    "#nombreModal, #localidadModal, #telefonoModal, #emailModal, #dnicuitModal"
+    "#nombreModal, #localidadModal, #telefonoModal, #emailModal, #dnicuitModal",
   ).val("");
 }
+
+
+const inputDni = document.getElementById("cuit");
+
+inputDni.addEventListener("input", () => {
+  let valor = inputDni.value.replace(/\D/g, ""); // solo números
+
+  // máximo 11 dígitos
+  if (valor.length > 11) {
+    valor = valor.slice(0, 11);
+  }
+
+  let resultado = "";
+
+  if (valor.length > 0) {
+    resultado = valor.slice(0, 2);
+  }
+  if (valor.length > 2) {
+    resultado += "-" + valor.slice(2, 10);
+  }
+  if (valor.length > 10) {
+    resultado += "-" + valor.slice(10, 11);
+  }
+
+  inputDni.value = resultado;
+});

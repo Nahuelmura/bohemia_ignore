@@ -118,3 +118,18 @@ public class HomeController : Controller
         return Json(result.Succeeded);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

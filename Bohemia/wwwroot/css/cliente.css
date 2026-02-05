@@ -49,3 +49,40 @@
   background: linear-gradient(135deg, #1f2933, #111827);
   border: 1px solid #374151;
 }
+
+
+
+table.table.table-dark th.Textobohemia-tabla {
+  font-family: Arial, sans-serif !important;
+  font-variant: small-caps !important;
+  font-weight: 600 !important;
+  font-size: 0.90rem !important;
+  letter-spacing: 0.06em !important;
+  color: #ffffff !important;
+  background-color: #3d3fae !important;
+}
+
+
+@media (max-width: 992px) {
+  table.table.table-dark th.Textobohemia-tabla {
+    font-size: 0.78rem !important;
+    padding: 0.55rem !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  table.table.table-dark th.Textobohemia-tabla {
+    font-size: 0.68rem !important;
+    padding: 0.45rem !important;
+    letter-spacing: 0.03em !important;
+  }
+}
+
+/* Mobile chico */
+@media (max-width: 576px) {
+  table.table.table-dark th.Textobohemia-tabla {
+    font-size: 0.62rem !important;
+    padding: 0.35rem !important;
+  }
+}

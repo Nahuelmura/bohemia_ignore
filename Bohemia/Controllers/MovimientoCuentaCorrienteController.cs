@@ -57,10 +57,8 @@ public class MovimientoCuentaCorrienteController : Controller
             .Select(g => new CuentaCorrienteClienteVista
             {
                 ClienteID = g.Key.ClienteID,
-                
                 ClienteNombre = g.Key.Nombre,
-                SaldoActual = g
-                            .OrderByDescending(x => x.MovimientoCuentaCorrienteID)
+                SaldoActual = g.OrderByDescending(x => x.Fecha)
                             .Select(x => x.Saldo)
                             .FirstOrDefault(),
                 Pendiente = g.Where(x => x.TipoMovimiento == TipoMovimiento.Venta)
@@ -68,7 +66,6 @@ public class MovimientoCuentaCorrienteController : Controller
                             - g.Where(x => x.TipoMovimiento == TipoMovimiento.Cobro)
                             .Sum(x => x.Importe),
                 UltimoMovimiento = g.Max(x => x.Fecha)
-
             })
             .ToList();
 
@@ -89,7 +86,7 @@ public class MovimientoCuentaCorrienteController : Controller
             m.TipoMovimiento,
             m.ReferenciaTipo,
             m.ReferenciaID,
-            m.Saldo
+
         })
         .ToList();
 
