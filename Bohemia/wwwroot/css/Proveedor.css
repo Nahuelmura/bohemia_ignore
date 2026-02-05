@@ -141,3 +141,30 @@ thead, tbody tr {
     }
 }
 /* el grueso de la interfaz y estilo esta en cobros.css */
+
+
+
+
+@media (max-width: 992px) {
+    table.table.table-dark th.Textobohemia-tabla {
+        font-size: 0.78rem !important;
+        padding: 0.55rem !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    table.table.table-dark th.Textobohemia-tabla {
+        font-size: 0.68rem !important;
+        padding: 0.45rem !important;
+        letter-spacing: 0.03em !important;
+    }
+}
+
+/* Mobile chico */
+@media (max-width: 576px) {
+    table.table.table-dark th.Textobohemia-tabla {
+        font-size: 0.62rem !important;
+        padding: 0.35rem !important;
+    }
+}

@@ -32,10 +32,11 @@ public class ProveedorController : Controller
                     if (!string.IsNullOrEmpty(nombre))
         {
             proveedores = proveedores.Where(c => c.NombreProveedor.StartsWith(nombre));
-        }
+        } 
 
 
-    var proveedorMostrar = proveedores.Select(p => new ProveedorVista
+    var proveedorMostrar = proveedores.    OrderByDescending(p => p.Activo) // true primero
+    .ThenBy(p => p.NombreProveedor).Select(p => new ProveedorVista
             {
                 ProveedorID = p.ProveedorID,
             
