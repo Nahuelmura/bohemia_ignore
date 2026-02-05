@@ -45,8 +45,8 @@ function cargarTarjetasClientes() {
                                 <div class="balance-row">
                                     <div class="balance-item">
                                         <span class="balance-label">Saldo Actual</span>
-                                        <span class="balance-amount ${c.saldoActual >= 0 ? "positive" : "warning"}">
-                                            $ ${formatearNumero(c.saldoActual)}
+                                        <span class="balance-amount ${c.pendiente >= 0 ? "positive" : "warning"}">
+                                            $ ${formatearNumero(c.pendiente)}
                                         </span>
                                     </div>
 
@@ -95,10 +95,13 @@ function cargarMovimientosCliente(clienteID) {
                         <span class="trans-type ${esVenta ? "type-venta" : "type-cobro"}">
                             ${esVenta ? "Venta" : "Cobro"}
                         </span>
+                        <div class="trans-meta">
+                            <span>${m.referenciaTipo ?? ""}</span>
+                        </div>
                     </div>
 
                     <span class="trans-amount ${esVenta ? "positive" : "negative"}">
-                        $ ${formatearNumero(Math.abs(m.importe))}
+                        ${esVenta ? "+" : "-"} $ ${formatearNumero(Math.abs(m.importe))}
                     </span>
                 </div>`;
             });
@@ -115,7 +118,11 @@ function openDrawer(card) {
 
     const clienteID = card.dataset.clienteid;
     const nombre = card.dataset.nombre;
-    const saldo = card.dataset.saldo;
+    const saldo = Number(card.dataset.saldo);
+
+
+    console.log("Saldo dataset:", card.dataset.saldo);
+console.log("Saldo numérico:", Number(card.dataset.saldo));
 
     clienteActivoID = clienteID;
 
