@@ -301,3 +301,29 @@ function EliminarCliente(clienteID) {
     }
   });
 }
+
+
+const inputDni = document.getElementById("dni");
+
+inputDni.addEventListener("input", () => {
+  let valor = inputDni.value.replace(/\D/g, ""); // solo números
+
+  // máximo 11 dígitos
+  if (valor.length > 11) {
+    valor = valor.slice(0, 11);
+  }
+
+  let resultado = "";
+
+  if (valor.length > 0) {
+    resultado = valor.slice(0, 2);
+  }
+  if (valor.length > 2) {
+    resultado += "-" + valor.slice(2, 10);
+  }
+  if (valor.length > 10) {
+    resultado += "-" + valor.slice(10, 11);
+  }
+
+  inputDni.value = resultado;
+});
