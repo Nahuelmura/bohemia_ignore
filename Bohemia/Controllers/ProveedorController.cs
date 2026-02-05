@@ -25,13 +25,17 @@ public class ProveedorController : Controller
         return View();
     }
 
-        public JsonResult ListadoProveedores()
+        public JsonResult ListadoProveedores(string nombre)
         {
-            var proveedores = _context.Proveedores
-        
-            .ToList();
-    
-            var proveedorMostrar = proveedores.Select(p => new ProveedorVista
+            var proveedores = _context.Proveedores.AsQueryable();
+
+                    if (!string.IsNullOrEmpty(nombre))
+        {
+            proveedores = proveedores.Where(c => c.NombreProveedor.StartsWith(nombre));
+        }
+
+
+    var proveedorMostrar = proveedores.Select(p => new ProveedorVista
             {
                 ProveedorID = p.ProveedorID,
             
