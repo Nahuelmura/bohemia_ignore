@@ -1,0 +1,89 @@
+<h1 class="Textobohemia"  style="text-align: center;">Informe </h1>
+<h6  class="Textobohemia"  style="text-align: center;">En esta sección se mostrarán las ventas realizadas por el usuario logueado.</h6>
+<div id="resumenVentas" style="display: none; font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #007bff;">
+</div>
+
+  <div class="toast align-items-center text-bg-dark border-0" id="myToastOutside" role="alert" aria-live="assertive"
+    aria-atomic="true" data-bs-delay="5000" style="position: fixed; top: 400px; right: 20px; z-index: 1050;">
+    <div class="d-flex">
+   <div class="toast-body">
+Filtra las ventas por Fecha Desde y Fecha Hasta, y obtendrás el total de las ventas y las ganancias al final de la tabla, con el título <mark>Total de la venta</mark> y <mark>Ganancia total venta</mark>.
+</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+        aria-label="Close"></button>
+    </div>
+  </div>
+
+<div class="row mb-3 contenedor-filtro">
+     <div class="col-md-3">
+       
+<div >
+  <span style="display: inline-block; width: 20px; height: 20px; background-color: red; margin-right: 5px;"></span>
+  <span class="Textobohemia">Los numeros rojos indican devolucion </span> <br>
+   <span style="display: inline-block; width: 20px; height: 20px; background-color: green; margin-right: 5px;"></span>
+   <span class="Textobohemia">Los numeros Verdes indican Total seleccionado </span>
+</div>
+    </div> 
+
+
+  <div class="col-md-3">
+    <label class="form-label Textobohemia">Desde</label>
+    <input type="date" id="FechaDesde" onchange="TraerDetalleVentas()" class="form-control"
+     />
+  </div>
+  <div class=" col-md-3">
+    <label class="form-label Textobohemia">Hasta</label>
+    <input type="date" id="FechaHasta" onchange="TraerDetalleVentas()" class="form-control"
+       />
+  </div>
+
+
+ <div class="mb-3 col-md-3">
+    <label for="DescripcionBuscar" class="form-label Textobohemia">Buscar por descripción</label>
+    @Html.DropDownList("DescripcionBuscar", ViewBag.DescripcionBuscar as List<SelectListItem>, new { @class = "form-control select2" })
+</div>
+
+
+<div style="max-height: 400px; overflow-y: auto;">
+  <table class="table table-hover table-fixed" style="table-layout: fixed; width: 100%;">
+    <thead class="Textobohemia" style="position: sticky; top: 0; background-color: white; z-index: 1;">
+      <tr>
+        <th style="width: 10%;">Código</th>
+        <th style="width: 20%;" class="ocultar-en-768px">Descripción Producto</th>
+        <th style="width: 15%;" class="ocultar-en-768px">Costo del Producto</th>
+        <th style="width: 15%;" class="ocultar-en-768px">Precio Venta</th>
+        <th style="width: 10%;">Cantidad Vendida</th>
+        <th style="width: 15%;" class="ocultar-en-768px">Ganancia Neta</th>
+        <th style="width: 15%;">Total</th>
+      </tr>
+    </thead>
+    <tbody id="tbody-informe">
+      <!-- contenido dinámico -->
+    </tbody>
+  </table>
+</div>
+<script>
+  // alerta verde. tostol 
+document.addEventListener("DOMContentLoaded", function () {
+    var delayModal = 2000;
+    var delayOutside = 400;
+  
+    setTimeout(function () {
+      var myToastModal = document.getElementById('myToastModal');
+      if (myToastModal) {
+        new bootstrap.Toast(myToastModal).show();
+      }
+    }, delayModal);
+  
+    setTimeout(function () {
+      var myToastOutside = document.getElementById('myToastOutside');
+      if (myToastOutside) {
+        new bootstrap.Toast(myToastOutside).show();
+      }
+    }, delayOutside);
+  });
+</script>
+
+@section Scripts {
+  <script src="~/js/Informe.1.0.0.js"></script>
+}
