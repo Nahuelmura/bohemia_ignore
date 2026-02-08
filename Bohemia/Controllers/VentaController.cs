@@ -414,6 +414,44 @@ public JsonResult ObtenerClienteID(int id)
     return Json(new { success = true, cliente });
 }
 
+//revertiendo ventas
 
+    public void RevertirVenta(int ventaId)
+    {
+        var venta = _context.Ventas
+            .Include(v => v.DetalleVentas)
+            .FirstOrDefault(v => v.VentaID == ventaId);
 
-}
+        if (venta == null)
+            throw new Exception("Venta no encontrada");
+
+        // Crear venta inversa
+        var ventaReversa = new Venta
+        {
+            Fecha_Venta = DateTime.Now,
+            ClienteID = venta.ClienteID,
+            Total = venta.Total * -1,
+            Forma_pago = venta.Forma_pago,
+            UsuarioID = venta.UsuarioID,
+            DetalleVentas = venta.DetalleVentas.Select(d => new DetalleVenta
+            {
+                ProductoID = d.ProductoID,
+                Cantidad = d.Cantidad * -1,
+                PrecioUnitario = d.PrecioUnitario
+            }).ToList()
+        };
+
+        _context.Ventas.Add(ventaReversa);
+
+        // Devolver stock
+        foreach (var d in venta.DetalleVentas)
+        {
+            var producto = _context.Productos.Find(d.ProductoID);
+            producto.Cantidad += d.Cantidad;
+        }
+
+        _context.SaveChanges();
+    }
+    
+
+    }

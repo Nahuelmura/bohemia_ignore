@@ -140,23 +140,15 @@ return Json(new {
 
 
 
-    public JsonResult GuardarProducto(int productoID, string codigo, Descripcion descripcion, int cantidad, decimal precio, string observacion,decimal precioVenta, DateTime fechaIngreso)
+    public JsonResult GuardarProducto(int productoID, string codigo, Descripcion descripcion, int cantidad, decimal precio, string observacion, decimal precioVenta, DateTime fechaIngreso)
     {
         string resultado = "";
 
-        if (precio  > precioVenta)
+        if (precio > precioVenta)
         {
-            return Json ("El precio de costo no puede ser mayor al precio de venta");
+            return Json("El precio de costo no puede ser mayor al precio de venta");
         }
-        
 
-
-Thread.CurrentThread.CurrentCulture = new CultureInfo("es-AR");
-   string numeroString = "50.66";
-        if(!string.IsNullOrEmpty(numeroString)){
-            numeroString = numeroString.Replace(".", ",");
-        }
-       
         if (!String.IsNullOrEmpty(codigo))
         {
 

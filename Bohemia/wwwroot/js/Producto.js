@@ -1,12 +1,11 @@
 window.onload = ListadoProducto();
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    document.querySelectorAll(".cantidad-input")
-        .forEach(formatearCantidad);
-
-    document.querySelectorAll(".precio-input")
-        .forEach(i => formatearPrecio(i, true)); // true = muestra $
+    // Inicializar todos los inputs por clase
+    document.querySelectorAll(".cantidad-input").forEach(i => formatearCantidad(i));
+    document.querySelectorAll(".precio-input").forEach(i => formatearPrecio(i));
+    
+    // Inicialización específica si es necesario (ya cubierta por las clases arriba)
 });
 
 $(document).ready(function () {
@@ -142,19 +141,8 @@ function DesactivarProducto(productoID, accion) {
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
+// Eliminado bloque redundante de inicialización
 
-    // cantidades
-    formatearCantidad(document.getElementById("cantidad"), true);
-    formatearCantidad(document.getElementById("cantidadModal"), true);
-
-    // precios
-    formatearMoneda(document.getElementById("precio"), true);
-    formatearMoneda(document.getElementById("precioVenta"), true);
-    formatearMoneda(document.getElementById("precioModal"), true);
-    formatearMoneda(document.getElementById("precioVentaModal"), true);
-
-});
 
 
 
@@ -169,42 +157,37 @@ function GuardarProducto() {
 
     // Si el modal está abierto, usar los valores del modal
     if ($("#modalEditarProducto").hasClass("show")) {
-    codigo = $("#codigoModal").val().trim();
-    cantidad = limpiarNumeroSQL($("#cantidadModal").val());
-    descripcion = $("#descripcionModal").val().trim();
-    precio = limpiarNumeroSQL($("#precioModal").val());
-    precioVenta = limpiarNumeroSQL($("#precioVentaModal").val());
-    observacion = $("#observacionModal").val().trim();
+        codigo = $("#codigoModal").val().trim();
+        cantidad = limpiarNumeroSQL($("#cantidadModal").val(), true); // true = retorna número
+        descripcion = $("#descripcion").val().trim();
+        precio = limpiarNumeroSQL($("#precioModal").val(), true);
+        precioVenta = limpiarNumeroSQL($("#precioVentaModal").val(), true);
+        observacion = $("#observacionModal").val().trim();
     } else {
         // Si no, usar los valores del formulario principal
         codigo = $("#codigo").val().trim();
-        cantidad = limpiarNumeroSQL($("#cantidad").val());
+        cantidad = limpiarNumeroSQL($("#cantidad").val(), true);
         descripcion = $("#Descripcion").val().trim();
-        precio = limpiarNumeroSQL($("#precio").val());
-        precioVenta = limpiarNumeroSQL($("#precioVenta").val());
+        precio = limpiarNumeroSQL($("#precio").val(), true);
+        precioVenta = limpiarNumeroSQL($("#precioVenta").val(), true);
         observacion = $("#observacion").val().trim();
     }
 
-    // Validaciones antes de enviar la solicitud
+    // Validaciones antes de enviar la solicitud (usando números reales)
     if (!codigo) {
         Swal.fire({
             icon: "warning",
             title: "Código requerido",
-            text: "Debe ingresar un código.",
-            footer: '<a href="#">¿Por qué necesito un código?</a>'
+            text: "Debe ingresar un código."
         });
         return;
     }
 
-  
-
-
-    if (!descripcion) {
+    if (!descripcion || descripcion === "0") {
         Swal.fire({
             icon: "warning",
             title: "Descripción requerida",
-            text: "Debe ingresar una descripción.",
-            footer: '<a href="#">¿Por qué la descripción es obligatoria?</a>'
+            text: "Debe ingresar una descripción."
         });
         return;
     }
@@ -212,19 +195,48 @@ function GuardarProducto() {
     if (isNaN(precio) || precio <= 0) {
         Swal.fire({
             icon: "warning",
-            title: "Precio inválido",
-            text: "El precio debe ser un número mayor a 0.",
-            footer: '<a href="#">¿Cómo definir un precio válido?</a>'
+            title: "Precio costo inválido",
+            text: "El precio de costo debe ser mayor a 0."
         });
         return;
     }
+
+    if (isNaN(precioVenta) || precioVenta <= 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "Precio venta inválido",
+            text: "El precio de venta debe ser mayor a 0."
+        });
+        return;
+    }
+
+    if (precio > precioVenta) {
+        Swal.fire({
+            icon: "warning",
+            title: "Precio inválido",
+            text: "El precio de costo no puede ser mayor al de venta."
+        });
+        return;
+    }
+
+    // Preparar datos para el servidor (como strings en formato AR para el binding)
+    let datosParaEnviar = {
+        productoID: productoID,
+        codigo: codigo,
+        cantidad: Math.floor(cantidad),
+        precio: precio.toString().replace(".", ","),
+        descripcion: descripcion,
+        observacion: observacion,
+        precioVenta: precioVenta.toString().replace(".", ",")
+    };
 
     $.ajax({
         url: '../../Productos/GuardarProducto',
         type: 'POST',
         dataType: 'json',
-        data: { productoID: productoID, codigo: codigo, cantidad: cantidad, precio: precio, descripcion: descripcion, observacion: observacion, precioVenta : precioVenta },
+        data: datosParaEnviar,
         success: function (resultado) {
+
             Swal.fire({
                 icon: resultado.includes("exitosamente") ? "success" : "error",
                 title: resultado.includes("exitosamente") ? "¡Éxito!" : "Oops...",
@@ -375,7 +387,10 @@ function formatearCantidad(input) {
     if (!input) return;
 
     input.addEventListener("input", e => {
+        let cursorPosition = e.target.selectionStart;
+        let oldLength = e.target.value.length;
 
+        // Solo números
         let valor = e.target.value.replace(/\D/g, "");
 
         if (!valor) {
@@ -383,80 +398,175 @@ function formatearCantidad(input) {
             return;
         }
 
-        e.target.value = Number(valor).toLocaleString("es-AR");
+        // Formatear con separador de miles
+        let formateado = Number(valor).toLocaleString("es-AR");
+        e.target.value = formateado;
+
+        // Ajustar cursor
+        let newLength = e.target.value.length;
+        cursorPosition = cursorPosition + (newLength - oldLength);
+        e.target.setSelectionRange(cursorPosition, cursorPosition);
+    });
+
+    // Asegurar que al perder el foco esté limpio si está vacío
+    input.addEventListener("blur", e => {
+        if (e.target.value === "0") e.target.value = "";
     });
 }
 
 
-function formatearMoneda(input) {
-    if (!input) return;
+// formatearMoneda eliminado por redundancia con formatearPrecio
 
-    input.addEventListener("input", () => {
-
-        let raw = input.value.replace(/[^\d]/g, "");
-
-        if (!raw) {
-            input.value = "";
-            return;
-        }
-
-        const numero = raw / 100;
-
-        input.value = numero.toLocaleString("es-AR", {
-            style: "currency",
-            currency: "ARS",
-            minimumFractionDigits: 2
-        });
-    });
-}
 
 
 /* ================================
    PRECIO (moneda)
 ================================ */
+// function formatearPrecio(input) {
+//     if (!input) return;
+
+//     input.addEventListener("input", e => {
+//         let cursorPosition = e.target.selectionStart;
+//         let oldLength = e.target.value.length;
+
+//         // Solo números (centavos)
+//         let numeros = e.target.value.replace(/\D/g, "");
+
+//         if (!numeros || numeros === "0") {
+//             e.target.value = "$ 0,00";
+//             e.target.setSelectionRange(5, 5);
+//             return;
+//         }
+
+//         // Siempre 2 decimales, rellenar con ceros a la izquierda si es necesario
+//         numeros = numeros.replace(/^0+/, ""); // quitar ceros a la izquierda
+//         if (numeros.length < 3) numeros = numeros.padStart(3, "0");
+
+//         let entero = numeros.slice(0, -2);
+//         let decimal = numeros.slice(-2);
+
+//         // Formatear la parte entera con separadores de miles
+//         entero = Number(entero).toLocaleString("es-AR");
+
+//         let resultado = `$ ${entero},${decimal}`;
+//         e.target.value = resultado;
+
+//         // Ajustar cursor para que no salte al final si se edita en el medio
+//         let newLength = e.target.value.length;
+//         cursorPosition = cursorPosition + (newLength - oldLength);
+//         e.target.setSelectionRange(cursorPosition, cursorPosition);
+//     });
+
+//     input.addEventListener("focus", e => {
+//         if (!e.target.value || e.target.value === "$ 0,00") {
+//             e.target.value = "$ 0,00";
+//             // Posicionar el cursor después del "$ 0,"
+//             setTimeout(() => e.target.setSelectionRange(5, 5), 0);
+//         }
+//     });
+
+//     input.addEventListener("click", e => {
+//         // Si el valor es el inicial, poner el cursor al final
+//         if (e.target.value === "$ 0,00") {
+//             e.target.setSelectionRange(5, 5);
+//         }
+//     });
+// }
+
+
+
+
+
 function formatearPrecio(input) {
+  if (!input) return;
 
-    if (!input) return;
+  let tieneComa = false;
 
-    /* ===== al entrar ===== */
-    input.addEventListener("focus", () => {
-        if (!input.value) {
-            input.value = "$ 0,00";
-        }
+  input.addEventListener("keydown", (e) => {
+    const key = e.key;
+
+    // Navegación y borrado
+    if (
+      ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)
+    ) {
+      return;
+    }
+
+    // Coma → activar centavos
+    if (key === "," || key === ".") {
+      if (tieneComa) {
+        e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      tieneComa = true;
+      input.value += ",";
+      return;
+    }
+
+    // Solo números
+    if (!/^[0-9]$/.test(key)) {
+      e.preventDefault();
+      return;
+    }
+
+    // Limitar centavos a 2
+    if (tieneComa) {
+      const dec = input.value.split(",")[1] || "";
+      if (dec.length >= 2) {
+        e.preventDefault();
+      }
+    }
+  });
+
+  input.addEventListener("input", () => {
+    tieneComa = input.value.includes(",");
+  });
+
+  input.addEventListener("blur", () => {
+    let valor = input.value.replace("$", "").trim();
+    if (!valor) {
+      input.value = "$ 0,00";
+      return;
+    }
+
+    let [entero, decimal = ""] = valor.split(",");
+
+    entero = entero.replace(/\D/g, "");
+    decimal = decimal.replace(/\D/g, "").padEnd(2, "0").slice(0, 2);
+
+    let numero = parseFloat(entero + "." + decimal);
+
+    input.value = numero.toLocaleString("es-AR", {
+      style: "currency",
+      currency: "ARS",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
+  });
 
-
-    /* ===== mientras escribe ===== */
-    input.addEventListener("input", e => {
-
-        // solo números (centavos)
-        let numeros = e.target.value.replace(/\D/g, "");
-
-        if (!numeros) numeros = "0";
-
-        // siempre 2 decimales
-        numeros = numeros.padStart(3, "0");
-
-        let entero = numeros.slice(0, -2);
-        let decimal = numeros.slice(-2);
-
-        entero = Number(entero).toLocaleString("es-AR");
-
-        e.target.value = `$ ${entero},${decimal}`;
-    });
+  input.addEventListener("focus", () => {
+    if (input.value === "$ 0,00") {
+      input.value = "";
+      tieneComa = false;
+    }
+  });
 }
 
-
-function limpiarNumeroSQL(valor) {
+function limpiarNumeroSQL(valor, retornarNumero = true) {
     if (!valor) return 0;
 
+    // Eliminar $, espacios y puntos (separador de miles en AR)
     const limpio = valor
         .replace(/\$/g, "")
         .replace(/\s/g, "")
         .replace(/\./g, "")
-        .replace(",", ".");
+        .replace(",", "."); // Convertir coma decimal en punto para JS
 
-    return Number(limpio) || 0;
+    if (retornarNumero) {
+        return parseFloat(limpio) || 0;
+    }
+    return limpio; // Retorna string con punto
 }
 
 

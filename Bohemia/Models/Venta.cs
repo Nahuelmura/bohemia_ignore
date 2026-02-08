@@ -12,7 +12,7 @@ public class Venta
    [Key]
    public int VentaID { get; set; }
 
-    public int? ClienteID { get; set; }
+   public int? ClienteID { get; set; }
    //    public int PersonaID { get; set; }
    public DateTime Fecha_Venta { get; set; }
    public decimal Total { get; set; }
@@ -22,7 +22,7 @@ public class Venta
    public string? UsuarioID { get; set; }
    public ICollection<DetalleVenta> DetalleVentas { get; set; }
 
-       public virtual Cliente Cliente { get; set; }
+   public virtual Cliente Cliente { get; set; }
    //  public ICollection<Cliente> Clientes { get; set; }
 
 }
@@ -70,7 +70,7 @@ public class VentaVistaInforme
 
    public Forma_pago Forma_pago { get; set; }
 
-   public  string? Forma_pagostring { get; set; }
+   public string? Forma_pagostring { get; set; }
 
    public List<VistadetalleVenta> ListadoDetalle { get; set; }
 
