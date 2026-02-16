@@ -34,8 +34,6 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (listadoProducto) {
                 let productos = listadoProducto.productos; // Ahora accedemos correctamente a la lista
-
-                productos.sort((a, b) => parseInt(a.codigo) - parseInt(b.codigo));
             
                 $("#totalProductos").text("Total de productos registrados: " + productos.length);
             
@@ -59,7 +57,7 @@ $(document).ready(function () {
                     observacion = producto.eliminado ? `<del>${observacion}</del>` : observacion;
             
                     let botonEstado = `
-                        <button type="button" class="btn ${producto.eliminado ? 'btn-outline-danger'  : 'btn-outline-success'}" 
+                        <button type="button" class="btn btn-sm me-1 ${producto.eliminado ? 'btn-outline-danger'  : 'btn-outline-success'}" 
                             onclick="DesactivarProducto(${producto.productoID}, ${producto.eliminado ? 0 : 1})">
                             <i class="fa-solid fa-ban ${producto.eliminado ? 'fa-trash-can' : 'fa-check-circle'}"></i> 
                         </button>`;
@@ -68,25 +66,46 @@ $(document).ready(function () {
                     contenidoTabla += `
                         <tr class="${claseEliminado}">
                             <td>${producto.codigo}</td>
-                            <td class="ocultar-en-768px">${descripcion}</td>
-                            <td class="ocultar-en-768px">${observacion}</td>
-                            <td>${cantidad}</td>
-                            <td> $ ${precio}</td>
-                               <td> $ ${precioVenta}</td>
-                            <td>
-                                <button type="button" class="btn btn-outline-success me-2" onclick="AbrirModalEditar(${producto.productoID})">
-                                    <i class="fa-solid fa-file-pen"></i>
-                                </button>
+
+                            <td class="ocultar-en-768px td-truncado" title="${descripcion}">
+                                ${descripcion}
                             </td>
-                            <td class="ocultar-en-768px">${botonEstado}</td>
+
+                            <td class="ocultar-en-768px td-truncado" title="${observacion}">
+                                ${observacion}
+                            </td>
+
+                            <td>${cantidad}</td>
+
+                            <td>$ ${precio}</td>
+
+                            <td>$ ${precioVenta}</td>
+
+                            <td class="Textobohemia-tabla text-center align-middle text-nowrap">
+
+    <button type="button"
+        class="btn btn-outline-success btn-sm me-1"
+        onclick="AbrirModalEditar(${producto.productoID})">
+        <i class="fa-solid fa-file-pen"></i>
+    </button>
+
+    ${botonEstado}
+
+</td>
                         </tr>`;
+
                 });
             
                 document.getElementById("tbody-producto").innerHTML = contenidoTabla;
             },
             error: function (xhr, status) {
-                alert('Disculpe, existió un problema al cargar los productos.');
-            }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Disculpe, existió un problema al cargar los productos.',
+                    confirmButtonText: 'Aceptar'
+                });
+            }   
         });
     }
 
@@ -141,12 +160,6 @@ function DesactivarProducto(productoID, accion) {
 
 
 
-// Eliminado bloque redundante de inicialización
-
-
-
-
-
 
 
 function GuardarProducto() {
@@ -158,7 +171,7 @@ function GuardarProducto() {
     // Si el modal está abierto, usar los valores del modal
     if ($("#modalEditarProducto").hasClass("show")) {
         codigo = $("#codigoModal").val().trim();
-        cantidad = limpiarNumeroSQL($("#cantidadModal").val(), true); // true = retorna número
+        cantidad = limpiarNumeroSQL($("#cantidadModal").val(), true); 
         descripcion = $("#descripcion").val().trim();
         precio = limpiarNumeroSQL($("#precioModal").val(), true);
         precioVenta = limpiarNumeroSQL($("#precioVentaModal").val(), true);
@@ -283,19 +296,21 @@ function AbrirModalEditar(productoID) {
             document.getElementById("ProductoID").value = Producto.productoID;
             document.getElementById("codigoModal").value = Producto.codigo;
             document.getElementById("descripcion").value = Producto.descripcion;
-            document.getElementById("cantidadModal").value = Producto.cantidad;
-            document.getElementById("precioModal").value = Producto.precioCosto;
-            document.getElementById("precioVentaModal").value = Producto.precioVenta;
-            document.getElementById("observacionModal").value = Producto.observacion;
-           
-
-
-
-            
+            document.getElementById("cantidadModal").value =formatearCantidadAR(Producto.cantidad);
+            document.getElementById("precioModal").value =formatearPrecioAR(Producto.precioCosto);
+            document.getElementById("precioVentaModal").value =formatearPrecioAR(Producto.precioVenta);
+            document.getElementById("observacionModal").value =Producto.observacion || '';
+        
             $('#modalEditarProducto').modal('show');
         },
         error: function (xhr, status) {
-            alert('Disculpe, existió un problema');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Disculpe, existió un problema al abrir el modal de edición.',
+            confirmButtonText: 'Aceptar'
+        });
+
         }
     });
 }
@@ -415,67 +430,6 @@ function formatearCantidad(input) {
 }
 
 
-// formatearMoneda eliminado por redundancia con formatearPrecio
-
-
-
-/* ================================
-   PRECIO (moneda)
-================================ */
-// function formatearPrecio(input) {
-//     if (!input) return;
-
-//     input.addEventListener("input", e => {
-//         let cursorPosition = e.target.selectionStart;
-//         let oldLength = e.target.value.length;
-
-//         // Solo números (centavos)
-//         let numeros = e.target.value.replace(/\D/g, "");
-
-//         if (!numeros || numeros === "0") {
-//             e.target.value = "$ 0,00";
-//             e.target.setSelectionRange(5, 5);
-//             return;
-//         }
-
-//         // Siempre 2 decimales, rellenar con ceros a la izquierda si es necesario
-//         numeros = numeros.replace(/^0+/, ""); // quitar ceros a la izquierda
-//         if (numeros.length < 3) numeros = numeros.padStart(3, "0");
-
-//         let entero = numeros.slice(0, -2);
-//         let decimal = numeros.slice(-2);
-
-//         // Formatear la parte entera con separadores de miles
-//         entero = Number(entero).toLocaleString("es-AR");
-
-//         let resultado = `$ ${entero},${decimal}`;
-//         e.target.value = resultado;
-
-//         // Ajustar cursor para que no salte al final si se edita en el medio
-//         let newLength = e.target.value.length;
-//         cursorPosition = cursorPosition + (newLength - oldLength);
-//         e.target.setSelectionRange(cursorPosition, cursorPosition);
-//     });
-
-//     input.addEventListener("focus", e => {
-//         if (!e.target.value || e.target.value === "$ 0,00") {
-//             e.target.value = "$ 0,00";
-//             // Posicionar el cursor después del "$ 0,"
-//             setTimeout(() => e.target.setSelectionRange(5, 5), 0);
-//         }
-//     });
-
-//     input.addEventListener("click", e => {
-//         // Si el valor es el inicial, poner el cursor al final
-//         if (e.target.value === "$ 0,00") {
-//             e.target.setSelectionRange(5, 5);
-//         }
-//     });
-// }
-
-
-
-
 
 function formatearPrecio(input) {
   if (!input) return;
@@ -569,58 +523,16 @@ function limpiarNumeroSQL(valor, retornarNumero = true) {
     return limpio; // Retorna string con punto
 }
 
+function formatearCantidadAR(valor) {
+    if (valor == null) return '';
+    return Number(valor).toLocaleString('es-AR');
+}
 
-
-
-
-
-
-// Función para eliminar un producto permanentemente
-
-// function EliminarProducto(productoID) {
-//     Swal.fire({
-//         title: "¿Estás seguro?",
-//         text: "Esta acción eliminará el producto permanentemente.",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#d33",
-//         cancelButtonColor: "#3085d6",
-//         confirmButtonText: "Sí, eliminar",
-//         cancelButtonText: "Cancelar"
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             $.ajax({
-//                 url: '../../Productos/EliminarProducto',
-//                 type: 'POST',
-//                 data: { productoID: productoID },
-//                 dataType: 'json',
-//                 success: function (respuesta) {
-//                     if (respuesta.success) {
-//                         Swal.fire({
-//                             title: "¡Eliminado!",
-//                             text: "El producto ha sido eliminado correctamente.",
-//                             icon: "success",
-//                             timer: 2000,
-//                             showConfirmButton: false
-//                         });
-
-//                         ListadoProducto(); // Recargar la lista después de eliminar
-//                     } else {
-//                         Swal.fire({
-//                             title: "Error",
-//                             text: "No se pudo eliminar el producto.",
-//                             icon: "error"
-//                         });
-//                     }
-//                 },
-//                 error: function () {
-//                     Swal.fire({
-//                         title: "Error",
-//                         text: "Ocurrió un problema al eliminar el producto.",
-//                         icon: "error"
-//                     });
-//                 }
-//             });
-//         }
-//     });
-// }
+function formatearPrecioAR(valor) {
+    if (valor == null) return '';
+    return Number(valor).toLocaleString('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 2
+    });
+}

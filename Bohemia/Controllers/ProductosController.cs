@@ -72,40 +72,33 @@ public JsonResult ListadoProducto(int productoID, string codigo, string observac
 {
     var productos = _context.Productos.AsQueryable();
 
+if (productoID > 0)
+    productos = productos.Where(p => p.ProductoID == productoID);
 
-        var culturaAR = new CultureInfo("es-AR");
+if (!string.IsNullOrEmpty(codigo))
+    productos = productos.Where(p => p.Codigo.StartsWith(codigo));
 
-        if (productoID > 0)
+if (!string.IsNullOrEmpty(observacion))
+    productos = productos.Where(p => p.Observacion.StartsWith(observacion));
+
+
+// ===== TOTALES (SIN ORDER)
+int totalProductosRegistrados = productos.Count();
+int totalCantidadProductos = productos.Sum(p => p.Cantidad);
+decimal totalPrecioCosto = productos.Sum(p => p.PrecioCosto * p.Cantidad);
+
+
+// ===== ORDEN SOLO PARA MOSTRAR
+productos = productos
+    .OrderBy(p => p.Eliminado)
+    .ThenBy(p => p.Codigo);
+
+
+var culturaAR = new CultureInfo("es-AR");
+
+var productoMostrar = productos
+    .Select(p => new ProductoVista
     {
-        productos = productos.Where(p => p.ProductoID == productoID);
-    }
-
-    if (!string.IsNullOrEmpty(codigo))
-    {
-        productos = productos.Where(p => p.Codigo.StartsWith(codigo));
-    }
-
-
-        if (!string.IsNullOrEmpty(observacion))
-    {
-        productos = productos.Where(p => p.Observacion.StartsWith(observacion));
-    }
-
-
-
-
-    
-    int totalProductosRegistrados = productos.Count();
-
-    int totalCantidadProductos = productos.Sum(p => p.Cantidad);
-
-    decimal totalPrecioCosto = productos.Sum(p => p.PrecioCosto  * p.Cantidad);
-
-    
-    var productoMostrar = productos.Select(p => new ProductoVista
-    
-    {
-        
         ProductoID = p.ProductoID,
         Codigo = p.Codigo,
         Descripcion = p.Descripcion,
@@ -117,15 +110,15 @@ public JsonResult ListadoProducto(int productoID, string codigo, string observac
         CantidadProducto = totalProductosRegistrados,
         Eliminado = p.Eliminado,
 
-        // 👇 FORMATO CORRECTO
         PrecioCostoFormato = p.PrecioCosto.ToString("N2", culturaAR),
         PrecioVentaFormato = p.PrecioVenta.ToString("N2", culturaAR),
-    }).ToList();
+    })
+    .ToList();
 
 return Json(new { 
     productos = productoMostrar, 
     totalPrecioCosto, 
-    totalCantidadProductos // Agregamos la cantidad total de productos 
+    totalCantidadProductos
 });
 }
 

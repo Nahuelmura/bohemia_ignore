@@ -40,9 +40,6 @@
     
 }
 
-
-
-
 .Posicion {
     flex: 1 1 calc(50% - 10px); /* Dos columnas en pantallas grandes */
 }
@@ -55,30 +52,9 @@
 
 /* background-image: url('/lib/img/Fondoproducto.jpg'); */
 
-.inputbusqueda
-{
-    width: 50em;
-    display: block;
-    margin: 0 auto;
-
-}
-
-#tbody-producto {
-    display: block;
-    max-height: 400px; /* Ajusta este valor según el tamaño que desees */
-    overflow-y: auto;  /* Habilita el scroll vertical */
-    width: 100%;       /* Asegura que el tbody ocupe el 100% del ancho de la tabla */
-}
-
-table {
+.inputbusqueda {
+    max-width: 500px;
     width: 100%;
-    border-collapse: collapse;
-}
-
-thead, tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
 }
 
 
@@ -103,16 +79,8 @@ thead, tbody tr {
     background: #aca9a9; /* Un gris más claro cuando el usuario pasa el mouse */
 }
 
-
-/* @media (max-width: 768px) {
-    .inputbusqueda
-    {
-        width:
-        1%;
-    }
-} */
 .table th, .table td {
-    padding: 10px;
+    padding: 10px 3px;
     text-align: center;
     max-width: 150px;
     word-wrap: break-word; /* Permite dividir el texto en varias líneas */
@@ -184,4 +152,46 @@ thead, tbody tr {
 
 .form-control{
     background-color: #505088 !important;
+}
+/* TABLA */
+.table-productos{
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* tamaño fuente responsive */
+.table {
+    font-size: 0.95rem;
+}
+
+@media (max-width: 992px){
+    .table{ font-size:0.85rem; }
+}
+
+@media (max-width: 768px){
+    .table{ font-size:0.75rem; }
+}
+
+@media (max-width: 480px){
+    .table{ font-size:0.65rem; }
+}
+
+/* padding compacto */
+.table td,
+.table th{
+    padding: 4px 6px;
+    text-align:center;
+}
+
+/* texto largo */
+.td-truncado{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+/* botones chicos */
+.btn-accion{
+    padding:2px 8px;
+    font-size:12px;
 }

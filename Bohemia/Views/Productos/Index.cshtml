@@ -29,6 +29,7 @@
         <input type="hidden" id="ProductoID" value="0">
 
         <!-- ================= FORMULARIO ================= -->
+        
         <div class="row mb-4">
 
             <div class="col-md-4">
@@ -68,11 +69,18 @@
                 <label class="form-label Textobohemia">Precio de venta</label>
                 <input type="text" class="form-control precio-input" id="precioVenta" placeholder="⚠️Ingrese el Precio de venta: $6000">
             </div>
+            
+            <div class="col-12 d-flex justify-content-center mt-3">
+                <button class="btn btn-outline-dark px-5" onclick="GuardarProducto()">
+                    Guardar Producto
+                </button>
+            </div>
 
         </div>
 
         <!-- ================= BUSQUEDA + GUARDAR ================= -->
-        <div class="row mb-4 align-items-end">
+        <div class="filtro-clientes-cobro mb-4">
+        <div class="row mb-4 align-items-end justify-content-center">
 
             <div class="col-md-4">
                 <label class="form-label Textobohemia">Buscar por código</label>
@@ -84,12 +92,7 @@
                 <input class="form-control" id="txtBuscarDescripcion" placeholder="Busqueda por observacion">
             </div>
 
-            <div class="col-md-4 mt-3">
-                <button class="btn btn-outline-dark w-100" onclick="GuardarProducto()">
-                    Guardar Producto
-                </button>
-            </div>
-
+        </div>
         </div>
 
         <!-- ================= METRICAS ================= -->
@@ -100,23 +103,32 @@
         </div>
 
         <!-- ================= TABLA ================= -->
-        <div class="table-responsive mt-3">
-            <table class="table table-hover table-dark table-sm">
-                <thead>
-                    <tr>
-                        <th class="Textobohemia-tabla">Código</th>
-                        <th class="Textobohemia-tabla ocultar-en-768px">Descripción</th>
-                        <th class="Textobohemia-tabla ocultar-en-768px">Observación</th>
-                        <th class="Textobohemia-tabla">Cantidad</th>
-                        <th class="Textobohemia-tabla">Costo</th>
-                        <th class="Textobohemia-tabla">Venta</th>
-                        <th class="Textobohemia-tabla">Editar</th>
-                        <th class="Textobohemia-tabla">EStado</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-producto"></tbody>
-            </table>
-        </div>
+        <div class="table-responsive">
+    <table class="table table-hover table-dark table-sm table-productos">
+        <thead>
+            <tr>
+                <th class="Textobohemia-tabla" style="width:8%; text-align:center;">Código</th>
+
+                <th class="Textobohemia-tabla ocultar-en-768px" style="width:25%; text-align:center;">
+                    Descripción
+                </th>
+
+                <th class="Textobohemia-tabla ocultar-en-768px" style="width:20%; text-align:center;">
+                    Observación
+                </th>
+
+                <th class="Textobohemia-tabla" style="width:12%; text-align:center;">Cantidad</th>
+
+                <th class="Textobohemia-tabla" style="width:12%; text-align:center;">Costo</th>
+
+                <th class="Textobohemia-tabla" style="width:12%; text-align:center;">Venta</th>
+
+                <th class="Textobohemia-tabla" style="width:12%; text-align:center;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-producto"></tbody>
+    </table>
+</div>
 
     </div>
 
@@ -149,7 +161,7 @@
 
                     <div class="mb-3 col-md-4">
                         <label class="form-label Textobohemia">Cantidad</label>
-                        <input type="number" class="form-control cantidad-input" id="cantidadModal">
+                        <input type="text" class="form-control cantidad-input" id="cantidadModal">
                     </div>
 
                     <div class="mb-3 col-md-4">
