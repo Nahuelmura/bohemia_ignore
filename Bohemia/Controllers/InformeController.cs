@@ -48,51 +48,36 @@ public class InformeController : Controller
         return View();
     }
 
-
-
-
     public JsonResult TraerDetalleVentas(string? DescripcionBuscar, DateTime? fechaDesde, DateTime? fechaHasta)
     {
-        List<VentaVistaInforme> detalleVentasMostrar = new List<VentaVistaInforme>();
-        
-
-
-        decimal totalVentasFecha = 0; // Variable para almacenar el total de ventas por fecha
-        decimal gananciaTotalFecha = 0;
-        var detalleventas = _context.DetalleVentas
-            .Include(d => d.Ventas)
-            .Include(d => d.Productos)
-            .ToList();
-
         CultureInfo culturaArgentina = new CultureInfo("es-AR");
         Thread.CurrentThread.CurrentCulture = culturaArgentina;
         Thread.CurrentThread.CurrentUICulture = culturaArgentina;
+
+        var consulta = _context.DetalleVentas
+            .Include(d => d.Ventas)
+            .Include(d => d.Productos)
+            .AsQueryable();
 
         if (!string.IsNullOrEmpty(DescripcionBuscar) && DescripcionBuscar != "0")
         {
             if (Enum.TryParse(DescripcionBuscar, out Descripcion descripcionEnum))
             {
-                detalleventas = detalleventas
-                            .Where(d => d.Productos.Descripcion == descripcionEnum)
-                            .ToList();
+                consulta = consulta.Where(d => d.Productos.Descripcion == descripcionEnum);
             }
-
         }
 
         if (fechaDesde.HasValue && fechaHasta.HasValue)
         {
-            DateTime desde = fechaDesde.Value.Date; // Establece la hora en 00:00:00
-            DateTime hasta = fechaHasta.Value.Date.AddDays(1).AddTicks(-1); // Fin del día 23:59:59
+            DateTime desde = fechaDesde.Value.Date;
+            DateTime hasta = fechaHasta.Value.Date.AddDays(1).AddTicks(-1);
 
-            detalleventas = detalleventas
-                .Where(d => d.Ventas.Fecha_Venta >= desde && d.Ventas.Fecha_Venta <= hasta)
-                .ToList();
-
-            totalVentasFecha = detalleventas.Sum(d => d.PrecioUnitario );
-gananciaTotalFecha = detalleventas.Sum(d => d.PrecioUnitario - (d.Productos.PrecioCosto * d.Cantidad));
+            consulta = consulta.Where(d => d.Ventas.Fecha_Venta >= desde && d.Ventas.Fecha_Venta <= hasta);
         }
-        
 
+        var detalleventas = consulta.ToList();
+
+        List<VentaVistaInforme> detalleVentasMostrar = new List<VentaVistaInforme>();
 
         foreach (var detalle in detalleventas)
         {
@@ -100,9 +85,15 @@ gananciaTotalFecha = detalleventas.Sum(d => d.PrecioUnitario - (d.Productos.Prec
 
             if (ventaMostrar == null)
             {
+                bool esReversa = detalle.Ventas.VentaOriginalID != null;
+
+                bool estaAnulada = _context.Ventas
+                    .Any(v => v.VentaOriginalID == detalle.VentaID);
+
                 ventaMostrar = new VentaVistaInforme
                 {
                     VentaID = detalle.VentaID,
+                    VentaOriginalID = detalle.Ventas.VentaOriginalID,
                     UsuarioID = detalle.UsuarioID,
                     EmailUsuario = detalle.UsuarioID,
                     Observacion = detalle.Productos.Observacion,
@@ -110,25 +101,23 @@ gananciaTotalFecha = detalleventas.Sum(d => d.PrecioUnitario - (d.Productos.Prec
                     Fecha_Venta = detalle.Ventas.Fecha_Venta.Date,
                     Fecha_Ventas = detalle.Ventas.Fecha_Venta.ToString("dd/MM/yyyy"),
                     Forma_pagostring = detalle.Ventas.Forma_pago.ToString(),
-                 
-                    Total = 0, // Inicializar total en 0 total de la venta dia 
+
+                    EsReversa = esReversa,
+                    EsAnulada = estaAnulada,
+
+                    Total = 0,
                     GananciaTotal = 0,
                     ListadoDetalle = new List<VistadetalleVenta>()
                 };
 
                 detalleVentasMostrar.Add(ventaMostrar);
-              
             }
-            // Calcular el total de la venta
-         var calculoTotal = detalle.PrecioUnitario;
 
-            // Calcular la ganancia (precio de venta - precio de costo)
-            var gananciaPorProducto = detalle.PrecioUnitario - detalle.Productos.PrecioCosto * detalle.Cantidad;  // ver con juan
-
+            var calculoTotal = detalle.PrecioUnitario;
+            var gananciaPorProducto = detalle.PrecioUnitario - (detalle.Productos.PrecioCosto * detalle.Cantidad);
 
             ventaMostrar.ListadoDetalle.Add(new VistadetalleVenta
             {
-
                 DetalleVentaID = detalle.DetalleVentaID,
                 Cantidad = detalle.Cantidad,
                 PrecioUnitario = detalle.PrecioUnitario,
@@ -138,46 +127,28 @@ gananciaTotalFecha = detalleventas.Sum(d => d.PrecioUnitario - (d.Productos.Prec
                 PrecioCostoProducto = detalle.Productos?.PrecioCosto ?? 0,
                 PrecioVentaProducto = detalle.Productos.PrecioVenta,
                 TotalVenta = calculoTotal,
-                GananciaProducto = gananciaPorProducto, // Asigna la ganancia de cada producto
-                // UsuarioID = detalle.UsuarioID,
-                // EmailUsuario = detalle.UsuarioID,
-
-
-
+                GananciaProducto = gananciaPorProducto
             });
 
-
-
-            // Sumar al total de la venta esto es el resultado que da en "total de la venta"
             ventaMostrar.Total += calculoTotal;
-
-            // Sumar la ganancia total
             ventaMostrar.GananciaTotal += gananciaPorProducto;
-
-
-            //Suma del total feneral del dia 
-            // totalVentasFecha += calculoTotal;
-            //  gananciaTotalFecha += gananciaPorProducto;
         }
 
         detalleVentasMostrar = detalleVentasMostrar
-              .OrderByDescending(v => v.Fecha_Venta)
-              .ToList();
+      .OrderByDescending(v => v.VentaOriginalID ?? v.VentaID) // agrupa
+      .ThenBy(v => v.EsReversa) // primero venta original, después reversa
+      .ToList();
 
+        decimal totalVentasFecha = detalleVentasMostrar.Sum(v => v.Total);
+        decimal gananciaTotalFecha = detalleVentasMostrar.Sum(v => v.GananciaTotal);
 
         return Json(new
         {
             detalleVentasMostrar,
             totalVentasFecha,
             gananciaTotalFecha
-
         });
     }
-
-
-
-
-
 
 
 

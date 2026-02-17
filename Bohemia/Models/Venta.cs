@@ -16,14 +16,21 @@ public class Venta
    //    public int PersonaID { get; set; }
    public DateTime Fecha_Venta { get; set; }
    public decimal Total { get; set; }
-
    public Forma_pago Forma_pago { get; set; } // es la forma con el que el local cobra la
-
    public string? UsuarioID { get; set; }
+
+//revertir venta
+  public int? VentaOriginalID { get; set; }
+  public Venta? VentaOriginal { get; set; }
+
+
+
    public ICollection<DetalleVenta> DetalleVentas { get; set; }
 
    public virtual Cliente Cliente { get; set; }
    //  public ICollection<Cliente> Clientes { get; set; }
+
+
 
 }
 
@@ -71,6 +78,14 @@ public class VentaVistaInforme
    public Forma_pago Forma_pago { get; set; }
 
    public string? Forma_pagostring { get; set; }
+
+
+
+
+
+   public bool EsAnulada { get; set; }
+   public bool EsReversa { get; set; }
+   public int? VentaOriginalID { get; set; }
 
    public List<VistadetalleVenta> ListadoDetalle { get; set; }
 
