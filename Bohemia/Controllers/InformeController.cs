@@ -175,98 +175,143 @@ gananciaTotalFecha = detalleventas.Sum(d => d.PrecioUnitario - (d.Productos.Prec
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public IActionResult IndexPro()
     {
-
-
-
           return View();
     }
 
-public JsonResult ProductosMinimos()
-{
-    var productosNoVendidos = _context.Productos
-        .Where(p => !_context.DetalleVentas.Any(dv => dv.ProductoID == p.ProductoID))
-        .Select(p => new
+    public JsonResult ProductosMinimos()
+    {
+        var productosNoVendidos = _context.Productos
+            .Where(p => !_context.DetalleVentas.Any(dv => dv.ProductoID == p.ProductoID))
+            .Select(p => new
+            {
+                ProductoID = p.ProductoID,
+                NombreProducto = p.Descripcion,
+                DescripcionProducto = p.Descripcion.ToString(),
+                CodigoProducto = p.Codigo,
+                FechaIngreso = p.FechaIngreso != null ? p.FechaIngreso.ToString("dd-MM-yyyy") : "SIN FECHA",
+                CantidadVendida = 0,
+                Observaciones = string.IsNullOrEmpty(p.Observacion) ? "NO DEFINIDO" : p.Observacion
+            })
+            .ToList();
+
+        var productosMenosVendidos = _context.DetalleVentas
+            .Include(dv => dv.Productos)
+            .GroupBy(dv => dv.ProductoID)
+            .Select(g => new
+            {
+                ProductoID = g.Key,
+                NombreProducto = g.First().Productos.Descripcion,
+                DescripcionProducto = g.First().Productos.Descripcion.ToString(),
+                CodigoProducto = g.First().Productos.Codigo,
+                FechaIngreso = g.First().Productos.FechaIngreso != null ? g.First().Productos.FechaIngreso.ToString("dd-MM-yyyy") : "SIN FECHA",
+                CantidadVendida = g.Sum(dv => dv.Cantidad),
+                Observaciones = string.IsNullOrEmpty(g.First().Productos.Observacion) ? "NO DEFINIDO" : g.First().Productos.Observacion
+            })
+            .OrderBy(p => p.CantidadVendida)
+            .Take(5)
+            .ToList();
+
+        var resultado = productosNoVendidos.Concat(productosMenosVendidos).Take(5).ToList();
+
+        return Json(resultado);
+    }
+
+
+
+
+
+    public JsonResult ProductosMasVendidos()
+    {
+        var productosMasVendidos = _context.DetalleVentas
+            .Include(dv => dv.Productos)
+            .GroupBy(dv => dv.ProductoID)
+            .Select(g => new
+            {
+                ProductoID = g.Key,
+                NombreProducto = g.First().Productos.Descripcion,
+                Observaciones = g.First().Productos.Observacion ?? "NO DEFINIDO",
+                DescripcionProducto = g.First().Productos.Descripcion.ToString(),
+                CodigoProducto = g.First().Productos.Codigo,
+                CantidadVendida = g.Sum(dv => dv.Cantidad), // Suma la cantidad total vendida
+                FechaIngreso = g.First().Productos.FechaIngreso != null ? g.First().Productos.FechaIngreso.ToString("dd-MM-yyyy") : "SIN FECHA",
+
+
+
+            })
+            .OrderByDescending(p => p.CantidadVendida) // Ordena de mayor a menor (más vendidos primero)
+            .Take(10) // Solo los 5 más vendidos
+            .ToList();
+
+        return Json(productosMasVendidos);
+    }
+
+
+    [HttpGet]
+    public IActionResult VentasMensuales()
+    {
+        var desde = DateTime.Today.AddMonths(-11);
+
+        var ventas = _context.Ventas
+            .Where(v => v.Fecha_Venta >= desde)
+            .GroupBy(v => new
+            {
+                v.Fecha_Venta.Year,
+                v.Fecha_Venta.Month
+            })
+            .Select(g => new
+            {
+                Año = g.Key.Year,
+                Mes = g.Key.Month,
+                Total = g.Sum(x => x.Total)
+            })
+            .OrderBy(x => x.Año)
+            .ThenBy(x => x.Mes)
+            .ToList();
+
+        string[] meses = new[]
         {
-            ProductoID = p.ProductoID,
-            NombreProducto = p.Descripcion,
-            DescripcionProducto = p.Descripcion.ToString(),
-            CodigoProducto = p.Codigo,
-            FechaIngreso = p.FechaIngreso != null ? p.FechaIngreso.ToString("dd-MM-yyyy") : "SIN FECHA",
-            CantidadVendida = 0,
-            Observaciones = string.IsNullOrEmpty(p.Observacion) ? "NO DEFINIDO" : p.Observacion
-        })
-        .ToList();
+            "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+            "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+        };
 
-    var productosMenosVendidos = _context.DetalleVentas
-        .Include(dv => dv.Productos)
-        .GroupBy(dv => dv.ProductoID)
-        .Select(g => new
+        return Json(new
         {
-            ProductoID = g.Key,
-            NombreProducto = g.First().Productos.Descripcion,
-            DescripcionProducto = g.First().Productos.Descripcion.ToString(),
-            CodigoProducto = g.First().Productos.Codigo,
-            FechaIngreso = g.First().Productos.FechaIngreso != null ? g.First().Productos.FechaIngreso.ToString("dd-MM-yyyy") : "SIN FECHA",
-            CantidadVendida = g.Sum(dv => dv.Cantidad),
-            Observaciones = string.IsNullOrEmpty(g.First().Productos.Observacion) ? "NO DEFINIDO" : g.First().Productos.Observacion
-        })
-        .OrderBy(p => p.CantidadVendida)
-        .Take(5)
-        .ToList();
-
-    var resultado = productosNoVendidos.Concat(productosMenosVendidos).Take(5).ToList();
-
-    return Json(resultado);
-}
+            labels = ventas.Select(v =>
+                $"{meses[v.Mes - 1]} {(v.Año % 100):D2}"
+            ),
+            data = ventas.Select(v => v.Total),
+            meta = ventas.Select(v => new {
+                mes = v.Mes,
+                año = v.Año
+            })
+        });
+    }
 
 
 
-
-
-public JsonResult ProductosMasVendidos()
-{
-    var productosMasVendidos = _context.DetalleVentas
-        .Include(dv => dv.Productos)
-        .GroupBy(dv => dv.ProductoID)
-        .Select(g => new
+    [HttpGet]
+        public IActionResult VentasDiarias(int mes, int año)
         {
-            ProductoID = g.Key,
-            NombreProducto = g.First().Productos.Descripcion,
-          Observaciones = g.First().Productos.Observacion ?? "NO DEFINIDO",
-            DescripcionProducto = g.First().Productos.Descripcion.ToString(),
-            CodigoProducto = g.First().Productos.Codigo,
- CantidadVendida = g.Sum(dv => dv.Cantidad), // Suma la cantidad total vendida
-  FechaIngreso = g.First().Productos.FechaIngreso != null ? g.First().Productos.FechaIngreso.ToString("dd-MM-yyyy") : "SIN FECHA",
+            var ventas = _context.Ventas
+                .Where(v => v.Fecha_Venta.Month == mes &&
+                            v.Fecha_Venta.Year == año)
+                .GroupBy(v => v.Fecha_Venta.Day)
+                .Select(g => new
+                {
+                    Dia = g.Key,
+                    Total = g.Sum(x => x.Total)
+                })
+                .OrderBy(x => x.Dia)
+                .ToList();
 
-
-
-        })
-        .OrderByDescending(p => p.CantidadVendida) // Ordena de mayor a menor (más vendidos primero)
-        .Take(10) // Solo los 5 más vendidos
-        .ToList();
-
-    return Json(productosMasVendidos);
-}
-
-
+            return Json(new
+            {
+                labels = ventas.Select(v => $"Día {v.Dia}"),
+                data = ventas.Select(v => v.Total)
+            });
+        }
 
 }
 

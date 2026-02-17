@@ -70,7 +70,8 @@ public class ProductosController : Controller
 
 public JsonResult ListadoProducto(int productoID, string codigo, string observacion)
 {
-    var productos = _context.Productos.AsQueryable();
+    var productos = _context.Productos
+    .AsQueryable();
 
 if (productoID > 0)
     productos = productos.Where(p => p.ProductoID == productoID);
@@ -83,9 +84,17 @@ if (!string.IsNullOrEmpty(observacion))
 
 
 // ===== TOTALES (SIN ORDER)
-int totalProductosRegistrados = productos.Count();
-int totalCantidadProductos = productos.Sum(p => p.Cantidad);
-decimal totalPrecioCosto = productos.Sum(p => p.PrecioCosto * p.Cantidad);
+int totalProductosRegistrados = productos
+    .Where(p => !p.Eliminado)
+    .Count();
+
+int totalCantidadProductos = productos
+    .Where(p => !p.Eliminado)
+    .Sum(p => p.Cantidad);
+
+decimal totalPrecioCosto = productos
+    .Where(p => !p.Eliminado)
+    .Sum(p => p.PrecioCosto * p.Cantidad);
 
 
 // ===== ORDEN SOLO PARA MOSTRAR
@@ -117,6 +126,7 @@ var productoMostrar = productos
 
 return Json(new { 
     productos = productoMostrar, 
+    totalProductosRegistrados,
     totalPrecioCosto, 
     totalCantidadProductos
 });

@@ -1,6 +1,7 @@
 window.onload = function () {
     ObtenerProductosMinimos();
     ObtenerProductosMasVendidos();
+    cargarVentas();
 };
 
 function ObtenerProductosMinimos() {
@@ -42,7 +43,7 @@ function ObtenerProductosMinimos() {
 
 function ObtenerProductosMasVendidos() {
     $.ajax({
-        url: '../../Informe/ProductosMasVendidos', // Llamamos al nuevo método
+        url: '../../Informe/ProductosMasVendidos',
         type: 'GET',
         dataType: 'json',
         beforeSend: function () {
@@ -71,56 +72,80 @@ function ObtenerProductosMasVendidos() {
 }
 
 
+let chartMensual = null;
+let chartDiario = null;
 
-    // Puedes definir Utils.months así si no tienes la librería de muestras
-    const Utils = {
-        months: function({ count }) {
-          const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-          return months.slice(0, count);
-        }
-      };
-  
-      const labels = Utils.months({ count: 7 });
-      const data = {
-        labels: labels,
-        datasets: [{
-          label: 'My First Dataset',
-          data: [65, 59, 80, 81, 56, 55, 40],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-            'rgba(255, 205, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(201, 203, 207, 0.2)'
-          ],
-          borderColor: [
-            'rgb(255, 99, 132)',
-            'rgb(255, 159, 64)',
-            'rgb(255, 205, 86)',
-            'rgb(75, 192, 192)',
-            'rgb(54, 162, 235)',
-            'rgb(153, 102, 255)',
-            'rgb(201, 203, 207)'
-          ],
-          borderWidth: 1
-        }]
-      };
-  
-      const config = {
-        type: 'bar', // o 'line', 'pie', etc.
-        data: data,
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
+function cargarVentas() {
+    $.ajax({
+        url: '../../Informe/VentasMensuales',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+
+            // 🔁 Si ya existe, destruir
+            if (chartMensual) {
+                chartMensual.destroy();
             }
-          }
+
+            chartMensual = new Chart(
+                document.getElementById('chartMensual'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: response.labels,
+                        datasets: [{
+                            label: 'Ventas mensuales',
+                            data: response.data,
+                            backgroundColor: '#4e73df'
+                        }]
+                    },
+                    options: {
+                        onClick: (evt, elements) => {
+                            if (!elements.length) return;
+
+                            const index = elements[0].index;
+                            const mes = response.meta[index].mes;
+                            const año = response.meta[index].año;
+
+                            cargarVentasDiarias(mes, año);
+                        }
+                    }
+                }
+            );
         }
-      };
-  
-      const myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-      );
+    });
+}
+
+
+function cargarVentasDiarias(mes, año) {
+
+    $.get('/Informe/VentasDiarias', { mes, año }, function (response) {
+
+        // 🔁 Destruir gráfico anterior
+        if (chartDiario) {
+            chartDiario.destroy();
+        }
+
+        chartDiario = new Chart(
+            document.getElementById('chartDiario'),
+            {
+                type: 'bar',
+                data: {
+                    labels: response.labels,
+                    datasets: [{
+                        label: `Ventas diarias`,
+                        data: response.data,
+                        backgroundColor: '#1cc88a'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }
+        );
+    });
+}

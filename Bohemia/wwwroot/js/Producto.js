@@ -33,16 +33,22 @@ $(document).ready(function () {
             type: 'GET',
             dataType: 'json',
             success: function (listadoProducto) {
-                let productos = listadoProducto.productos; // Ahora accedemos correctamente a la lista
-            
-                $("#totalProductos").text("Total de productos registrados: " + productos.length);
-            
-                var totalPrecioCosto = parseFloat(listadoProducto.totalPrecioCosto) || 0;
-                $("#totalPrecioCosto").text("Total de Precios Costo: $" + totalPrecioCosto.toFixed(2));
+                let productos = listadoProducto.productos;
 
+                $("#totalProductos").text(
+                    "Total de productos registrados: " +
+                    formatearCantidadAR(listadoProducto.totalProductosRegistrados)
+                );
+
+                var totalPrecioCosto = parseFloat(listadoProducto.totalPrecioCosto) || 0;
+                $("#totalPrecioCosto").text(
+                    "Total de Precios Costo: " + formatearPrecioAR(totalPrecioCosto)
+                );
 
                 let totalCantidadProductos = listadoProducto.totalCantidadProductos || 0;
-                $("#totalCantidadProductos").text("Cantidad total de productos: " + totalCantidadProductos)  .addClass("Textobohemia");
+                $("#totalCantidadProductos").text(
+                    "Cantidad total de productos: " + formatearCantidadAR(totalCantidadProductos)
+                ).addClass("Textobohemia");
             
                 limpiarCampos();
                 let contenidoTabla = ``;
