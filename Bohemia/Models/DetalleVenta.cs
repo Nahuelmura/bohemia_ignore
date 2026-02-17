@@ -57,6 +57,7 @@ public class DetalleVentaVista
     public Forma_pago Forma_pago { get; set; }
 
     public string? Forma_pagostring { get; set; }
+    public bool TieneReversa { get; set; }
 
 }
 

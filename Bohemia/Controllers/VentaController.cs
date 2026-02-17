@@ -189,7 +189,8 @@ public class VentaController : Controller
                 Forma_pagostring = v.Ventas.Forma_pago.ToString(),
 
                 Cantidad = v.Cantidad,
-                PrecioUnitario = v.PrecioUnitario  // si lo necesitás como referencia original
+                PrecioUnitario = v.PrecioUnitario,  // si lo necesitás como referencia original
+                TieneReversa = _context.Ventas.Any(r => r.VentaOriginalID == v.VentaID)
             };
         })
         .ToList();
@@ -414,44 +415,137 @@ public JsonResult ObtenerClienteID(int id)
     return Json(new { success = true, cliente });
 }
 
-//revertiendo ventas
 
-    public void RevertirVenta(int ventaId)
+
+
+
+private void RevertirVentaInterno(int ventaId)
+{
+    var venta = _context.Ventas
+        .Include(v => v.DetalleVentas)
+        .FirstOrDefault(v => v.VentaID == ventaId);
+
+    if (venta == null)
+        throw new Exception("Venta no encontrada");
+
+    //  Bloqueo TOTAL
+    if (_context.Ventas.Any(v => v.VentaOriginalID == ventaId))
+        throw new Exception("Esta venta ya fue revertida");
+
+    var ventaReversa = new Venta
     {
-        var venta = _context.Ventas
-            .Include(v => v.DetalleVentas)
-            .FirstOrDefault(v => v.VentaID == ventaId);
+        Fecha_Venta = DateTime.Now,
+        ClienteID = venta.ClienteID,
+        Total = venta.Total * -1,
+        Forma_pago = venta.Forma_pago,
+        UsuarioID = User.Identity?.Name ?? "sistema",
 
-        if (venta == null)
-            throw new Exception("Venta no encontrada");
+        // vínculo real
+        VentaOriginalID = venta.VentaID,
 
-        // Crear venta inversa
-        var ventaReversa = new Venta
+        DetalleVentas = venta.DetalleVentas.Select(d => new DetalleVenta
         {
-            Fecha_Venta = DateTime.Now,
-            ClienteID = venta.ClienteID,
-            Total = venta.Total * -1,
-            Forma_pago = venta.Forma_pago,
-            UsuarioID = venta.UsuarioID,
-            DetalleVentas = venta.DetalleVentas.Select(d => new DetalleVenta
-            {
-                ProductoID = d.ProductoID,
-                Cantidad = d.Cantidad * -1,
-                PrecioUnitario = d.PrecioUnitario
-            }).ToList()
-        };
+            ProductoID = d.ProductoID,
+            Cantidad = d.Cantidad * -1,
+            PrecioUnitario = d.PrecioUnitario * -1 // Importante: Precio negativo para informes
+        }).ToList()
+    };
 
-        _context.Ventas.Add(ventaReversa);
+    _context.Ventas.Add(ventaReversa);
+    _context.SaveChanges(); // Guardamos para obtener el ID de ventaReversa
 
-        // Devolver stock
-        foreach (var d in venta.DetalleVentas)
+    foreach (var d in venta.DetalleVentas)
+    {
+        var producto = _context.Productos.Find(d.ProductoID);
+        if (producto != null)
         {
-            var producto = _context.Productos.Find(d.ProductoID);
             producto.Cantidad += d.Cantidad;
         }
-
-        _context.SaveChanges();
     }
+
+    // Movimiento de cuenta corriente (Reverso)
+    if (venta.ClienteID.HasValue)
+    {
+        decimal ultimoSaldo = _context.MovimientosCuentaCorrientes
+            .Where(m => m.ClienteID == venta.ClienteID)
+            .OrderByDescending(m => m.Fecha)
+            .Select(m => m.Saldo)
+            .FirstOrDefault();
+
+        var movimientoReverso = new MovimientoCuentaCorriente
+        {
+            ClienteID = venta.ClienteID.Value,
+            Fecha = DateTime.Now,
+            Importe = venta.Total * -1, // Negativo para restar del saldo
+            Saldo = ultimoSaldo - venta.Total,
+            TipoMovimiento = TipoMovimiento.Venta,
+            ReferenciaTipo = "Reverso Venta",
+            ReferenciaID = ventaReversa.VentaID
+        };
+        _context.MovimientosCuentaCorrientes.Add(movimientoReverso);
+    }
+
+    _context.SaveChanges();
+}
+
+
+
+[HttpPost]
+public IActionResult RevertirVenta(int ventaId)
+{
+    try 
+    {
+        RevertirVentaInterno(ventaId);
+        return Json(new { ok = true, mensaje = "Venta revertida exitosamente" });
+    }
+    catch (Exception ex)
+    {
+        return Json(new { ok = false, mensaje = "Error: " + ex.Message });
+    }
+}
+
+}
+//revertiendo ventas
+
+    // public void RevertirVenta(int ventaId)
+    // {
+    //     var venta = _context.Ventas
+    //         .Include(v => v.DetalleVentas)
+    //         .FirstOrDefault(v => v.VentaID == ventaId);
+
+    //     if (venta == null)
+    //         throw new Exception("Venta no encontrada");
+
+    //     // Crear venta inversa
+    //     var ventaReversa = new Venta
+    //     {
+    //         Fecha_Venta = DateTime.Now,
+    //         ClienteID = venta.ClienteID,
+    //         Total = venta.Total * -1,
+    //         Forma_pago = venta.Forma_pago,
+    //         UsuarioID = venta.UsuarioID,
+    //         DetalleVentas = venta.DetalleVentas.Select(d => new DetalleVenta
+    //         {
+    //             ProductoID = d.ProductoID,
+    //             Cantidad = d.Cantidad * -1,
+    //             PrecioUnitario = d.PrecioUnitario
+    //         }).ToList()
+    //     };
+
+    //     _context.Ventas.Add(ventaReversa);
+
+    //     // Devolver stock
+    //     foreach (var d in venta.DetalleVentas)
+    //     {
+    //         var producto = _context.Productos.Find(d.ProductoID);
+    //         producto.Cantidad += d.Cantidad;
+    //     }
+
+    //     _context.SaveChanges();
+    // }
     
 
-    }
+    // }
+
+
+    
