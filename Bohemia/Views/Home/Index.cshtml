@@ -2,29 +2,78 @@
     ViewData["Title"] = "Home Page";
 }
 
-<body class="fondo">
+<body class="Fondo_cobro">
+
+<h1 class="tituloCard text-center">Bienvenido a Bohemia Vintage</h1>
+
+<!-- BOTONES DE ACCIÓN -->
+<div class="dashboard-actions">
+    <a href="/venta" class="action-card">
+        <div>
+            <h2>Nueva Venta</h2>
+            <p>Crear factura o recibo</p>
+        </div>
+        <div class="action-icon">
+            <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+    </a>
+
+    <a href="/productos" class="action-card">
+        <div>
+            <h2>Inventario</h2>
+            <p>Ver y agregar productos</p>
+        </div>
+        <div class="action-icon">
+            <i class="fa-solid fa-boxes-stacked"></i>
+        </div>
+    </a>
+
+    <a href="/cobro" class="action-card">
+        <div>
+            <h2>Cobros</h2>
+            <p>Registrar pagos recibidos</p>
+        </div>
+        <div class="action-icon">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+        </div>
+    </a>
+</div>
+
+<!-- CUENTA CORRIENTE -->
+<div class="dashboard-columns">
+    <div class="card-alert card-alert--danger">
+        <div class="card-header">
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Pagos Vencidos</h3>
+            <span class="badge badge-danger">3 Pendientes</span>
+        </div>
+        <!-- tabla -->
+    </div>
+
+    <div class="card-alert card-alert--success">
+        <div class="card-header">
+            <h3><i class="fa-solid fa-clock"></i> Próximos Cobros</h3>
+            <span class="badge badge-success">Esta Semana</span>
+        </div>
+        <!-- tabla -->
+    </div>
+</div>
+
+<!-- GRÁFICO -->
+<div class="chart-card">
+    <div class="chart-header">
+        <h3>
+            <i class="fa-solid fa-chart-line"></i> Ventas Últimos 12 Meses
+        </h3>
+    </div>
+    <div class="chart-container">
+        <canvas id="chartpro"></canvas>
+    </div>
+</div>
+
+</body>
+
     
 
-<h1 class="tituloCard" style="text-align: center;">Bienvenido a Bohemia Vintage</h1>
-<section class="home-cards">
-  <div class="card">
-    <a asp-controller="Productos" asp-action="Index" class="card">
-    <img src="/lib/img/Inventario.jpeg" alt="Imagen 1">
-    <div class="card-content">
-      <h3 class="tituloCard">Producto</h3>
-      <p class="Textobohemia">usted podra cargar los productos de la tienda: código, descripción, precios, cantidad y editarlos.</p>
-    </div>
-    </a>
-  </div>
-
-  <div class="card">
-    <a asp-controller="Venta" asp-action="Index" class="card">
-    <img src="/lib/img/Venta.jpeg" alt="Imagen 2">
-    <div class="card-content">
-      <h3 class="tituloCard">Realizar venta</h3>
-      <p class="Textobohemia"> usted podra Realizar Ventas detallar la cantidad y generar un registro</p>
-    </div>
-    </a>
-  </div>
-</section>
-</body>
+  @section Scripts {
+    <script src="~/js/InformePro.js"></script>
+}
