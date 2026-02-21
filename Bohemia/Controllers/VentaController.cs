@@ -225,6 +225,8 @@ public class VentaController : Controller
     [HttpPost]
     public JsonResult GuardarVenta(DateTime? fecha_venta, decimal total, string usuarioID, Forma_pago Forma_pago, int clienteID)
     {
+
+        Thread.CurrentThread.CurrentCulture = new CultureInfo("es-AR");
         try
         {
             if (string.IsNullOrEmpty(usuarioID))
@@ -244,7 +246,7 @@ public class VentaController : Controller
             {
                 ClienteID = clienteID,
                 Fecha_Venta = fechaVenta,
-                Total = total,
+                Total = total / 100,
                 UsuarioID = usuario.Email, // Guardar el email del usuario en UsuarioID
                 Forma_pago = Forma_pago,
             };

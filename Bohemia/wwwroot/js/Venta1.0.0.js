@@ -40,15 +40,16 @@ function ListadoDetalleVenta() {
             ? "No definido"
             : ventas.observacion;
 
+        // CAMBIO 1: Formatear precioUnitario y total con formato argentino (xx.xxx,xx)
         contenidoTabla += `
                     <tr>
                         <td>${ventas.codigoProducto}</td>
                         <td  class="ocultar-en-768px">${ventas.descripcionProducto}</td>
-                        <td>${observacion}</td> 
+                        <td>${observacion}</td>
                         <td class="ocultar-en-768px">${ventas.fecha_Venta_string}</td>
-                        <td> $ ${ventas.precioUnitario}</td>
+                        <td>${formatearPrecioAR(ventas.precioUnitario)}</td>
                          <td  class="ocultar-en-768px"> ${claseCantidad}${ventas.cantidad}</td>
-                        <td ${claseTotal} class="ocultar-en-768px">$ ${ventas.total}</td> 
+                        <td ${claseTotal} class="ocultar-en-768px">${formatearPrecioAR(ventas.total)}</td>
                           <td class="ocultar-en-768px">${ventas.forma_pagostring}</td>
                      
                     </tr>
@@ -113,13 +114,16 @@ function obtenerPorcentajeDescuentoPorValor(formaVal) {
 
 function actualizarTotalConDescuento() {
   let cantidad = parseInt($("#cantidad").val(), 10) || 0;
-  let precio = parseFloat($("#precioUnitario").val().replace(",", ".")) || 0;
+  // Parsear el precio quitando puntos de miles y cambiando coma por punto
+  let precioRaw = $("#precioUnitario").val().replace(/\./g, "").replace(",", ".");
+  let precio = parseFloat(precioRaw) || 0;
   let formaVal = $("#Forma_pago").val();
 
   let porcentaje = obtenerPorcentajeDescuentoPorValor(formaVal);
   let totalFinal = cantidad * precio * (1 - porcentaje);
 
-  $("#totalConDescuento").val(totalFinal.toFixed(2));
+  // Formatear con formato argentino (xx.xxx,xx)
+  $("#totalConDescuento").val(totalFinal.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 }
 
 $(document).ready(function () {
@@ -163,7 +167,9 @@ $(document).ready(function () {
         data: { codigoProducto: codigo },
         success: function (response) {
           if (response.success) {
-            $("#precioUnitario").val(response.precio); // Asignar precio
+            // Formatear el precio con formato argentino (xx.xxx,xx)
+            let precioFormateado = response.precio.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            $("#precioUnitario").val(precioFormateado);
             $("#stockdisponible").val(response.stock); // Asignar stock disponible
             $("#descripcion").val(response.descripcionProducto);
             $("#Observacion").val(response.observacion);
@@ -193,12 +199,20 @@ let detallesVenta = [];
 function AgregarProductoTemporal() {
   let codigoProducto = $("#CodigoProducto").val().toUpperCase();
   let cantidad = parseInt($("#cantidad").val());
-  let precioUnitario = parseFloat($("#precioUnitario").val());
+  // Parsear el precio quitando puntos de miles y cambiando coma por punto
+  let precioRaw = $("#precioUnitario").val().replace(/\./g, "").replace(",", ".");
+  let precioUnitario = parseFloat(precioRaw);
   let descripcion = $("#descripcion").val();
   let observacion = $("#Observacion").val() || "No definido"; // Si es null o vacío, asigna "No definido"
   let stockDisponible = parseInt($("#stockdisponible").val());
   let forma_Pago = $("#Forma_pago option:selected").text();
-  let totalConDescuento = $("#totalConDescuento").val();
+  // Parsear el total quitando puntos de miles y cambiando coma por punto
+  let totalRaw = $("#totalConDescuento").val().replace(/\./g, "").replace(",", ".");
+let totalConDescuento = parseFloat(
+  cantidad *
+    precioUnitario *
+    (1 - obtenerPorcentajeDescuentoPorValor($("#Forma_pago").val())),
+);
 
   if (!codigoProducto || isNaN(cantidad) || isNaN(precioUnitario)) {
     alert("Ingrese datos válidos");
@@ -222,7 +236,7 @@ function AgregarProductoTemporal() {
     precioUnitario: precioUnitario,
     descripcion: descripcion,
     forma_Pago: forma_Pago,
-    totalConDescuento: totalConDescuento,
+    totalConDescuento: parseFloat(totalRaw),
   });
   console.log(forma_Pago);
   // Actualizar la tabla después de agregar el producto
@@ -239,26 +253,32 @@ function ActualizarTotalCompra() {
     return sum + parseFloat(item.totalConDescuento || 0);
   }, 0);
 
-  $("#totalCompra").val(total.toFixed(2));
+  // Formatear con formato argentino (xx.xxx,xx)
+  $("#totalCompra").val(total.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 }
 
+// CAMBIO 2: Formatear totalConDescuento y precioUnitario con formato argentino (xx.xxx,xx)
 function ActualizarTabla() {
   let tabla = $("#detalleVentaTabla");
   tabla.empty();
 
   detallesVenta.forEach((producto, index) => {
+    // Convertir a número para formatear correctamente
+    let totalDescuento = parseFloat(producto.totalConDescuento) || 0;
+    let precioUnit = parseFloat(producto.precioUnitario) || 0;
+    
     tabla.append(`
             <tr>
                 <td>${producto.codigoProducto}</td>
                 <td>${producto.descripcion}</td>
-                <td class="ocultar-en-768px"  >${producto.observacion}</td> 
+                <td class="ocultar-en-768px"  >${producto.observacion}</td>
                 <td class="ocultar-en-768px">${producto.cantidad}</td>
                 <td class="ocultar-en-768px" >${producto.forma_Pago}</td>
-                  <td class="ocultar-en-768px">${producto.totalConDescuento}</td>
+                  <td class="ocultar-en-768px">${formatearPrecioAR(totalDescuento)}</td>
                   
 
     
-                <td class="ocultar-en-768px">${producto.precioUnitario.toFixed(2)}</td>
+                <td class="ocultar-en-768px">${formatearPrecioAR(precioUnit)}</td>
                 <td><button class="btn btn-danger btn-sm" onclick="confirmarEliminar(${index})">Eliminar</button></td>
             </tr>
         `);
@@ -428,6 +448,7 @@ function GenerarPDF() {
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(8);
 
+      // CAMBIO 3: Formatear precios en PDF con formato argentino (xx.xxx,xx)
       detallesVenta.forEach((item, index) => {
         let codigo = item.codigoProducto || "N/A";
         let descripcion = item.descripcion || "Sin descripción";
@@ -437,7 +458,8 @@ function GenerarPDF() {
 
         totalCompra += totalItem;
 
-        let totalConFormato = `$${totalItem.toFixed(2)}`;
+        // Formato argentino: punto para miles, coma para decimales
+        let totalConFormato = `$ ${totalItem.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
         y = agregarTexto(`${index + 1}. Código: ${codigo}`, 10, y);
         y = agregarTexto(`   ${descripcion} - ${observacion}`, 10, y);
@@ -446,7 +468,8 @@ function GenerarPDF() {
       });
 
       doc.setTextColor(0, 100, 0);
-      y = agregarTexto(`Total: $${totalCompra.toFixed(2)}`, 10, y + 5);
+      // Formato argentino para el total general
+      y = agregarTexto(`Total: $ ${totalCompra.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 10, y + 5);
 
       doc.setTextColor(255, 0, 0);
       y = agregarTexto(
