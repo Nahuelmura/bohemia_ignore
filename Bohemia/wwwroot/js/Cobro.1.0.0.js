@@ -48,7 +48,7 @@ function ListadoCobro(nombre) {
                  <td class="ocultar-en-768px">${cobro.fechaCobroTexto}</td>
                       <td>${cobro.telefonoCliente}</td>                  
                     <td class="ocultar-en-768px" >${cobro.formaCobro}</td>
-                     <td>${cobro.montoCobroTexto}</td>  
+                     <td>${formatearPrecioAR(cobro.montoCobro)}</td>  
                 </tr>`;
       });
 
@@ -65,6 +65,12 @@ function ListadoCobro(nombre) {
 
 $(document).ready(function () {
   let timer = null;
+
+  // Formatear input monto
+  const montoInput = document.getElementById("monto");
+  if (montoInput) {
+    formatearInputPrecio(montoInput);
+  }
 
   // BUSCAR CLIENTES
   $("#Nombre").on("input", function () {
@@ -268,6 +274,105 @@ function GuardarCobro() {
         confirmButtonText: "Aceptar",
       });
     },
+  });
+}
+
+// Función para formatear números en la tabla (xx.xxx,xx)
+function formatearPrecioAR(valor) {
+  if (valor == null || valor === "") return "";
+
+  // Si viene como string con formato argentino
+  if (typeof valor === "string") {
+    valor = valor
+      .replace(/\$/g, "")
+      .replace(/\s/g, "")
+      .replace(/\./g, "")
+      .replace(",", ".");
+  }
+
+  const numero = parseFloat(valor);
+
+  if (isNaN(numero)) return "";
+
+  // Formato xx.xxx,xx sin símbolo de moneda
+  return numero.toLocaleString("es-AR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+// Función para formatear input de precio (xx.xxx,xx)
+function formatearInputPrecio(input) {
+  if (!input) return;
+
+  let tieneComa = false;
+
+  input.addEventListener("keydown", (e) => {
+    const key = e.key;
+
+    // Navegación y borrado
+    if (
+      ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)
+    ) {
+      return;
+    }
+
+    // Coma → activar centavos
+    if (key === "," || key === ".") {
+      if (tieneComa) {
+        e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      tieneComa = true;
+      input.value += ",";
+      return;
+    }
+
+    // Solo números
+    if (!/^[0-9]$/.test(key)) {
+      e.preventDefault();
+      return;
+    }
+
+    // Limitar centavos a 2
+    if (tieneComa) {
+      const dec = input.value.split(",")[1] || "";
+      if (dec.length >= 2) {
+        e.preventDefault();
+      }
+    }
+  });
+
+  input.addEventListener("input", () => {
+    tieneComa = input.value.includes(",");
+  });
+
+  input.addEventListener("blur", () => {
+    let valor = input.value.replace("$", "").trim();
+    if (!valor) {
+      input.value = "0,00";
+      return;
+    }
+
+    let [entero, decimal = ""] = valor.split(",");
+
+    entero = entero.replace(/\D/g, "");
+    decimal = decimal.replace(/\D/g, "").padEnd(2, "0").slice(0, 2);
+
+    let numero = parseFloat(entero + "." + decimal);
+
+    input.value = numero.toLocaleString("es-AR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  });
+
+  input.addEventListener("focus", () => {
+    if (input.value === "0,00") {
+      input.value = "";
+      tieneComa = false;
+    }
   });
 }
 
