@@ -3,6 +3,8 @@ window.onload = function () {
     ObtenerProductosMasVendidos();
     cargarVentas();
     cargarVentaspro();
+    cargarVencidos();
+    cargarProximosCobros();
 };
 
 function ObtenerProductosMinimos() {
@@ -234,3 +236,89 @@ function cargarVentasDiarias(mes, año) {
     }
 
 
+function cargarVencidos() {
+
+    fetch('/Informe/ListadoVencidos')
+        .then(r => r.json())
+        .then(data => {
+
+            const tbody = document.querySelector("#tablaVencidos tbody");
+            tbody.innerHTML = "";
+
+            let total = 0;
+
+            data.forEach(item => {
+
+                total += Number(item.monto);
+
+                const fecha = new Date(item.fecha)
+                    .toLocaleDateString("es-AR");
+
+                tbody.innerHTML += `
+                    <tr class="table-danger">
+                        <td>${item.cliente}</td>
+                        <td>${Number(item.monto).toLocaleString("es-AR", {
+                            style: "currency",
+                            currency: "ARS"
+                        })}</td>
+                        <td>${fecha}</td>
+                        <td>${item.tipo}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("badgeVencidos").innerText = data.length;
+
+            document.getElementById("totalVencidosTabla").innerText =
+                total.toLocaleString("es-AR", {
+                    style: "currency",
+                    currency: "ARS"
+                });
+        });
+}
+
+
+function cargarProximosCobros() {
+
+    fetch('/Informe/ListadoProximosCobros')
+        .then(r => r.json())
+        .then(data => {
+
+            const tbody = document.getElementById("tbodyProximos");
+            tbody.innerHTML = "";
+
+            let total = 0;
+
+            data.forEach(item => {
+
+                total += Number(item.monto);
+
+                const fecha = new Date(item.fecha)
+                    .toLocaleDateString("es-AR");
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.cliente}</strong></td>
+                        <td>
+                            <strong>${Number(item.monto).toLocaleString("es-AR", {
+                                style: "currency",
+                                currency: "ARS"
+                            })}</strong>
+                        </td>
+                        <td>${fecha}</td>
+                        <td>${item.tipo}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("badgeProximos").innerText =
+                data.length;
+
+            document.getElementById("totalProximos").innerText =
+                total.toLocaleString("es-AR", {
+                    style: "currency",
+                    currency: "ARS"
+                });
+
+        });
+}

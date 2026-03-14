@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoBohemia.Data;
 using ProyectoBohemia.Models;
 
+
 namespace ProyectoBohemia.Controllers;
 
 public class CobroController : Controller
@@ -71,12 +72,6 @@ public class CobroController : Controller
             cobros = cobros.Where(c => c.FormaCobro == cobroID.Value);
         }
 
-
-        // if (cobros > 0)
-        // {
-        //     cobros = cobros
-        //         .Where(c => c.ClienteID == clienteID);
-        // }
         var CobrosMostrar = cobros.Select(c => new CobroVista
         {
             CobroID = c.CobroID,
@@ -96,11 +91,6 @@ public class CobroController : Controller
             TelefonoCliente = c.Cliente.Telefono,
             EmailCliente = c.Cliente.Email,
             Dni_cuilCliente = c.Cliente.Dni_cuil
-
-
-
-
-
 
 
         }).ToList();
@@ -256,6 +246,88 @@ public class CobroController : Controller
 
         return Json(resultado);
     }
+
+    [HttpPost]
+    public JsonResult GuardarPlanCuotas(int clienteID, decimal montoTotal,
+        int cantidadCuotas, DateTime primerVencimiento)
+    {
+        var plan = new CobroDiferido
+        {
+            ClienteID = clienteID,
+            MontoTotal = montoTotal,
+            FechaAlta = DateTime.Now,
+            Finalizado = false
+        };
+
+        _context.CobrosDiferidos.Add(plan);
+        _context.SaveChanges();
+
+        decimal montoCuota = Math.Round(montoTotal / cantidadCuotas, 2);
+
+        for (int i = 1; i <= cantidadCuotas; i++)
+        {
+            var cuota = new CobroCuota
+            {
+                CobroDiferidoID = plan.CobroDiferidoID,
+                NumeroCuota = i,
+                MontoCuota = montoCuota,
+                FechaVencimiento = primerVencimiento.AddMonths(i - 1),
+                Pagada = false
+            };
+
+            _context.CobrosCuotas.Add(cuota);
+        }
+
+        _context.SaveChanges();
+
+        return Json("Plan de cuotas guardado correctamente");
+    }
+
+
+    [HttpPost]
+    public JsonResult GuardarCheque(
+        int clienteID,
+        decimal montoTotal,
+        string banco,
+        string numeroCheque,
+        DateTime fechaEmision,
+        DateTime fechaCobro)
+    {
+        try
+        {
+            var diferido = new CobroDiferido
+            {
+                ClienteID = clienteID,
+                MontoTotal = montoTotal,
+                FechaAlta = DateTime.Now,
+                Finalizado = false
+            };
+
+            _context.CobrosDiferidos.Add(diferido);
+            _context.SaveChanges();
+
+            var cheque = new CobroCheque
+            {
+                CobroDiferidoID = diferido.CobroDiferidoID,
+                Banco = banco,
+                NumeroCheque = numeroCheque,
+                FechaEmision = fechaEmision,
+                FechaCobro = fechaCobro,
+                Estado = EstadoCheque.Pendiente
+            };
+
+            _context.CobrosCheques.Add(cheque);
+            _context.SaveChanges();
+
+            return Json("Cheque registrado correctamente");
+        }
+        catch (Exception ex)
+        {
+            return Json("ERROR REAL: " + ex.InnerException?.Message ?? ex.Message);
+        }
+    }
+    
+
 
 
 

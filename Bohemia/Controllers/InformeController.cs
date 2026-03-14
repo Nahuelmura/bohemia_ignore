@@ -305,6 +305,97 @@ public class InformeController : Controller
             });
         }
 
+
+        [HttpGet]
+public JsonResult ListadoVencidos()
+{
+    var hoy = DateTime.Today;
+
+    // 🔴 Cheques vencidos
+    var cheques = _context.CobrosCheques
+        .Include(c => c.CobroDiferido)
+            .ThenInclude(cd => cd.Cliente)
+        .Where(c =>
+            c.Estado == EstadoCheque.Pendiente &&
+            c.FechaCobro < hoy)
+        .Select(c => new
+        {
+            Tipo = "Cheque",
+            Cliente = c.CobroDiferido.Cliente.Nombre,
+            Monto = c.CobroDiferido.MontoTotal,
+            Fecha = c.FechaCobro
+        });
+
+    // 🔴 Cuotas vencidas
+    var cuotas = _context.CobrosCuotas
+        .Include(c => c.CobroDiferido)
+            .ThenInclude(cd => cd.Cliente)
+        .Where(c =>
+            !c.Pagada &&
+            c.FechaVencimiento < hoy)
+        .Select(c => new
+        {
+            Tipo = "Cuota",
+            Cliente = c.CobroDiferido.Cliente.Nombre,
+            Monto = c.MontoCuota,
+            Fecha = c.FechaVencimiento
+        });
+
+    var resultado = cheques
+        .Concat(cuotas)
+        .OrderBy(x => x.Fecha)
+        .ToList();
+
+    return Json(resultado);
+}
+
+
+[HttpGet]
+public JsonResult ListadoProximosCobros()
+{
+    var hoy = DateTime.Today;
+    var hasta = hoy.AddDays(30);
+
+    // 🟡 Cheques próximos
+    var cheques = _context.CobrosCheques
+        .Include(c => c.CobroDiferido)
+            .ThenInclude(cd => cd.Cliente)
+        .Where(c =>
+            c.Estado == EstadoCheque.Pendiente &&
+            c.FechaCobro >= hoy &&
+            c.FechaCobro <= hasta)
+        .Select(c => new
+        {
+            Tipo = "Cheque",
+            Cliente = c.CobroDiferido.Cliente.Nombre,
+            Monto = c.CobroDiferido.MontoTotal,
+            Fecha = c.FechaCobro
+        });
+
+    // 🟡 Cuotas próximas
+    var cuotas = _context.CobrosCuotas
+        .Include(c => c.CobroDiferido)
+            .ThenInclude(cd => cd.Cliente)
+        .Where(c =>
+            !c.Pagada &&
+            c.FechaVencimiento >= hoy &&
+            c.FechaVencimiento <= hasta)
+        .Select(c => new
+        {
+            Tipo = "Cuota",
+            Cliente = c.CobroDiferido.Cliente.Nombre,
+            Monto = c.MontoCuota,
+            Fecha = c.FechaVencimiento
+        });
+
+    var resultado = cheques
+        .Concat(cuotas)
+        .OrderBy(x => x.Fecha)
+        .ToList();
+
+    return Json(resultado);
+}
+
 }
 
     

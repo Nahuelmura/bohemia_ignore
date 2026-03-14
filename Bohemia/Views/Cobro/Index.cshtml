@@ -135,4 +135,95 @@
         <script src="~/js/Cobro.1.0.0.js"></script>
     }
 
+
+    <!-- ================= MODAL CUOTAS ================= -->
+<div class="modal fade" id="modalCuotas" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content cobros-dark">
+
+      <div class="modal-header">
+        <h5 class="modal-title Textobohemia">Registrar Plan de Cuotas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="Textobohemia text-white">Cantidad de Cuotas</label>
+            <input type="number" id="cantidadCuotas" class="form-control" min="1" value="1">
+          </div>
+
+          <div class="col-md-4">
+            <label class="Textobohemia text-white">Monto Total</label>
+            <input type="text" id="montoTotalCuotas" class="form-control" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label class="Textobohemia text-white">Primer Vencimiento</label>
+            <input type="date" id="primerVencimiento" class="form-control">
+          </div>
+        </div>
+
+        <div id="detalleCuotas"></div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-success" onclick="GuardarPlanCuotas()">Guardar Plan</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ================= MODAL CHEQUE ================= -->
+<div class="modal fade" id="modalCheque" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content cobros-dark">
+
+            <div class="modal-header">
+                <h5 class="modal-title Textobohemia">Registrar Cheque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body row">
+
+                <div class="mb-3 ">
+                    <label class="text-white">Banco</label>
+                    <input type="text" id="bancoCheque" class="form-control" placeholder="Ej: Banco Nación">
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="text-white">Fecha Emisión</label>
+                    <input type="date" id="fechaEmisionCheque" class="form-control">
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="text-white">Fecha Cobro</label>
+                    <input type="date" id="fechaCobroCheque" class="form-control" >
+                </div>
+
+                 <div class="mb-3 col-md-6">
+                    <label class="text-white">Número de Cheque</label>
+                    <input type="text" id="numeroCheque" class="form-control" placeholder="Ej: 12345678">
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label class="text-white">Monto</label>
+                    <input type="text" id="montoCheque" class="form-control" readonly>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="GuardarCheque()">Guardar Cheque</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 </body>

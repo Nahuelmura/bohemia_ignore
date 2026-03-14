@@ -20,10 +20,11 @@ public enum FormaCobro
 {
     Efectivo = 1,
     Transferencia = 2,
-    TarjetaCredito = 3,
-    TarjetaDebito = 4,
-    Cheque = 5,
-    MercadoPago = 6
+    Pago_en_Cuota = 3,
+    Cheque = 4,
+    TarjetaCredito = 5,
+    TarjetaDebito = 6,
+    MercadoPago = 7
 }
 
 
@@ -48,5 +49,5 @@ public class CobroVista
 
     public string? MontoCobroTexto { get; set; }
 
-    public string?FechaCobroTexto { get; set; }
+    public string? FechaCobroTexto { get; set; }
 }

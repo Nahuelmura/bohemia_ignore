@@ -39,25 +39,64 @@
     </a>
 </div>
 
-<!-- CUENTA CORRIENTE -->
 <div class="dashboard-columns">
+
+    <!-- VENCIDOS -->
     <div class="card-alert card-alert--danger">
         <div class="card-header">
             <h3><i class="fa-solid fa-triangle-exclamation"></i> Pagos Vencidos</h3>
-            <span class="badge badge-danger">3 Pendientes</span>
+            <span id="badgeVencidos" class="badge badge-danger">0 Pendientes</span>
         </div>
-        <!-- tabla -->
+
+        <table class="table table-hover" id="tablaVencidos">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr class="table-secondary">
+                    <th colspan="3" class="text-end">Total:</th>
+                    <th id="totalVencidosTabla">$0</th>
+                </tr>
+            </tfoot>
+        </table>
     </div>
 
-    <div class="card-alert card-alert--success">
+
+    <!-- PRÓXIMOS -->
+    <div class="card-alert card-alert--warning">
         <div class="card-header">
-            <h3><i class="fa-solid fa-clock"></i> Próximos Cobros</h3>
-            <span class="badge badge-success">Esta Semana</span>
+            <h3><i class="fa-solid fa-calendar-day"></i> Próximos Cobros (30 días)</h3>
+            <span id="badgeProximos" class="badge badge-warning">0 Próximos</span>
         </div>
-        <!-- tabla -->
-    </div>
-</div>
 
+       <table class="table table-hover" id="tablaProximos">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+
+    <tbody id="tbodyProximos"></tbody>
+
+    <tfoot>
+        <tr class="table-secondary">
+            <th colspan="3" class="text-end">Total:</th>
+            <th id="totalProximos">$0</th>
+        </tr>
+    </tfoot>
+</table>
+    </div>
+
+</div>
 <!-- GRÁFICO -->
 <div class="chart-card">
     <div class="chart-header">

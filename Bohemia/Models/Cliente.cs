@@ -25,6 +25,10 @@ public class Cliente
 
 
     public virtual ICollection<Cobro> Cobros { get; set; }
+    public virtual ICollection<CobroCheque> CobrosCheques { get; set; }
+    public virtual ICollection<CobroDiferido> CobrosDiferidos { get; set; }
+    public virtual ICollection<CobroCuota> CobroCuota { get; set; }
+
     public virtual ICollection<MovimientoCuentaCorriente> MovimientosCuentaCorriente { get; set; }
     public virtual ICollection<Venta> Ventas { get; set; }
 
