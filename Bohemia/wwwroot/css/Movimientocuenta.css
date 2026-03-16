@@ -1,0 +1,32 @@
+.btn-pdf {
+    background: linear-gradient(135deg, #d32f2f, #b71c1c);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Hover */
+.btn-pdf:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #e53935, #c62828);
+}
+
+/* Click */
+.btn-pdf:active {
+    transform: scale(0.95);
+}
+
+/* Icono */
+.btn-pdf i {
+    font-size: 18px;
+}

@@ -214,18 +214,14 @@ public class CobroController : Controller
             _context.Cobros.Add(nuevoCobro);
             _context.SaveChanges();
 
-            decimal ultimoSaldo = _context.MovimientosCuentaCorrientes
-                .Where(m => m.ClienteID == clienteID)
-                .OrderByDescending(m => m.Fecha)
-                .Select(m => m.Saldo)
-                .FirstOrDefault();
+           
 
             var movimientoCobro = new MovimientoCuentaCorriente
             {
                 ClienteID = clienteID,
                 Fecha = fechaCobro,
                 Importe = monto,                 // NEGATIVO
-                Saldo = ultimoSaldo - monto,
+                // Saldo = ultimoSaldo - monto,
                 TipoMovimiento = TipoMovimiento.Cobro,
                 ReferenciaTipo = "Cobro",
                 ReferenciaID = nuevoCobro.CobroID

@@ -1,3 +1,8 @@
+
+<body class="fondo_Informe">
+  
+
+
 <h1 class="Textobohemia"  style="text-align: center;">Informe </h1>
 <h6  class="Textobohemia"  style="text-align: center;">En esta sección se mostrarán las ventas realizadas por el usuario logueado.</h6>
 <div id="resumenVentas" style="display: none; font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #007bff;">
@@ -15,46 +20,52 @@ Filtra las ventas por Fecha Desde y Fecha Hasta, y obtendrás el total de las ve
   </div>
 
 <div class="row mb-3 contenedor-filtro">
-     <div class="col-md-3">
+     <div class="">
        
-<div >
-  <span style="display: inline-block; width: 20px; height: 20px; background-color: red; margin-right: 5px;"></span>
-  <span class="Textobohemia">Los numeros rojos indican devolucion </span> <br>
-   <span style="display: inline-block; width: 20px; height: 20px; background-color: green; margin-right: 5px;"></span>
-   <span class="Textobohemia">Los numeros Verdes indican Total seleccionado </span>
-</div>
-    </div> 
 
 
-  <div class="col-md-3">
-    <label class="form-label Textobohemia">Desde</label>
-    <input type="date" id="FechaDesde" onchange="TraerDetalleVentas()" class="form-control"
-     />
-  </div>
-  <div class=" col-md-3">
-    <label class="form-label Textobohemia">Hasta</label>
-    <input type="date" id="FechaHasta" onchange="TraerDetalleVentas()" class="form-control"
-       />
-  </div>
+<div class="filtro-clientes-cobro mb-4">
+    <div class="row">
 
-
- <div class="mb-3 col-md-3">
-    <label for="DescripcionBuscar" class="form-label Textobohemia">Buscar por descripción</label>
-    @Html.DropDownList("DescripcionBuscar", ViewBag.DescripcionBuscar as List<SelectListItem>, new { @class = "form-control select2" })
+        <div class="col-md-3 d-flex align-items-center">
+    <div class="texto-informe">
+        <span class="text-danger">Los numeros rojos indican devolucion</span>
+        <span class="text-success">Los numeros Verdes indican Total seleccionado</span>
+    </div>
 </div>
 
+        <div class="col-md-3">
+            <label class="form-label Textobohemia text-white">Desde</label>
+            <input type="date" id="FechaDesde" onchange="TraerDetalleVentas()" class="form-control" />
+        </div>
 
-<div style="max-height: 400px; overflow-y: auto;">
-  <table class="table table-hover table-fixed" style="table-layout: fixed; width: 100%;">
+        <div class="col-md-3">
+            <label class="form-label Textobohemia text-white">Hasta</label>
+            <input type="date" id="FechaHasta" onchange="TraerDetalleVentas()" class="form-control" />
+        </div>
+
+        <div class="mb-3 col-md-3">
+            <label for="DescripcionBuscar" class="form-label Textobohemia text-white">Buscar por descripción</label>
+            @Html.DropDownList("DescripcionBuscar", ViewBag.DescripcionBuscar as List<SelectListItem>, new { @class = "form-control select2" })
+        </div>
+
+    </div>
+</div>
+
+
+<div class="informe-ventas-tabla">
+<div style="max-height: 400px; overflow-y: auto;" >
+  <table class="table table-hover table-dark table-fixed" style="table-layout: fixed; width: 100%;">
     <thead class="Textobohemia" style="position: sticky; top: 0; background-color: white; z-index: 1;">
       <tr>
-        <th style="width: 10%;">Código</th>
-        <th style="width: 20%;" class="ocultar-en-768px">Descripción Producto</th>
-        <th style="width: 15%;" class="ocultar-en-768px">Costo del Producto</th>
-        <th style="width: 15%;" class="ocultar-en-768px">Precio Venta</th>
-        <th style="width: 10%;">Cantidad Vendida</th>
-        <th style="width: 15%;" class="ocultar-en-768px">Ganancia Neta</th>
-        <th style="width: 15%;">Total</th>
+        <th>Código</th>
+        <th class="ocultar-en-768px text-center">Descripción Producto</th>
+        <th class="ocultar-en-768px text-center">Costo del Producto</th>
+        <th class="ocultar-en-768px text-center">Precio Venta</th>
+        <th class="text-center">Cantidad Vendida</th>
+        <th class="ocultar-en-768px text-center">Ganancia Neta</th>
+        <th class="text-center">Total</th>
+        
       </tr>
     </thead>
     <tbody id="tbody-informe">
@@ -62,8 +73,10 @@ Filtra las ventas por Fecha Desde y Fecha Hasta, y obtendrás el total de las ve
     </tbody>
   </table>
 </div>
+<div>
+
+
 <script>
-  // alerta verde. tostol 
 document.addEventListener("DOMContentLoaded", function () {
     var delayModal = 2000;
     var delayOutside = 400;
@@ -86,4 +99,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 @section Scripts {
   <script src="~/js/Informe.1.0.0.js"></script>
-}
+}</body>

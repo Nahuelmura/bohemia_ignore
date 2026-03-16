@@ -39,7 +39,7 @@ public class MovimientoCuentaCorrienteController : Controller
             ClienteID = m.ClienteID,
             ClienteNombre = m.Cliente != null ? m.Cliente.Nombre : "",
             Importe = m.Importe,
-            Saldo = m.Saldo,
+            // Saldo = m.Saldo,
             Fecha = m.Fecha,
             FechaString = m.Fecha.ToString("dd/MM/yyyy"),
             TipoMovimiento = m.TipoMovimiento,
@@ -49,18 +49,24 @@ public class MovimientoCuentaCorrienteController : Controller
         return Json(MovimientosMostrar);
     }
 
-    public JsonResult ListadoCuentaCorrienteClientes()
+    public JsonResult ListadoCuentaCorrienteClientes(string nombre)
     {
-        var data = _context.MovimientosCuentaCorrientes
+        var query = _context.MovimientosCuentaCorrientes
             .Include(m => m.Cliente)
+            .AsQueryable();
+
+        // FILTRO POR NOMBRE
+        if (!string.IsNullOrEmpty(nombre))
+        {
+            query = query.Where(m => m.Cliente.Nombre.Contains(nombre));
+        }
+
+        var data = query
             .GroupBy(m => new { m.ClienteID, m.Cliente.Nombre })
             .Select(g => new CuentaCorrienteClienteVista
             {
                 ClienteID = g.Key.ClienteID,
                 ClienteNombre = g.Key.Nombre,
-                SaldoActual = g.OrderByDescending(x => x.Fecha)
-                            .Select(x => x.Saldo)
-                            .FirstOrDefault(),
                 Pendiente = g.Where(x => x.TipoMovimiento == TipoMovimiento.Venta)
                             .Sum(x => x.Importe)
                             - g.Where(x => x.TipoMovimiento == TipoMovimiento.Cobro)
@@ -94,22 +100,30 @@ public class MovimientoCuentaCorrienteController : Controller
 }
 
 
-public JsonResult ObtenerSaldoTotal()
-{
-    var saldoTotal = _context.MovimientosCuentaCorrientes
-        .GroupBy(m => m.ClienteID)
-        .Select(g => g
-            .OrderByDescending(x => x.Fecha)
-            .Select(x => x.Saldo)
-            .FirstOrDefault()
-        )
-        .Sum();
 
-    return Json(saldoTotal);
-}
+    public JsonResult SumaSaldo(int clienteID)
+    {
+        var saldo = _context.MovimientosCuentaCorrientes
+            .Where(m => m.ClienteID == clienteID
+                     && (m.TipoMovimiento == TipoMovimiento.Venta
+                     || m.TipoMovimiento == TipoMovimiento.Cobro)) // 👈
+            .Sum(m => m.TipoMovimiento == TipoMovimiento.Venta ? m.Importe : -m.Importe);
+
+        return Json(new { saldo = saldo });
+    }
 
 
-public JsonResult ObtenerTotalPendiente()
+    public JsonResult ObtenerSaldoTotal()
+    {
+        var saldo = _context.MovimientosCuentaCorrientes
+            .Where(m => m.TipoMovimiento == TipoMovimiento.Venta
+                     || m.TipoMovimiento == TipoMovimiento.Cobro) // 👈 mismo filtro que Pendiente
+            .Sum(m => m.TipoMovimiento == TipoMovimiento.Venta ? m.Importe : -m.Importe);
+
+        return Json(new { saldo = saldo });
+    }
+
+    public JsonResult ObtenerTotalPendiente()
 {
     var totalPendiente = _context.MovimientosCuentaCorrientes
         .Where(m => m.TipoMovimiento == TipoMovimiento.Venta

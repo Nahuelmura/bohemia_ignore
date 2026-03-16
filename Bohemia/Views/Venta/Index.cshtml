@@ -17,7 +17,7 @@
     <div class="modal-body">
         <input type="hidden" id="ProductoID" value="0">
         <input type="hidden" id="VentaID" value="0">
-        <input type="hidden" id="ClienteID" value="2">
+            <input type="hidden" id="ClienteID" value="@ViewBag.ClienteID">
         <input type="text" id="UserId" value="@ViewBag.UsuarioId" hidden>
 
         <!-- Primera fila: 3 inputs juntos -->
@@ -62,8 +62,8 @@
 
                     <label class="form-label Textobohemiaventas">Cliente</label>
 
-                    <input type="text" id="Nombre" class="form-control" placeholder="Buscar cliente por nombre"
-                           autocomplete="off">
+                    <input type="text"     id="Nombre"     class="form-control"     placeholder="Buscar cliente por nombre"
+                           value="@ViewBag.ClienteNombre" autocomplete="off">
 
                     <input type="hidden" id="ClienteID">
 

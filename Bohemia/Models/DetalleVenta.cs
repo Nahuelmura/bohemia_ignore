@@ -14,7 +14,7 @@ public class DetalleVenta
     public int Cantidad { get; set; }
     public decimal PrecioUnitario { get; set; }
 
- 
+
     public virtual Producto Productos { get; set; }
     public virtual Venta Ventas { get; set; }
 }
@@ -44,7 +44,7 @@ public class DetalleVentaVista
     public int CantidadProducto { get; set; }
     public decimal PrecioCostoProducto { get; set; }
 
-        public decimal PrecioVentaProducto { get; set; }
+    public decimal PrecioVentaProducto { get; set; }
 
     public string? DescripcionProducto { get; set; }
 
@@ -80,6 +80,7 @@ public class VistadetalleVenta
     public string? DescripcionProducto { get; set; }
     public decimal? TotalVenta { get; set; }
 
+    public decimal? TotalConDescuento { get; set; }
 
     public decimal? GananciaProducto { get; set; }
 

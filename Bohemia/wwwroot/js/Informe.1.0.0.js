@@ -1,4 +1,5 @@
 window.onload = TraerDetalleVentas;
+
 function TraerDetalleVentas() {
   let descripcionBuscar = $("#DescripcionBuscar").val();
   let fechaDesde = $("#FechaDesde").val();
@@ -22,52 +23,54 @@ function TraerDetalleVentas() {
 
       if (!ventasMostrar || ventasMostrar.length === 0) {
         contenidoTabla = `
-                    <tr>
-                        <td colspan="7" style="text-align:center;font-weight:bold;color:red;">
-                            No se encontraron registros
-                        </td>
-                    </tr>`;
+        <tr>
+            <td colspan="7" style="text-align:center;font-weight:bold;color:red;">
+                No se encontraron registros
+            </td>
+        </tr>`;
       } else {
         $.each(ventasMostrar, function (index, venta) {
-          /* ------------------ BOTÓN ANULAR ------------------ */
+          /* BOTÓN ANULAR */
 
           let botonRevertir = "";
 
           if (!venta.esReversa && !venta.esAnulada) {
             botonRevertir = `
-                            <button onclick="RevertirVenta(${venta.ventaID})"
-                                    class="btn btn-danger btn-sm"
-                                    style="margin-left:10px;">
-                                Anular
-                            </button>`;
+            <button onclick="RevertirVenta(${venta.ventaID})"
+                    class="btn btn-danger btn-sm ocultar-en-768px"
+                    style="margin-left:10px;">
+                Anular
+            </button>`;
           }
 
-          /* ------------------ CABECERA VENTA ------------------ */
+          /* CABECERA VENTA */
 
           let estiloCabecera = venta.esReversa
-            ? "background-color:#f8d7da;"
+            ? "background-color:#7f1d1d;"
             : venta.esAnulada
-              ? "background-color:#ffeeba;"
-              : "background-color:#f0f0f0;";
+              ? "background-color:#78350f;"
+              : "background-color:#1f2937;";
 
           contenidoTabla += `
-                        <tr>
-                            <td class="Textobohemia" colspan="7"
-                                style="font-weight:bold; ${estiloCabecera}">
-                                
-                                N° Venta: ${venta.ventaID}
-                                - Fecha: ${venta.fecha_Ventas}
-                                - ${venta.emailUsuario}
-                                - ${venta.forma_pagostring}
+<tr>
+<td class="text-center" colspan="7"
+    style="font-weight:bold; ${estiloCabecera}">
+    
+    <div class="d-flex flex-wrap justify-content-center align-items-center gap-2">
+        <span class="text-warning">N° Venta: ${venta.ventaID}</span>
+        <span class="ocultar-en-768px">Fecha: ${venta.fecha_Ventas}</span>
+        <span class="ocultar-en-768px">${venta.emailUsuario}</span>
+        <span class="ocultar-en-768px">${venta.forma_pagostring}</span>
 
-                                ${venta.esAnulada ? '<span style="color:red;margin-left:10px;">ANULADA</span>' : ""}
-                                ${venta.esReversa ? '<span style="color:red;margin-left:10px;">REVERSA</span>' : ""}
+        ${venta.esAnulada ? '<span style="color:red;">ANULADA</span>' : ""}
+        ${venta.esReversa ? '<span style="color:red;">REVERSA</span>' : ""}
 
-                                ${botonRevertir}
-                            </td>
-                        </tr>`;
+        ${botonRevertir}
+    </div>
+</td>
+</tr>`;
 
-          /* ------------------ DETALLES ------------------ */
+          /* DETALLE PRODUCTOS */
 
           $.each(venta.listadoDetalle, function (i, detalle) {
             let claseCantidad =
@@ -84,18 +87,37 @@ function TraerDetalleVentas() {
                 : "";
 
             contenidoTabla += `
-                            <tr>
-                                <td>${detalle.codigoProducto}</td>
-                                <td class="ocultar-en-768px">${detalle.descripcionProducto}</td>
-                                <td class="ocultar-en-768px">$ ${detalle.precioCostoProducto}</td>
-                                <td class="ocultar-en-768px">$ ${detalle.precioUnitario}</td>
-                                <td ${claseCantidad}>${detalle.cantidad}</td>
-                                <td class="ocultar-en-768px" ${claseGanancia}>$ ${detalle.gananciaProducto}</td>
-                                <td ${claseTotal}>$ ${detalle.totalVenta}</td>
-                            </tr>`;
+<tr>
+<td>${detalle.codigoProducto}</td>
+
+<td class="ocultar-en-768px">
+${detalle.descripcionProducto}
+</td>
+
+<td class="ocultar-en-768px">
+$ ${formatearPrecioAR(detalle.precioCostoProducto)}
+</td>
+
+<td class="ocultar-en-768px">
+$ ${formatearPrecioAR(detalle.precioUnitario)}
+</td>
+
+<td ${claseCantidad}>
+${detalle.cantidad}
+</td>
+
+<td class="ocultar-en-768px" ${claseGanancia}>
+$ ${formatearPrecioAR(detalle.gananciaProducto)}
+</td>
+
+<td ${claseTotal}>
+$ ${formatearPrecioAR(detalle.totalVenta)}
+</td>
+
+</tr>`;
           });
 
-          /* ------------------ TOTAL POR VENTA ------------------ */
+          /* TOTAL POR VENTA */
 
           let claseTotalVenta =
             venta.total < 0 ? 'style="color:red;font-weight:bold;"' : "";
@@ -106,38 +128,54 @@ function TraerDetalleVentas() {
               : "";
 
           contenidoTabla += `
-                        <tr style="background-color:#dff0d8;font-weight:bold;">
-                            <td colspan="3" style="text-align:right;">
-                                Total de la venta:
-                            </td>
-                            <td ${claseTotalVenta}>$ ${venta.total}</td>
-                            <td class="ocultar-en-768px">Ganancia total:</td>
-                            <td class="ocultar-en-768px" ${claseGananciaTotal}>
-                                $ ${venta.gananciaTotal}
-                            </td>
-                            <td></td>
-                        </tr>`;
+<tr style="background-color:#dff0d8;font-weight:bold;">
+
+<td></td>
+<td class="ocultar-en-768px"></td>
+<td class="ocultar-en-768px"></td>
+<td class="ocultar-en-768px"></td>
+
+<td style="text-align:right;">
+Total:
+</td>
+
+<td class="ocultar-en-768px" ${claseGananciaTotal}>
+$ ${formatearPrecioAR(venta.gananciaTotal)}
+</td>
+
+<td ${claseTotalVenta}>
+$ ${formatearPrecioAR(venta.total)}
+</td>
+
+</tr>`;
         });
 
-        /* ------------------ TOTAL GENERAL ------------------ */
+        /* TOTAL GENERAL */
 
         let hayFiltrosAplicados =
           descripcionBuscar !== "0" || fechaDesde || fechaHasta;
 
         if (hayFiltrosAplicados) {
           contenidoTabla += `
-                        <tr style="background-color:#ffd700;font-weight:bold;">
-                            <td colspan="4"
-                                style="color:green;text-align:right;">
-                                Total ventas seleccionadas:
-                                $ ${totalVentasFecha}
-                            </td>
-                            <td colspan="3"
-                                style="color:green;text-align:right;">
-                                Ganancia total:
-                                $ ${gananciaTotalFecha}
-                            </td>
-                        </tr>`;
+<tr style="background-color:#ffd700;font-weight:bold;">
+
+<td colspan="2"
+    style="color:green;text-align:right;">
+
+Total ventas seleccionadas:
+$ ${formatearPrecioAR(totalVentasFecha)}
+
+</td>
+
+<td colspan="2"
+    style="color:green;text-align:right;">
+
+Ganancia total:
+$ ${formatearPrecioAR(gananciaTotalFecha)}
+
+</td>
+
+</tr>`;
         }
       }
 
@@ -174,33 +212,23 @@ function RevertirVenta(ventaId) {
   });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-document.getElementById("DescripcionBuscar").addEventListener("change", TraerDetalleVentas);
-document.getElementById("btnLimpiarFiltro").addEventListener("click", function () {
+document
+  .getElementById("DescripcionBuscar")
+  .addEventListener("change", TraerDetalleVentas);
+document
+  .getElementById("btnLimpiarFiltro")
+  .addEventListener("click", function () {
     $("#DescripcionBuscar").val("0");
     TraerDetalleVentas();
-});
-
+  });
 
 // Evento para limpiar el filtro y mostrar todas las ventas
-document.getElementById("btnLimpiarFiltro").addEventListener("click", function () {
+document
+  .getElementById("btnLimpiarFiltro")
+  .addEventListener("click", function () {
     $("#FechaBuscar").val(""); // Borrar la fecha seleccionada
     TraerDetalleVentas(null); // Recargar todas las ventas sin filtro
-});
-
-
-
-
+  });
 
 // function RevertirVenta(ventaId) {
 //   if (!confirm("¿Seguro que querés anular esta venta?")) {
@@ -224,8 +252,6 @@ document.getElementById("btnLimpiarFiltro").addEventListener("click", function (
 //     },
 //   });
 // }
-
-
 
 // function ObtenerProductosMinimos() {
 //     $.ajax({
@@ -256,3 +282,24 @@ document.getElementById("btnLimpiarFiltro").addEventListener("click", function (
 
 // // Llamar la función cuando la página cargue
 // window.onload = ObtenerProductosMinimos;
+
+function formatearPrecioAR(valor) {
+  if (valor == null || valor === "") return "";
+
+  if (typeof valor === "string") {
+    valor = valor
+      .replace(/\$/g, "")
+      .replace(/\s/g, "")
+      .replace(/\./g, "")
+      .replace(",", ".");
+  }
+
+  const numero = parseFloat(valor);
+
+  if (isNaN(numero)) return "";
+
+  return numero.toLocaleString("es-AR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}

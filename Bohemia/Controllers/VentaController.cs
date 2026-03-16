@@ -26,6 +26,17 @@ public class VentaController : Controller
     public IActionResult Index(string codigo, DateTime? fecha, Descripcion descripcion)
     {
 
+        var cliente = _context.Clientes
+      .FirstOrDefault(c => c.ClienteID == 2);
+
+        if (cliente != null)
+        {
+            ViewBag.ClienteID = cliente.ClienteID;
+            ViewBag.ClienteNombre = cliente.Nombre;
+        }
+
+       
+
         // Crear una lista de SelectListItem que incluya el elemento adicional
         var selectListItems = new List<SelectListItem>
         {
@@ -223,52 +234,42 @@ public class VentaController : Controller
 
 
     [HttpPost]
-    public JsonResult GuardarVenta(DateTime? fecha_venta, decimal total, string usuarioID, Forma_pago Forma_pago, int clienteID)
+  public JsonResult GuardarVenta([FromBody] GuardarVentaDto dto)
     {
-
         Thread.CurrentThread.CurrentCulture = new CultureInfo("es-AR");
         try
         {
-            if (string.IsNullOrEmpty(usuarioID))
-            {
+            if (string.IsNullOrEmpty(dto.UsuarioID))  // 👈 dto.
                 return Json(new { success = false, message = "ID de usuario inválido" });
-            }
 
-            var usuario = _context.Users.FirstOrDefault(u => u.Id == usuarioID);
+            var usuario = _context.Users.FirstOrDefault(u => u.Id == dto.UsuarioID);  // 👈 dto.
             if (usuario == null)
-            {
                 return Json(new { success = false, message = "Usuario no encontrado" });
-            }
 
-            DateTime fechaVenta = fecha_venta ?? DateTime.Now;
+            DateTime fechaVenta = dto.Fecha_venta ?? DateTime.Now;  // 👈 dto.
+
+            int? clienteID = (dto.ClienteID == 0) ? null : dto.ClienteID;
 
             var venta = new Venta
             {
-                ClienteID = clienteID,
+                ClienteID = dto.ClienteID,       // 👈 dto.
                 Fecha_Venta = fechaVenta,
-                Total = total / 100,
-                UsuarioID = usuario.Email, // Guardar el email del usuario en UsuarioID
-                Forma_pago = Forma_pago,
+                Total = dto.Total,               // 👈 dto.
+                UsuarioID = usuario.Email,
+                Forma_pago = dto.Forma_pago,     // 👈 dto.
             };
-
             _context.Ventas.Add(venta);
             _context.SaveChanges(); // Guardamos para obtener el ID de la nueva venta
 
-            // Obtener último saldo del cliente
-            decimal ultimoSaldo = _context.MovimientosCuentaCorrientes
-                .Where(m => m.ClienteID == clienteID)
-                .OrderByDescending(m => m.Fecha)
-                .Select(m => m.Saldo)
-                .FirstOrDefault();
-
+          
             // Crear movimiento por venta
             var movimientoVenta = new MovimientoCuentaCorriente
             {
-                ClienteID = clienteID,
+                ClienteID = dto.ClienteID,
                 Fecha = fechaVenta,
 
-                Importe = total, // POSITIVO
-                Saldo = ultimoSaldo + total,
+                Importe = dto.Total , // POSITIVO
+             
 
                 TipoMovimiento = TipoMovimiento.Venta,
                 ReferenciaTipo = "Venta",
@@ -287,64 +288,42 @@ public class VentaController : Controller
     }
 
 
-
     [HttpPost]
-    public JsonResult GuardarDetalleVenta(int ClienteID, int ventaId, string codigoProducto, int cantidad, decimal precioUnitario, string usuarioID)
+    public JsonResult GuardarDetalleVenta([FromBody] GuardarDetalleVentaDto dto)
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo("es-AR");
         try
         {
-            if (string.IsNullOrEmpty(usuarioID))
-            {
+            if (string.IsNullOrEmpty(dto.UsuarioID))
                 return Json(new { success = false, message = "ID de usuario inválido" });
-            }
 
-            var usuario = _context.Users.FirstOrDefault(u => u.Id == usuarioID);
+            var usuario = _context.Users.FirstOrDefault(u => u.Id == dto.UsuarioID);
             if (usuario == null)
-            {
                 return Json(new { success = false, message = "Usuario no encontrado" });
-            }
-            // Buscar la venta
-            var venta = _context.Ventas.Find(ventaId);
+
+            var venta = _context.Ventas.Find(dto.VentaId);
             if (venta == null)
-            {
                 return Json(new { success = false, message = "Venta no encontrada" });
-            }
 
-            // Buscar el producto por código
-            var producto = _context.Productos.FirstOrDefault(p => p.Codigo == codigoProducto && !p.Eliminado);
+            var producto = _context.Productos.FirstOrDefault(p => p.Codigo == dto.CodigoProducto && !p.Eliminado);
             if (producto == null)
-            {
                 return Json(new { success = false, message = "Producto no encontrado" });
-            }
 
-            // Verificar si hay suficiente stock
-            if (producto.Cantidad < cantidad)
-            {
+            if (producto.Cantidad < dto.Cantidad)
                 return Json(new { success = false, message = "Stock insuficiente" });
-            }
 
-            if (cantidad == 0)
-            {
-                return Json(new { success = false, message = "La cantidad tiene que ser igual o mayuor a 1" });
-            }
+            if (dto.Cantidad == 0)
+                return Json(new { success = false, message = "La cantidad tiene que ser igual o mayor a 1" });
 
+            producto.Cantidad -= dto.Cantidad;
 
-
-            // Restar la cantidad del stock
-            producto.Cantidad -= cantidad;
-
-            // Crear el detalle de venta con el ProductoID obtenido
             var detalleVenta = new DetalleVenta
             {
-                VentaID = ventaId,
+                VentaID = dto.VentaId,
                 ProductoID = producto.ProductoID,
-                Cantidad = cantidad,
-                PrecioUnitario = precioUnitario / 100,
-               
-                UsuarioID = usuario.Email, // Guardar el email del usuario en UsuarioID
-
-
+                Cantidad = dto.Cantidad,
+                PrecioUnitario = dto.PrecioUnitario, // llega como 628.20 ✓
+                UsuarioID = usuario.Email,
             };
 
             _context.DetalleVentas.Add(detalleVenta);
@@ -359,12 +338,11 @@ public class VentaController : Controller
     }
 
 
+    // busqueda de cliente en venta 
 
-// busqueda de cliente en venta 
+    //Controllador de cliente en venta 
 
-//Controllador de cliente en venta 
-
-[HttpGet]
+    [HttpGet]
 public JsonResult BuscarClientes(string texto)
 {
     if (string.IsNullOrWhiteSpace(texto))
@@ -468,18 +446,14 @@ private void RevertirVentaInterno(int ventaId)
     // Movimiento de cuenta corriente (Reverso)
     if (venta.ClienteID.HasValue)
     {
-        decimal ultimoSaldo = _context.MovimientosCuentaCorrientes
-            .Where(m => m.ClienteID == venta.ClienteID)
-            .OrderByDescending(m => m.Fecha)
-            .Select(m => m.Saldo)
-            .FirstOrDefault();
+       
 
         var movimientoReverso = new MovimientoCuentaCorriente
         {
             ClienteID = venta.ClienteID.Value,
             Fecha = DateTime.Now,
             Importe = venta.Total * -1, // Negativo para restar del saldo
-            Saldo = ultimoSaldo - venta.Total,
+            // Saldo = ultimoSaldo - venta.Total,
             TipoMovimiento = TipoMovimiento.Venta,
             ReferenciaTipo = "Reverso Venta",
             ReferenciaID = ventaReversa.VentaID

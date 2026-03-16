@@ -162,25 +162,6 @@ Loguin */
 }
 
 
-.contenedor-filtro {
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-}
-
-@media (max-width: 768px) {
-  .contenedor-filtro .row {
-    flex-direction: column;
-  }
-
-  .contenedor-filtro .col-md-3 {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-}
 
 
 @media (max-width: 550px) {

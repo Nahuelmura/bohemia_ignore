@@ -233,10 +233,10 @@ let totalConDescuento = parseFloat(
     codigoProducto: codigoProducto,
     cantidad: cantidad,
     observacion: observacion,
-    precioUnitario: precioUnitario,
+    precioUnitario: Math.round(precioUnitario * 100) / 100,
     descripcion: descripcion,
     forma_Pago: forma_Pago,
-    totalConDescuento: parseFloat(totalRaw),
+    totalConDescuento: Math.round(parseFloat(totalRaw) * 100) / 100,
   });
   console.log(forma_Pago);
   // Actualizar la tabla después de agregar el producto
@@ -299,7 +299,6 @@ function confirmarEliminar(index) {
     }
   });
 }
-
 function GuardarVenta() {
   if (detallesVenta.length === 0) {
     Swal.fire({
@@ -312,13 +311,16 @@ function GuardarVenta() {
   }
 
   let fecha_venta = new Date().toISOString();
-  let total = detallesVenta.reduce(
-    (sum, prod) => sum + parseFloat(prod.totalConDescuento),
-    0,
-  );
-  let usuarioID = $("#UserId").val().trim(); // Asegura que no esté vacío
-  let formaPagoSeleccionada = $("#Forma_pago").val(); //
-  let clienteID = $("#ClienteID").val() || null; //
+  let total =
+    Math.round(
+      detallesVenta.reduce(
+        (sum, prod) => sum + parseFloat(prod.totalConDescuento),
+        0,
+      ) * 100,
+    ) / 100;
+  let usuarioID = $("#UserId").val().trim();
+  let formaPagoSeleccionada = parseInt($("#Forma_pago").val()); // 👈 parseInt para que llegue como número
+  let clienteID = parseInt($("#ClienteID").val()) || 0;
 
   if (!usuarioID) {
     alert("Error: Usuario no identificado.");
@@ -328,14 +330,16 @@ function GuardarVenta() {
   $.ajax({
     url: "../../Venta/GuardarVenta",
     type: "POST",
+    contentType: "application/json", // 👈
     dataType: "json",
-    data: {
+    data: JSON.stringify({
+      // 👈
       fecha_venta: fecha_venta,
-      total: total,
+      total: total, // llega como 628.20 ✓
       usuarioID: usuarioID,
-      Forma_pago: formaPagoSeleccionada,
+      forma_pago: formaPagoSeleccionada,
       clienteID: clienteID,
-    },
+    }),
     success: function (response) {
       if (response.success) {
         let ventaId = response.ventaId;
@@ -343,7 +347,6 @@ function GuardarVenta() {
       } else {
         alert(response.message);
       }
-      $("#DetalleModal").modal("hide");
     },
     error: function () {
       alert("Error al guardar la venta");
@@ -351,50 +354,49 @@ function GuardarVenta() {
   });
   GenerarPDF();
 }
-
 function GuardarDetallesVenta(ventaId) {
-  let usuarioID = $("#UserId").val().trim(); // Asegura que no esté vacío
+  let usuarioID = $("#UserId").val().trim();
 
   if (!usuarioID) {
     alert("Error: Usuario no identificado.");
     return;
   }
-  detallesVenta.forEach((producto) => {
-    $.ajax({
+
+  let promesas = detallesVenta.map((producto) => {
+    return $.ajax({
       url: "../../Venta/GuardarDetalleVenta",
       type: "POST",
+      contentType: "application/json", // 👈
       dataType: "json",
-      data: {
+      data: JSON.stringify({
+        // 👈
         ventaId: ventaId,
         codigoProducto: producto.codigoProducto,
         cantidad: producto.cantidad,
-        precioUnitario: producto.totalConDescuento,
-
+        precioUnitario: producto.precioUnitario, // llega como 628.20 ✓
         usuarioID: usuarioID,
-      },
-      success: function (response) {
-        if (!response.success) {
-          alert(response.message);
-        }
-        ListadoDetalleVenta();
-      },
+      }),
       error: function () {
         alert("Error al guardar un detalle de venta");
       },
     });
   });
 
-  Swal.fire({
-    icon: "success",
-    title: "¡Éxito!",
-    text: "Venta y detalles guardados correctamente",
-    confirmButtonText: "Aceptar",
-  });
-  location.reload();
+  // Esperar que TODOS los detalles se guarden antes de mostrar éxito
+  Promise.all(promesas).then(() => {
+    Swal.fire({
+      icon: "success",
+      title: "¡Éxito!",
+      text: "Venta y detalles guardados correctamente",
+      confirmButtonText: "Aceptar",
+    }).then(() => {
+      location.reload();
+    });
 
-  detallesVenta = []; // Limpiar productos en memoria
-  $("#detalleVentaTabla").empty();
-  $("#DetalleModal").modal("hide"); // Cerrar modal
+    detallesVenta = [];
+    $("#detalleVentaTabla").empty();
+    $("#DetalleModal").modal("hide");
+  });
 }
 function GenerarPDF() {
   const { jsPDF } = window.jspdf;

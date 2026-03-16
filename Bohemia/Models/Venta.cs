@@ -92,3 +92,24 @@ public class VentaVistaInforme
 
 
 }
+
+
+public class GuardarVentaDto
+{
+   public DateTime? Fecha_venta { get; set; }
+   public decimal Total { get; set; }
+   public string UsuarioID { get; set; }
+   public Forma_pago Forma_pago { get; set; }
+   public int ClienteID { get; set; }
+}
+
+
+
+public class GuardarDetalleVentaDto
+{
+   public int VentaId { get; set; }
+   public string CodigoProducto { get; set; }
+   public int Cantidad { get; set; }
+   public decimal PrecioUnitario { get; set; }
+   public string UsuarioID { get; set; }
+}

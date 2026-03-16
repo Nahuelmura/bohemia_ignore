@@ -24,5 +24,22 @@ public class ApplicationDbContext : IdentityDbContext
 
     // public DbSet<DigitalizarFactura> GetDigitalizarFacturas { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
 
+        // Configuración de decimales para Venta
+        builder.Entity<Venta>(entity =>
+        {
+            entity.Property(e => e.Total)
+                .HasColumnType("decimal(18,2)");
+        });
+
+        // Configuración de decimales para DetalleVenta
+        builder.Entity<DetalleVenta>(entity =>
+        {
+            entity.Property(e => e.PrecioUnitario)
+                .HasColumnType("decimal(18,2)");
+        });
+    }
 }
