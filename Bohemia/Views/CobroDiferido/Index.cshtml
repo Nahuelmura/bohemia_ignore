@@ -15,46 +15,42 @@
 
     <!-- Filtros -->
     <div class="filtros-card">
-        <div class="card-body">
-            <form class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">Cliente</label>
-                    <input type="text" class="form-control" placeholder="Buscar cliente...">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Tipo</label>
-                    <select class="form-select">
-                        <option value="">Todos</option>
-                        <option value="cheques">Cheques</option>
-                        <option value="cuota">Cuotas</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Estado</label>
-                    <select class="form-select">
-                        <option value="">Todos</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="cobrado">Cobrado</option>
-                        <option value="vencido">Vencido</option>
-                        <option value="rechazado">Rechazado</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Desde</label>
-                    <input type="date" class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Hasta</label>
-                    <input type="date" class="form-control">
-                </div>
-                <div class="col-md-1 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
+    <div class="card-body">
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <label class="form-label">Cliente</label>
+                <input type="text" id="filtro-cliente" class="form-control"
+                       placeholder="Buscar cliente..."
+                       oninput="aplicarFiltros()">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Estado</label>
+                <select id="filtro-estado" class="form-select" onchange="aplicarFiltros()">
+                    <option value="">Todos</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Cobrado">Cobrado</option>
+                    <option value="Vencido">Vencido</option>
+                    <option value="Rechazado">Rechazado</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Desde</label>
+                <input type="date" id="filtro-desde" class="form-control"
+                       onchange="aplicarFiltros()">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Hasta</label>
+                <input type="date" id="filtro-hasta" class="form-control"
+                       onchange="aplicarFiltros()">
+            </div>
+
         </div>
     </div>
+</div>
 
     <!-- Resumen -->
     <div class="row mb-4">
