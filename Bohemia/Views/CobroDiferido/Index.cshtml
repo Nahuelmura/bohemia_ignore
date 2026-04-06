@@ -1,0 +1,224 @@
+@{
+    ViewData["Title"] = "Cobro Diferido";
+}
+<link rel="stylesheet" href="~/css/cobodiferido.css" asp-append-version="true" />
+
+<body class="Fondo_cobro">
+
+    <h1 class="Textobohemia" style="text-align: center ;">Cobro Diferido </h1>
+
+    <h6 class="Textobohemia text-center mb-4">
+        En esta sección usted podrá visualizar los cobros diferidos.
+    </h6>
+
+<div class="container-fluid">
+
+    <!-- Filtros -->
+    <div class="filtros-card">
+        <div class="card-body">
+            <form class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Cliente</label>
+                    <input type="text" class="form-control" placeholder="Buscar cliente...">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tipo</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="cheques">Cheques</option>
+                        <option value="cuota">Cuotas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="cobrado">Cobrado</option>
+                        <option value="vencido">Vencido</option>
+                        <option value="rechazado">Rechazado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Desde</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Hasta</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+           <div class="card stats-card bg-warning text-dark">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0">Por Cobrar</h6>
+                            <h3 id="totalPorCobrar" class="mb-0">$0</h3>
+                        </div>
+                        <div>
+                            <i class="fas fa-clock fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+
+                    <small id="detallePorCobrar" class="opacity-75">
+                        0 Cheques + 0 Cuotas
+                    </small>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0">Vencidos</h6>
+                            <h3 id="totalVencidos" class="mb-0">$0</h3>
+                        </div>
+                        <div>
+                            <i class="fas fa-exclamation-circle fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <small id="detalleVencidos" class="opacity-75">
+                        0 Cheques + 0 Cuotas
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-success text-white">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0">Cobrados</h6>
+                            <h3 id="totalCobradosMes" class="mb-0">$0</h3>
+                        </div>
+                        <div>
+                            <i class="fas fa-check-double fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+
+                    <small id="detalleCobradosMes" class="opacity-75">
+                        Este mes
+                    </small>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0">Rechazados</h6>
+                            <h3 id="totalRechazados" class="mb-0">$0</h3>
+                        </div>
+                        <div>
+                            <i class="fas fa-times-circle fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <small id="detalleRechazados" class="opacity-75">0 Cheques</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="pagosTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="cheques-tab" data-bs-toggle="tab"
+                    data-bs-target="#cheques" type="button" role="tab">
+                <i class="fas fa-money-check-alt"></i> Cheques a Cobrar
+                <span id="badgeCheques" class="badge bg-danger ms-1">0</span>
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cuotas-tab" data-bs-toggle="tab"
+                    data-bs-target="#cuotas" type="button" role="tab">
+                <i class="fas fa-calendar-check"></i> Cuotas a Cobrar
+                <span id="badgeCuotas" class="badge bg-primary ms-1">0</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content bg-white p-3 border border-top-0 rounded-bottom">
+        
+        <!-- Tab Cheques -->
+        <div class="tab-pane fade show active" id="cheques" role="tabpanel">
+            <div class="table-responsive mt-2">
+                <table class="table table-hover table-striped" id="cobroChequeTable">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Banco</th>
+                            <th>N° Cheque</th>
+                            <th>Monto Total</th>
+                            <th>Fecha Emisión</th>
+                            <th>Fecha Cobro</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-secondary">
+                            <th colspan="3" class="text-end">Total Pendiente:</th>
+                            <th id="totalCheques">$0</th>
+                            <th colspan="3"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Cuotas -->
+        <div class="tab-pane fade" id="cuotas" role="tabpanel">
+            <div class="table-responsive mt-2">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr data-cobro-cheque-id="${cobro.cobroChequeId}">
+                            <th>Cliente</th>
+                            <th>Cuota</th>
+                            <th>Monto</th>
+                            <th>Fecha Vencimiento</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyCuotas">
+                    </tbody>
+                   <tfoot>
+                        <tr class="table-secondary">
+                            <th colspan="2" class="text-end">Total:</th>
+                            <th id="totalCuotas">$0</th>
+                            <th colspan="4"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/CobroDiferido.1.0.0.js"></script>
+}
+
+
+</body>
+

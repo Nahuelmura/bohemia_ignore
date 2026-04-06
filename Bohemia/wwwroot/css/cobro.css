@@ -48,6 +48,12 @@
     color: #fff;
 }
 
+.cobros-dark.modal-content {
+    background-color: #1e1e2d !important;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);    
+}
+
 /* Labels */
 .cobros-dark label,
 .cobros-dark legend {

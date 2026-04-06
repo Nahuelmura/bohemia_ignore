@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Movimiento Cuenta Corriente Proveedores";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/css/movimiento.css" />
+
+<h1 class="Textobohemia text-center">Movimiento Cuenta Corriente Proveedores</h1>
+
+<h6 class="Textobohemia text-center">
+    Aquí podrá ver el estado de cuenta corriente de los proveedores.
+</h6>
+
+<main class="dashboard-container">
+
+    <!-- RESUMEN -->
+    <div class="stats-bar">
+
+        <div class="stat-card">
+            <div class="stat-icon total"></div>
+            <div class="stat-content">
+                <h3>Saldo Total</h3>
+                <div class="value" id="saldoTotalProveedor">$ 0,00</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon pending"></div>
+            <div class="stat-content">
+                <h3>Total Compras</h3>
+                <div class="value" id="totalCompras">$ 0,00</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon overdue"></div>
+            <div class="stat-content">
+                <h3>Total Pagos</h3>
+                <div class="value" id="totalPagos">$ 0,00</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BUSCADOR -->
+    <div class="filtro-clientes mb-4 mx-auto">
+        <label class="Textobohemia text-white">🔎 Buscar proveedor</label>
+        <input type="text" class="form-control form-control-lg mt-2" id="txtBuscarProveedor"
+               placeholder="Buscar proveedor">
+    </div>
+
+    <!-- TARJETAS -->
+    <div class="cards-grid" id="cardsProveedores">
+    </div>
+
+</main>
+
+<!-- OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- PANEL LATERAL -->
+<div class="drawer-panel" id="drawerPanel">
+
+    <div class="drawer-header">
+        <div class="drawer-client-info">
+            <div class="avatar-circle" id="drawerAvatar">PR</div>
+            <div>
+                <h2 id="drawerProveedorNombre">Proveedor</h2>
+                <span class="drawer-balance" id="drawerSaldo">$ 0,00</span>
+            </div>
+        </div>
+
+        <button class="drawer-close-btn" onclick="closeDrawer()">X</button>
+    </div>
+
+    <div class="drawer-body">
+
+        <button onclick="generarEstadoCuentaProveedor()" class="btn-pdf">
+            Descargar Estado de Cuenta
+        </button>
+
+        <div class="history-timeline">
+            <div class="timeline-header">
+                <span>Historial de Movimientos</span>
+            </div>
+
+            <div id="drawerMovimientosProveedor">
+                <!-- JS -->
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/MovimientoProveedor.js"></script>
+}

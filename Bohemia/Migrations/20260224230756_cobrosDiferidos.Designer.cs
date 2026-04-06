@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoBohemia.Data;
 
@@ -11,9 +12,11 @@ using ProyectoBohemia.Data;
 namespace ProyectoBohemia.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260224230756_cobrosDiferidos")]
+    partial class cobrosDiferidos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,13 +297,10 @@ namespace ProyectoBohemia.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ClienteID")
-                        .HasColumnType("int");
-
                     b.Property<int>("CobroDiferidoID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CobroID")
+                    b.Property<int>("CobroID")
                         .HasColumnType("int");
 
                     b.Property<int>("Estado")
@@ -318,8 +318,6 @@ namespace ProyectoBohemia.Migrations
 
                     b.HasKey("CobroChequeID");
 
-                    b.HasIndex("ClienteID");
-
                     b.HasIndex("CobroDiferidoID")
                         .IsUnique();
 
@@ -335,9 +333,6 @@ namespace ProyectoBohemia.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CobroCuotaID"));
-
-                    b.Property<int?>("ClienteID")
-                        .HasColumnType("int");
 
                     b.Property<int>("CobroDiferidoID")
                         .HasColumnType("int");
@@ -358,8 +353,6 @@ namespace ProyectoBohemia.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("CobroCuotaID");
-
-                    b.HasIndex("ClienteID");
 
                     b.HasIndex("CobroDiferidoID");
 
@@ -390,74 +383,7 @@ namespace ProyectoBohemia.Migrations
 
                     b.HasKey("CobroDiferidoID");
 
-                    b.HasIndex("ClienteID");
-
                     b.ToTable("CobrosDiferidos");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.Compra", b =>
-                {
-                    b.Property<int>("CompraID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompraID"));
-
-                    b.Property<int>("FacturaNumero")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaCompra")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("MontoCompra")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Observacion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProveedorID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TipoCompra")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Usuario")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CompraID");
-
-                    b.HasIndex("ProveedorID");
-
-                    b.ToTable("Compras");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.DetalleCompra", b =>
-                {
-                    b.Property<int>("DetalleCompraID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DetalleCompraID"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompraID")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProductoID")
-                        .HasColumnType("int");
-
-                    b.HasKey("DetalleCompraID");
-
-                    b.HasIndex("CompraID");
-
-                    b.HasIndex("ProductoID");
-
-                    b.ToTable("DetalleCompras");
                 });
 
             modelBuilder.Entity("ProyectoBohemia.Models.DetalleVenta", b =>
@@ -509,9 +435,6 @@ namespace ProyectoBohemia.Migrations
                     b.Property<decimal>("Importe")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ProveedorID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ReferenciaID")
                         .HasColumnType("int");
 
@@ -528,45 +451,7 @@ namespace ProyectoBohemia.Migrations
 
                     b.HasIndex("ClienteID");
 
-                    b.HasIndex("ProveedorID");
-
                     b.ToTable("MovimientosCuentaCorrientes");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.MovimientoCuentaCorrienteProveedor", b =>
-                {
-                    b.Property<int>("MovimientoID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MovimientoID"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Importe")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProveedorID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReferenciaID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReferenciaTipo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Saldo")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TipoMovimiento")
-                        .HasColumnType("int");
-
-                    b.HasKey("MovimientoID");
-
-                    b.HasIndex("ProveedorID");
-
-                    b.ToTable("MovimientosCuentaCorrienteProveedor");
                 });
 
             modelBuilder.Entity("ProyectoBohemia.Models.Producto", b =>
@@ -736,11 +621,7 @@ namespace ProyectoBohemia.Migrations
 
             modelBuilder.Entity("ProyectoBohemia.Models.CobroCheque", b =>
                 {
-                    b.HasOne("ProyectoBohemia.Models.Cliente", null)
-                        .WithMany("CobrosCheques")
-                        .HasForeignKey("ClienteID");
-
-                    b.HasOne("ProyectoBohemia.Models.CobroDiferido", "CobroDiferido")
+                    b.HasOne("ProyectoBohemia.Models.CobroDiferido", null)
                         .WithOne("Cheque")
                         .HasForeignKey("ProyectoBohemia.Models.CobroCheque", "CobroDiferidoID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -748,20 +629,16 @@ namespace ProyectoBohemia.Migrations
 
                     b.HasOne("ProyectoBohemia.Models.Cobro", "Cobro")
                         .WithMany()
-                        .HasForeignKey("CobroID");
+                        .HasForeignKey("CobroID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Cobro");
-
-                    b.Navigation("CobroDiferido");
                 });
 
             modelBuilder.Entity("ProyectoBohemia.Models.CobroCuota", b =>
                 {
-                    b.HasOne("ProyectoBohemia.Models.Cliente", null)
-                        .WithMany("CobroCuota")
-                        .HasForeignKey("ClienteID");
-
-                    b.HasOne("ProyectoBohemia.Models.CobroDiferido", "CobroDiferido")
+                    b.HasOne("ProyectoBohemia.Models.CobroDiferido", null)
                         .WithMany("Cuotas")
                         .HasForeignKey("CobroDiferidoID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -772,49 +649,6 @@ namespace ProyectoBohemia.Migrations
                         .HasForeignKey("CobroID");
 
                     b.Navigation("Cobro");
-
-                    b.Navigation("CobroDiferido");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.CobroDiferido", b =>
-                {
-                    b.HasOne("ProyectoBohemia.Models.Cliente", "Cliente")
-                        .WithMany("CobrosDiferidos")
-                        .HasForeignKey("ClienteID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.Compra", b =>
-                {
-                    b.HasOne("ProyectoBohemia.Models.Proveedor", "Proveedor")
-                        .WithMany("Compras")
-                        .HasForeignKey("ProveedorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Proveedor");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.DetalleCompra", b =>
-                {
-                    b.HasOne("ProyectoBohemia.Models.Compra", "Compras")
-                        .WithMany()
-                        .HasForeignKey("CompraID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProyectoBohemia.Models.Producto", "Productos")
-                        .WithMany("DetalleCompras")
-                        .HasForeignKey("ProductoID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Compras");
-
-                    b.Navigation("Productos");
                 });
 
             modelBuilder.Entity("ProyectoBohemia.Models.DetalleVenta", b =>
@@ -844,22 +678,7 @@ namespace ProyectoBohemia.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProyectoBohemia.Models.Proveedor", null)
-                        .WithMany("MovimientosCuentaCorrientes")
-                        .HasForeignKey("ProveedorID");
-
                     b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.MovimientoCuentaCorrienteProveedor", b =>
-                {
-                    b.HasOne("ProyectoBohemia.Models.Proveedor", "Proveedor")
-                        .WithMany("MovimientosCuentaCorrienteProveedor")
-                        .HasForeignKey("ProveedorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Proveedor");
                 });
 
             modelBuilder.Entity("ProyectoBohemia.Models.Venta", b =>
@@ -879,13 +698,7 @@ namespace ProyectoBohemia.Migrations
 
             modelBuilder.Entity("ProyectoBohemia.Models.Cliente", b =>
                 {
-                    b.Navigation("CobroCuota");
-
                     b.Navigation("Cobros");
-
-                    b.Navigation("CobrosCheques");
-
-                    b.Navigation("CobrosDiferidos");
 
                     b.Navigation("MovimientosCuentaCorriente");
 
@@ -902,18 +715,7 @@ namespace ProyectoBohemia.Migrations
 
             modelBuilder.Entity("ProyectoBohemia.Models.Producto", b =>
                 {
-                    b.Navigation("DetalleCompras");
-
                     b.Navigation("DetalleVentas");
-                });
-
-            modelBuilder.Entity("ProyectoBohemia.Models.Proveedor", b =>
-                {
-                    b.Navigation("Compras");
-
-                    b.Navigation("MovimientosCuentaCorrienteProveedor");
-
-                    b.Navigation("MovimientosCuentaCorrientes");
                 });
 
             modelBuilder.Entity("ProyectoBohemia.Models.Venta", b =>

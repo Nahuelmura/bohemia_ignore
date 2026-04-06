@@ -19,6 +19,8 @@ public class Producto
 
     public bool Eliminado { get; set; }
     public virtual ICollection<DetalleVenta> DetalleVentas { get; set; }
+
+    public virtual ICollection<DetalleCompra> DetalleCompras { get; set; }
     //   public ICollection<Cliente> Clientes { get; set; }
 
 }

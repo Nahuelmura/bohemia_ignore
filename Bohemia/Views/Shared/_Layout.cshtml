@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="~/css/Movimientocuenta.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ProyectoBohemia.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Informe.css" asp-append-version="true" />
-
+    <link rel="stylesheet" href="~/css/Compra.css" asp-append-version="true" />
 
 
 
@@ -88,6 +88,11 @@
                                asp-action="Index">Venta</a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link text-light Textobohemia" asp-area="" asp-controller="Compra"
+                               asp-action="Index">Compras</a>
+                        </li>
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-light Textobohemia" href="#"
                                    id="clientesProveedoresDropdown" role="button" data-bs-toggle="dropdown"
@@ -134,11 +139,17 @@
                                         Movimiento Cuenta Corriente
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item Textobohemia" asp-area=""
+                                           asp-controller="MovimientoCuentaCorrienteProveedor" asp-action="Index">
+                                        Movimiento Cuenta Corriente Proveedor
+                                    </a>
+                                </li>
 
                                 <li>
-                                    <a class="dropdown-item Textobohemia" asp-area="" asp-controller="VentaCuotas"
-                                           asp-action="Index">
-                                        Venta en Cuotas
+                                    <a class="dropdown-item Textobohemia" asp-area="" asp-controller="CobroDiferido"
+                                        asp-action="Index">
+                                        Cobros Diferidos
                                     </a>
                                 </li>
                             </ul>

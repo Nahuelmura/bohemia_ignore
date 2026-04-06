@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoBohemia.Data;
 
@@ -11,9 +12,11 @@ using ProyectoBohemia.Data;
 namespace ProyectoBohemia.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260316233348_compradetallecompra")]
+    partial class compradetallecompra
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -533,42 +536,6 @@ namespace ProyectoBohemia.Migrations
                     b.ToTable("MovimientosCuentaCorrientes");
                 });
 
-            modelBuilder.Entity("ProyectoBohemia.Models.MovimientoCuentaCorrienteProveedor", b =>
-                {
-                    b.Property<int>("MovimientoID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MovimientoID"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Importe")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProveedorID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReferenciaID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReferenciaTipo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Saldo")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TipoMovimiento")
-                        .HasColumnType("int");
-
-                    b.HasKey("MovimientoID");
-
-                    b.HasIndex("ProveedorID");
-
-                    b.ToTable("MovimientosCuentaCorrienteProveedor");
-                });
-
             modelBuilder.Entity("ProyectoBohemia.Models.Producto", b =>
                 {
                     b.Property<int>("ProductoID")
@@ -851,17 +818,6 @@ namespace ProyectoBohemia.Migrations
                     b.Navigation("Cliente");
                 });
 
-            modelBuilder.Entity("ProyectoBohemia.Models.MovimientoCuentaCorrienteProveedor", b =>
-                {
-                    b.HasOne("ProyectoBohemia.Models.Proveedor", "Proveedor")
-                        .WithMany("MovimientosCuentaCorrienteProveedor")
-                        .HasForeignKey("ProveedorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Proveedor");
-                });
-
             modelBuilder.Entity("ProyectoBohemia.Models.Venta", b =>
                 {
                     b.HasOne("ProyectoBohemia.Models.Cliente", "Cliente")
@@ -910,8 +866,6 @@ namespace ProyectoBohemia.Migrations
             modelBuilder.Entity("ProyectoBohemia.Models.Proveedor", b =>
                 {
                     b.Navigation("Compras");
-
-                    b.Navigation("MovimientosCuentaCorrienteProveedor");
 
                     b.Navigation("MovimientosCuentaCorrientes");
                 });

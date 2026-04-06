@@ -1,0 +1,191 @@
+#sugerenciasProveedores {
+    background-color: #454040;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#sugerenciasProveedores li {
+    padding: 10px;
+    background-color: #242323;
+    transition: 0.2s;
+}
+
+#sugerenciasProveedores li:hover {
+    background-color: #f1f1f1;
+} 
+
+
+
+
+
+#sugerenciasProveedoresModal {
+    background-color: #454040;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#sugerenciasProveedoresModal li {
+    padding: 10px;
+    background-color: #242323;
+    transition: 0.2s;
+}
+
+#sugerenciasProveedoresModal li:hover {
+    background-color: #f1f1f1;
+}
+
+
+
+/* CONTENEDOR */
+.cobros-dark {
+    background: #1e1e2f;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* BLOQUES tipo card */
+.bloque {
+    background: #25253a;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+/* INPUTS */
+.form-control-sm {
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: #2b2b40;
+    color: #fff;
+    transition: all 0.2s ease;
+}
+
+.form-control-sm:focus {
+    border-color: #4da3ff;
+    box-shadow: 0 0 0 2px rgba(77, 163, 255, 0.2);
+    background-color: #2b2b40;
+}
+
+/* LABEL */
+.form-label {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* BOTONES */
+.btn {
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4da3ff, #0066ff);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 102, 255, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #00c851, #007e33);
+    border: none;
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 200, 81, 0.4);
+}
+
+/* TABLA */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background: #343454;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* SUGERENCIAS */
+.list-group {
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 200px;
+}
+
+
+/* BOTÓN TIPO CARD */
+.btn-toggle-obs {
+    width: 100%;
+    background: #25253a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border-radius: 10px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-toggle-obs:hover {
+    background: #2f2f48;
+}
+
+/* ICONO */
+#iconObs {
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+/* CAJA OCULTA */
+.obs-box {
+    display: none;
+    margin-top: 8px;
+    animation: fadeIn 0.2s ease;
+}
+
+/* ANIMACIÓN SUAVE */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+/*================= Errores ================= */
+
+.input-error {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5;
+}
+
+.input-ok {
+    border: 2px solid #28a745 !important;
+}
+
+
+
+.titulo_tabla_detalle {
+    color: black !important;
+    align-items: center;
+}

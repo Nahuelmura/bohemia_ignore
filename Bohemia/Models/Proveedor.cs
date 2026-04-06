@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProyectoBohemia.Models;
 
@@ -18,6 +19,11 @@ public class Proveedor
     public string? Cuit { get; set; }
     
     public bool Activo { get; set; } = false;
+
+    public virtual ICollection<Compra> Compras { get; set; }
+    public DbSet<MovimientoCuentaCorriente> MovimientosCuentaCorrientes { get; set; }
+
+    public DbSet<MovimientoCuentaCorrienteProveedor> MovimientosCuentaCorrienteProveedor { get; set; }
 }
 
 public class ProveedorVista

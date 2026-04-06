@@ -12,7 +12,7 @@ public class MovimientoCuentaCorriente
     public DateTime Fecha { get; set; }
     public decimal Importe { get; set; }
     public TipoMovimiento TipoMovimiento { get; set; }
-    // public decimal Saldo { get; set; }
+    public decimal Saldo { get; set; }
     public string? ReferenciaTipo { get; set; } // "Venta" / "Cobro"
     public int? ReferenciaID { get; set; }      // VentaID o CobroID
     public Cliente? Cliente { get; set; }

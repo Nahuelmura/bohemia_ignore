@@ -60,8 +60,6 @@ function ListadoCobro(nombre) {
   });
 }
 
-// <td><button class="btn btn-primary btn-sm" onclick="GuardarCobro(${cobro.cobroID})">Editar</button></td>
-// <td><button class="btn btn-danger btn-sm" onclick="eliminarCobro(${cobro.cobroID})">Eliminar</button></td>
 
 $(document).ready(function () {
   let timer = null;
@@ -233,6 +231,17 @@ function GuardarCobro() {
     return;
   }
 
+  if ($("#FormaCobro").val() == 3) {
+      $("#modalCuotas").modal("show");
+      return; // no ejecutar cobro normal
+  }
+
+
+    if ($("#FormaCobro").val() == 4) {
+        $("#modalCheque").modal("show");
+        return; // Es cheque → no guardar normal
+    }
+
   // 📤 OBJETO A ENVIAR
   let cobro = {
     CobroID: $("#CobroID").val(),
@@ -379,3 +388,172 @@ function formatearInputPrecio(input) {
 
 
 
+$("#FormaCobro").on("change", function () {
+    let forma = parseInt($(this).val());
+
+    // Valor del enum Pago_en_Cuota
+    if (forma === 3) {
+
+        // Validar cliente antes
+        if ($("#ClienteID").val() == 0) {
+            Swal.fire("Debe seleccionar un cliente primero");
+            $(this).val("0");
+            return;
+        }
+
+        // Copiar monto al modal
+        $("#montoTotalCuotas").val($("#monto").val());
+
+        let modal = new bootstrap.Modal(document.getElementById("modalCuotas"));
+        modal.show();
+    }
+});
+
+$("#FormaCobro").on("change", function () {
+
+    let forma = parseInt($(this).val());
+
+    // Ajustá este número al valor real de tu enum FormaCobro.Cheque
+    if (forma === 4) {
+
+        if ($("#ClienteID").val() == 0) {
+            Swal.fire("Debe seleccionar un cliente primero");
+            $(this).val("0");
+            return;
+        }
+
+        if (!$("#monto").val()) {
+            Swal.fire("Debe ingresar un monto");
+            $(this).val("0");
+            return;
+        }
+
+        // Copiar monto al modal
+        $("#montoCheque").val($("#monto").val());
+
+        let modal = new bootstrap.Modal(document.getElementById("modalCheque"));
+        modal.show();
+    }
+});
+
+
+
+$("#cantidadCuotas").on("input", function () {
+
+    let cantidad = parseInt($(this).val());
+    let montoTotal = parseFloat(
+        $("#montoTotalCuotas").val()
+            .replace(/\./g, "")
+            .replace(",", ".")
+    );
+
+    if (!cantidad || cantidad <= 0) return;
+
+    let montoCuota = (montoTotal / cantidad).toFixed(2);
+
+    let contenido = `<table class="table table-dark table-sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Monto</th>
+                                <th>Vencimiento</th>
+                            </tr>
+                        </thead><tbody>`;
+
+    for (let i = 1; i <= cantidad; i++) {
+        contenido += `
+            <tr>
+                <td>${i}</td>
+                <td>${montoCuota}</td>
+                <td>
+                    <input type="date" class="form-control fecha-cuota">
+                </td>
+            </tr>
+        `;
+    }
+
+    contenido += "</tbody></table>";
+
+    $("#detalleCuotas").html(contenido);
+});
+
+
+
+
+function GuardarPlanCuotas() {
+
+    let datos = {
+        clienteID: $("#ClienteID").val(),
+        montoTotal: $("#montoTotalCuotas").val(),
+        cantidadCuotas: $("#cantidadCuotas").val(),
+        primerVencimiento: $("#primerVencimiento").val()
+    };
+
+    $.ajax({
+        url: "/Cobro/GuardarPlanCuotas",
+        type: "POST",
+        data: datos,
+        success: function (res) {
+            Swal.fire("Éxito", res, "success");
+            location.reload();
+        }
+    });
+}
+
+
+
+
+
+function GuardarCheque() {
+
+    let datos = {
+        clienteID: $("#ClienteID").val(),
+        montoTotal: limpiarNumeroSQL($("#montoCheque").val()),
+        banco: $("#bancoCheque").val(),
+        numeroCheque: $("#numeroCheque").val(),
+        fechaEmision: $("#fechaEmisionCheque").val(),
+        fechaCobro: $("#fechaCobroCheque").val()
+    };
+
+    if (!datos.banco || !datos.numeroCheque) {
+        Swal.fire("Banco y número son obligatorios");
+        return;
+    }
+
+      console.log("Datos a enviar:", datos);
+
+    $.ajax({
+        url: "/Cobro/GuardarCheque",
+        type: "POST",
+        data: datos,
+        success: function (response) {
+
+            if (response.includes("Error") ||
+                response.includes("existe") ||
+                response.includes("inválido")) {
+
+                Swal.fire("Error", response, "error");
+                return;
+            }
+
+            Swal.fire("Éxito", response, "success")
+                .then(() => location.reload());
+        },
+        error: function () {
+            Swal.fire("Error", "Ocurrió un problema al guardar", "error");
+        }
+    });
+}
+
+
+function limpiarNumeroSQL(valor) {
+    if (!valor) return 0;
+
+    const limpio = valor
+        .replace(/\$/g, "")
+        .replace(/\s/g, "")
+        .replace(/\./g, "")
+        .replace(",", ".");
+
+    return isNaN(limpio) ? 0 : Number(limpio);
+}

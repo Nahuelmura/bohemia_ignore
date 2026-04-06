@@ -1,0 +1,61 @@
+        body {
+            background-color: #f5f6fa;
+            padding: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .table th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: 500;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .vencido {
+            background-color: #ffe6e6 !important;
+        }
+        .badge-cobrado, .badge-pagada {
+            background-color: #27ae60;
+        }
+        .badge-pendiente {
+            background-color: #f39c12;
+            color: white;
+        }
+        .badge-rechazado {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .badge-vencido {
+            background-color: #c0392b;
+            color: white;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #495057;
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            border-bottom: 3px solid #3498db;
+            color: #3498db;
+        }
+        .stats-card {
+            transition: transform 0.2s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+
+
+        .filtros-card {
+            height: 140px;
+
+        }
+
+        .stats-card {
+            height: 160px;
+        }
