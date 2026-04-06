@@ -1,16 +1,20 @@
 window.addEventListener('DOMContentLoaded', () => {
     listadoCobroCheque();
     cargarCuotas();
+    cargarCheques();
+    cargarCuota();
 
 });
 
 function listadoCobroCheque() {
-
-    const fechaDesde = document.getElementById('fechaDesde')?.value;
-    const fechaHasta = document.getElementById('fechaHasta')?.value;
+    const cliente    = document.getElementById('filtro-cliente')?.value.trim();
+    const estado     = document.getElementById('filtro-estado')?.value;
+    const fechaDesde = document.getElementById('filtro-desde')?.value;
+    const fechaHasta = document.getElementById('filtro-hasta')?.value;
 
     const params = new URLSearchParams();
-
+    if (cliente)    params.append('cliente',    cliente);
+    if (estado)     params.append('estado',     estado);
     if (fechaDesde) params.append('fechaDesde', fechaDesde);
     if (fechaHasta) params.append('fechaHasta', fechaHasta);
 
@@ -18,51 +22,37 @@ function listadoCobroCheque() {
         .then(response => response.json())
         .then(data => {
 
-            // 🔹 Cantidad pendientes
+                        // ✅ Actualiza la lista global para las cards
+            listaCheques = data;
+            actualizarCard();
+            actualizarCobradosMes();
+            actualizarCardVencidos(listaCheques, listaCuotas);
+            actualizarCardRechazados(listaCheques);
+            // 🔹 Badge y total — sin cambios
             const chequesPendientes = data.filter(x => x.estado === "Pendiente");
             document.getElementById("badgeCheques").innerText = chequesPendientes.length;
 
-            // 🔹 Total pendientes (UNA SOLA VEZ)
             const totalCheques = chequesPendientes
                 .reduce((acum, c) => acum + c.montoTotal, 0);
-
             document.getElementById("totalCheques").innerText =
-                totalCheques.toLocaleString("es-AR", {
-                    style: "currency",
-                    currency: "ARS"
-                });
+                totalCheques.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
 
             const tbody = document.querySelector('#cobroChequeTable tbody');
             tbody.innerHTML = '';
 
-            // 🔹 Armado de tabla
             data.forEach(cobro => {
-
-                
-                 // 🔴 Detectar vencida automáticamente
                 const fecha = new Date(cobro.fechaCobro);
-                const hoy = new Date();
-
                 const row = document.createElement('tr');
                 row.dataset.cobroChequeId = cobro.cobroChequeId;
 
                 let claseEstado = '';
                 let claseFila = '';
-
-                let estadoTexto = cobro.estado
-                    ? cobro.estado.toLowerCase()
-                    : "pendiente";
+                let estadoTexto = cobro.estado ? cobro.estado.toLowerCase() : "pendiente";
 
                 switch (estadoTexto) {
-                    case 'cobrado':
-                        claseEstado = 'badge-cobrado';
-                        break;
-                    case 'pendiente':
-                        claseEstado = 'badge-pendiente';
-                        break;
-                    case 'vencido':
-                        claseEstado = 'badge-vencido';
-                        break;
+                    case 'cobrado':   claseEstado = 'badge-cobrado';   break;
+                    case 'pendiente': claseEstado = 'badge-pendiente'; break;
+                    case 'vencido':   claseEstado = 'badge-vencido';   break;
                     case 'rechazado':
                         claseEstado = 'badge-rechazado';
                         claseFila = 'rechazado-row';
@@ -73,11 +63,7 @@ function listadoCobroCheque() {
                         break;
                 }
 
-
-
                 row.className = claseFila;
-
-
                 const fechaFormateada = fecha.toLocaleDateString("es-AR");
 
                 row.innerHTML = `
@@ -88,39 +74,28 @@ function listadoCobroCheque() {
                     <td>${cobro.fechaEmision}</td>
                     <td>${fechaFormateada}</td>
                     <td class="text-center">
-
-                    ${cobro.estado === 'Pendiente' ? `
-                        <div class="d-flex justify-content-center gap-2">
-
-                            <button 
-                                class="btn btn-success btn-sm btn-action"
-                                onclick="marcarCobradoCheque(${cobro.cobroChequeID})"
-                                title="Marcar como cobrado">
-                                <i class="fas fa-check"></i>
-                            </button>
-
-                            <button 
-                                class="btn btn-outline-danger btn-sm btn-action"
-                                onclick="marcarRechazado(${cobro.cobroChequeID})"
-                                title="Marcar como rechazado">
-                                <i class="fas fa-times"></i>
-                            </button>
-
-                        </div>
-                    `
-                    :
-                    `
-                        <span class="badge badge-estado ${claseEstado}">
-                            ${estadoTexto.charAt(0).toUpperCase() + estadoTexto.slice(1)}
-                        </span>
-                    `}
-
-                </td>
+                        ${cobro.estado === 'Pendiente' ? `
+                            <div class="d-flex justify-content-center gap-2">
+                                <button class="btn btn-success btn-sm btn-action"
+                                    onclick="marcarCobradoCheque(${cobro.cobroChequeID})"
+                                    title="Marcar como cobrado">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm btn-action"
+                                    onclick="marcarRechazado(${cobro.cobroChequeID})"
+                                    title="Marcar como rechazado">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        ` : `
+                            <span class="badge badge-estado ${claseEstado}">
+                                ${estadoTexto.charAt(0).toUpperCase() + estadoTexto.slice(1)}
+                            </span>
+                        `}
+                    </td>
                 `;
-
                 tbody.appendChild(row);
             });
-
         })
         .catch(error => console.error('Error al cargar los datos:', error));
 }
@@ -212,88 +187,79 @@ function marcarRechazado(id) {
 
 
 function cargarCuotas() {
+    const cliente    = document.getElementById('filtro-cliente')?.value.trim();
+    const estado     = document.getElementById('filtro-estado')?.value;
+    const fechaDesde = document.getElementById('filtro-desde')?.value;
+    const fechaHasta = document.getElementById('filtro-hasta')?.value;
 
-    
-    fetch('/CobroDiferido/ListadoCobroCuotas')
-    .then(response => response.json())
-    .then(data => {
+    const params = new URLSearchParams();
+    if (cliente)    params.append('cliente',    cliente);
+    if (fechaDesde) params.append('fechaDesde', fechaDesde);
+    if (fechaHasta) params.append('fechaHasta', fechaHasta);
 
-        const tbody = document.getElementById("tbodyCuotas");
-        tbody.innerHTML = "";
+    // Traducir estado → bool pagada
+    if (estado === 'Pendiente') params.append('pagada', 'false');
+    if (estado === 'Cobrado')   params.append('pagada', 'true');
+    // Vencido y Rechazado no aplican a cuotas → no se envían
 
-        // 🔹 Cuotas pendientes
-        const cuotasPendientes = data.filter(x => !x.pagada);
+    fetch(`/CobroDiferido/ListadoCobroCuotas?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
 
-        // 🔹 Badge cantidad
-        document.getElementById("badgeCuotas").innerText =
-            cuotasPendientes.length;
+             // ✅ Actualiza la lista global para las cards
+            listaCuotas = data;
+            actualizarCard();
+            actualizarCobradosMes();
+            actualizarCardVencidos(listaCheques, listaCuotas);
+            actualizarCardRechazados(listaCheques);
+            
+            const tbody = document.getElementById("tbodyCuotas");
+            tbody.innerHTML = "";
 
-        // 🔹 Total pendiente
-        const total = cuotasPendientes
-            .reduce((acum, c) => acum + c.montoCuota, 0);
+            const cuotasPendientes = data.filter(x => !x.pagada);
+            document.getElementById("badgeCuotas").innerText = cuotasPendientes.length;
 
-        document.getElementById("totalCuotas").innerText =
-            "$" + formatearNumero(total);
+            const total = cuotasPendientes.reduce((acum, c) => acum + c.montoCuota, 0);
+            document.getElementById("totalCuotas").innerText = "$" + formatearNumero(total);
 
-        // 🔹 Armar filas
-        data.forEach(c => {
-
-            let estadoBadge = "";
-            let filaClase = "";
-
-            // 🔴 Detectar vencida automáticamente
-            const fecha = new Date(c.fechaVencimiento);
             const hoy = new Date();
 
-            if (c.pagada) {
-                estadoBadge = `<span class="badge bg-success">Cobrada</span>`;
-            } 
-            else if (fecha < hoy) {
-                estadoBadge = `<span class="badge bg-danger">Vencida</span>`;
-                filaClase = "table-danger";
-            }
-            else {
-                estadoBadge = `<span class="badge bg-warning text-dark">Pendiente</span>`;
-            }
+            data.forEach(c => {
+                let estadoBadge = "";
+                let filaClase = "";
+                const fecha = new Date(c.fechaVencimiento);
 
-            const fechaFormateada = fecha.toLocaleDateString("es-AR");
+                if (c.pagada) {
+                    estadoBadge = `<span class="badge bg-success">Cobrada</span>`;
+                } else if (fecha < hoy) {
+                    estadoBadge = `<span class="badge bg-danger">Vencida</span>`;
+                    filaClase = "table-danger";
+                } else {
+                    estadoBadge = `<span class="badge bg-warning text-dark">Pendiente</span>`;
+                }
 
-            const fila = `
-                <tr class="${filaClase}">
-                    <td><strong>${c.cliente}</strong></td>
-                    <td>Cuota ${c.numeroCuota}</td>
-                    <td><strong>$${formatearNumero(c.montoCuota)}</strong></td>
-                    <td>${fechaFormateada}</td>
-                    <td>${estadoBadge}</td>
-                    <td>
-                        ${!c.pagada ? `
-                        <button class="btn btn-sm btn-success"
-                            onclick="marcarCobrado(${c.cobroCuotaID})">
-                            <i class="fas fa-check"></i> Cobrar
-                        </button>` : ""}
-                    </td>
-                </tr>
-            `;
+                const fechaFormateada = fecha.toLocaleDateString("es-AR");
 
-            tbody.innerHTML += fila;
-        });
-
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
+                tbody.innerHTML += `
+                    <tr class="${filaClase}">
+                        <td><strong>${c.cliente}</strong></td>
+                        <td>Cuota ${c.numeroCuota}</td>
+                        <td><strong>$${formatearNumero(c.montoCuota)}</strong></td>
+                        <td>${fechaFormateada}</td>
+                        <td>${estadoBadge}</td>
+                        <td>
+                            ${!c.pagada ? `
+                                <button class="btn btn-sm btn-success"
+                                    onclick="marcarCobrado(${c.cobroCuotaID})">
+                                    <i class="fas fa-check"></i> Cobrar
+                                </button>` : ""}
+                        </td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(error => console.error("Error:", error));
 }
-
-let listaCuotas = [];
-let listaCheques = [];
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    cargarCuota();
-    cargarCheques();
-
-
-});
 
 function cargarCuota() {
 
@@ -469,5 +435,66 @@ function actualizarCardRechazados(listaCheques) {
 function formatearNumero(numero) {
     return numero.toLocaleString("es-AR");
 }
+
+
+
+
+// Debounce para no spamear requests mientras el usuario escribe el nombre
+let debounceTimer = null;
+
+function aplicarFiltros() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        const params = obtenerParams();
+        cargarCheques(params);
+        cargarCuotas1(params);
+    }, 300); // espera 300ms tras el último cambio
+}
+
+function obtenerParams() {
+    const cliente    = document.getElementById('filtro-cliente').value.trim();
+    const estado     = document.getElementById('filtro-estado').value;
+    const fechaDesde = document.getElementById('filtro-desde').value;
+    const fechaHasta = document.getElementById('filtro-hasta').value;
+
+    const params = new URLSearchParams();
+    if (cliente)    params.append('cliente',    cliente);
+    if (estado)     params.append('estado',     estado);
+    if (fechaDesde) params.append('fechaDesde', fechaDesde);
+    if (fechaHasta) params.append('fechaHasta', fechaHasta);
+
+    return params;
+}
+
+function cargarCheques(params) {
+    fetch(`/CobroDiferido/ListadoCobroCheques?${params}`)
+        .then(r => r.json())
+        .then(data => listadoCobroCheque(data));
+}
+
+function cargarCuotas1(params) {
+    // Estado en cuotas es bool: solo aplica si es Pendiente o Cobrado
+    const paramsCuotas = new URLSearchParams(params);
+
+    const estado = paramsCuotas.get('estado');
+    paramsCuotas.delete('estado');
+    if (estado === 'Pendiente') paramsCuotas.append('pagada', 'false');
+    if (estado === 'Cobrado')   paramsCuotas.append('pagada', 'true');
+    // Vencido y Rechazado no aplican a cuotas → se ignoran
+
+    fetch(`/CobroDiferido/ListadoCobroCuotas?${paramsCuotas}`)
+        .then(r => r.json())
+        .then(data => cargarCuotas(data));
+}
+
+// Carga inicial
+document.addEventListener('DOMContentLoaded', aplicarFiltros);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    aplicarFiltros();
+    cargarCuota();   // cards de resumen
+    cargarCheques(); // cards de resumen
+});
 
 
